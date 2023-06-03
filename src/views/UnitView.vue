@@ -1,17 +1,16 @@
 <template>
-  <div v-if="unit != null">
+  <div v-if="JSON.stringify(unitDetail) != '{}'">
     <div class="px-4 py-5 relative shadow shadow-gray-300">
       <div
+        @click="$router.go(-1)"
         class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
       >
-        <router-link to="/">
-          <img src="../assets/images/left.svg" alt="" />
-        </router-link>
+        <img src="../assets/images/left.svg" alt="" />
       </div>
       <div
         class="ml-1/2 -translate-x-1/2 inline-block text-indigo text-xl font-semibold whitespace-nowrap"
       >
-        {{ unit.unitTitle }}
+        {{ unitDetail.unitTitle }}
       </div>
     </div>
     <div>
@@ -22,16 +21,16 @@
         <div class="px-6">
           <div class="w-full lg:w-1/2">
             <p class="text-xl text-indigo font-bold truncate">
-              {{ unit.chapterTitle }}
+              {{ unitDetail.chapterTitle }}
             </p>
             <p class="text-lg italic text-gray-400">
-              {{ unit.chapterDescription }}
+              {{ unitDetail.chapterDescription }}
             </p>
-            <div v-if="unit.numberQuestionComplete == 0">
+            <div v-if="unitDetail.numberQuestionComplete == 0">
               <p class="text-lg my-4">
                 Tổng:
                 <span class="text-xl text-indigo font-bold"
-                  >{{ unit.numberQuestion }} câu</span
+                  >{{ unitDetail.numberQuestion }} câu</span
                 >
               </p>
             </div>
@@ -39,8 +38,8 @@
               <p class="text-lg">
                 Hoàn thành:
                 <span class="text-xl text-indigo font-bold"
-                  >{{ unit.numberQuestionComplete }}/{{
-                    unit.numberQuestion
+                  >{{ unitDetail.numberQuestionComplete }}/{{
+                    unitDetail.numberQuestion
                   }}
                   câu</span
                 >
@@ -52,11 +51,13 @@
               ></div>
             </div>
           </div>
-          <button
-            class="text-white py-2 bg-indigo rounded border-indigo border-2 w-full mb-8 text-base font-medium hover:bg-white hover:text-indigo"
-          >
-            Làm bài
-          </button>
+          <router-link :to="`/practice/${unitDetail.id}`">
+            <button
+              class="text-white py-2 bg-indigo rounded border-indigo border-2 w-full mb-8 text-base font-medium hover:bg-white hover:text-indigo"
+            >
+              Làm bài
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -66,33 +67,25 @@
 <script lang="ts">
 import { storeToRefs } from "pinia";
 import { defineComponent, nextTick, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
 import { useUnitStore } from "../store/unitStore";
-import Unit from "../types/unit";
 export default defineComponent({
   name: "UnitView",
   setup() {
-    const route = useRoute();
-    const { id } = route.params;
     const questionProcess = ref(null);
-    const { units } = storeToRefs(useUnitStore());
-    const unit = ref<Unit | null>(null);
-    const findCurrentUnit = () => {
-      unit.value = units.value.find((data: Unit) => data.id == id) || null;
-    };
+    const { unitDetail } = storeToRefs(useUnitStore());
     const setProcess = () => {
-      if (unit.value.numberQuestionComplete > 0) {
+      if (unitDetail.value.numberQuestionComplete > 0) {
         nextTick(() => {
           questionProcess.value.style.width =
-            (unit.value.numberQuestionComplete / unit.value.numberQuestion) *
+            (unitDetail.value.numberQuestionComplete /
+              unitDetail.value.numberQuestion) *
               100 +
             "%";
         });
       }
     };
-    onMounted(findCurrentUnit);
     onMounted(setProcess);
-    return { unit, questionProcess };
+    return { unitDetail, questionProcess };
   },
 });
 </script>

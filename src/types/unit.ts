@@ -5,5 +5,7 @@ export default interface Unit {
   chapterDescription: string;
   numberQuestion: number;
   numberQuestionComplete: number;
+  currentIndex: number;
   url: string;
+  questionPart: Array<any>;
 }

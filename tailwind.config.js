@@ -6,7 +6,9 @@ export default {
     extend: {
       colors: {
         indigo: {
+          lighter: "#385768",
           DEFAULT: "#19455D",
+          darker: "#00314C",
         },
         blue: {
           lighter: "#BAE7FF",
@@ -14,14 +16,31 @@ export default {
         grey: {
           lighter: "#47474717",
         },
+        iceberg: {
+          DEFAULT: "#73AFD0",
+        },
+        green: {
+          lighter: "#55934b21",
+          DEFAULT: "#55934B",
+        },
+        raspberry: {
+          lighter: "#d0323936",
+          DEFAULT: "#D03239",
+        },
+        modal: {
+          DEFAULT: "#8c8c8c33",
+          darker: "#00000080",
+        },
       },
       spacing: {
+        2.5: "0.625rem",
         12.5: "3.125rem",
         40: "10rem",
         42: "10.5rem",
         50: "12.5rem",
         51.25: "12.8175rem",
         56.25: "14.0625rem",
+        62.5: "15.625rem",
         75: "18.75rem",
         90: "22.5rem",
         100: "25rem",

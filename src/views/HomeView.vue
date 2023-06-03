@@ -1,10 +1,15 @@
 <template>
   <div class="home">Home Page</div>
   <div class="flex p-4 gap-4 flex-wrap">
-    <router-link v-for="unit in units" :key="unit.id" :to="`unit/${unit.id}`">
+    <router-link
+      v-for="unit in units"
+      :key="unit.id"
+      @click="setUnitDetail(unit.id)"
+      :to="`/unit/${unit.id}`"
+    >
       <CartUnit
         :imageURL="unit.url"
-        :title="unit.title"
+        :title="unit.unitTitle"
         :numberQuestion="unit.numberQuestion"
       />
     </router-link>
@@ -21,9 +26,9 @@ export default defineComponent({
   name: "HomeView",
   setup() {
     const { units } = storeToRefs(useUnitStore());
-    const { getUnits } = useUnitStore();
+    const { getUnits, setUnitDetail } = useUnitStore();
     onMounted(getUnits);
-    return { units, getUnits };
+    return { units, getUnits, setUnitDetail };
   },
   components: { CartUnit },
 });
