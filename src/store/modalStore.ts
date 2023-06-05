@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import Unit from "@/types/unit";
 
 export const useModalStore = defineStore("modalStore", {
   state: () => ({

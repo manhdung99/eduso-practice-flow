@@ -1,0 +1,25 @@
+/* .ant-progress-text {
+    display: none !important;
+} */
+
+.ant-btn-primary {
+    border-color: #105277 !important;
+    background: #105277 !important;
+    border-radius: 5px !important;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+}
+
+.ant-btn:hover {
+    border-color: #105277 !important;
+    background: white;
+    color: #105277 !important;
+}
+
+.ant-btn-primary:hover {
+    border-color: #105277 !important;
+    background: #105277 !important;
+    color: white !important;
+
+}

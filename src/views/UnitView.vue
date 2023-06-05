@@ -1,24 +1,99 @@
 <template>
   <div v-if="JSON.stringify(unitDetail) != '{}'">
     <div class="px-4 py-5 relative shadow shadow-gray-300">
-      <div
-        @click="$router.go(-1)"
-        class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
-      >
-        <img src="../assets/images/left.svg" alt="" />
-      </div>
+      <router-link to="/">
+        <div
+          class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
+        >
+          <img src="../assets/images/left.svg" alt="" />
+        </div>
+      </router-link>
       <div
         class="ml-1/2 -translate-x-1/2 inline-block text-indigo text-xl font-semibold whitespace-nowrap"
       >
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div>
+    <div v-if="unitDetail.completed">
       <div
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
       >
         <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
         <div class="px-6">
+          <div class="w-full mb-8">
+            <p class="text-xl text-indigo font-bold truncate">
+              {{ unitDetail.chapterTitle }}
+            </p>
+            <p class="text-lg italic text-gray-400">
+              {{ unitDetail.chapterDescription }}
+            </p>
+            <div>
+              <p class="text-lg text-indigo font-semibold italic">Kết quả</p>
+              <div class="w-full flex gap-x-4">
+                <div class="w-20 h-20">
+                  <a-progress
+                    :percent="correctProcess"
+                    stroke-color="#55934B"
+                    type="circle"
+                    :width="80"
+                  >
+                    <template #format="percent">
+                      <span style="color: #55934b">{{ percent }} %</span>
+                    </template>
+                  </a-progress>
+                </div>
+                <div class="w-full flex flex-col justify-between">
+                  <div class="flex justify-between items-center">
+                    <span class="text-lg font-semibold text-green">Đúng</span>
+                    <span class="text-base font-semibold text-indigo"
+                      >{{ unitDetail.numberQuestionCorrect }} Câu</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-lg font-semibold text-raspberry-darker"
+                      >Sai</span
+                    >
+                    <span class="text-base font-semibold text-indigo"
+                      >{{
+                        unitDetail.numberQuestion -
+                        unitDetail.numberQuestionCorrect
+                      }}
+                      Câu</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <router-link :to="`/practice/${unitDetail.id}`">
+            <button
+              class="text-white py-2 bg-iceberg rounded border-iceberg border-2 w-full mb-8 text-base font-medium hover:bg-white hover:text-iceberg flex items-center justify-center gap-x-3"
+            >
+              <span class="icon-book text-xl"
+                ><span class="path1"></span><span class="path2"></span
+                ><span class="path3"></span
+              ></span>
+              Lịch sử luyện tập
+            </button>
+          </router-link>
+        </div>
+      </div>
+      <div class="w-1/2 ml-1/2 -translate-x-1/2 gap-x-4 flex mt-20">
+        <button class="btn btn-primary w-1/3">Làm lại</button>
+        <button class="btn btn-primary w-2/3 relative">
+          Làm tiếp
+          <span
+            class="icon-right absolute top-1/2 -translate-y-1/2 right-4"
+          ></span>
+        </button>
+      </div>
+    </div>
+    <div v-else>
+      <div
+        class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
+      >
+        <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
+        <div class="px-6 pb-6">
           <div class="w-full lg:w-1/2">
             <p class="text-xl text-indigo font-bold truncate">
               {{ unitDetail.chapterTitle }}
@@ -26,38 +101,48 @@
             <p class="text-lg italic text-gray-400">
               {{ unitDetail.chapterDescription }}
             </p>
-            <div v-if="unitDetail.numberQuestionComplete == 0">
-              <p class="text-lg my-4">
-                Tổng:
-                <span class="text-xl text-indigo font-bold"
-                  >{{ unitDetail.numberQuestion }} câu</span
-                >
-              </p>
+          </div>
+          <div v-if="unitDetail.numberQuestionComplete == 0">
+            <p class="text-lg my-4">
+              Tổng:
+              <span class="text-xl text-indigo font-bold"
+                >{{ unitDetail.numberQuestion }} câu</span
+              >
+            </p>
+            <router-link :to="`/practice/${unitDetail.id}`">
+              <a-button class="" type="primary !h-11.5 w-full !font-medium"
+                >Làm bài</a-button
+              >
+            </router-link>
+          </div>
+          <div class="my-4 relative" v-else>
+            <p class="text-lg">
+              Hoàn thành:
+              <span class="text-xl text-indigo font-bold"
+                >{{ unitDetail.numberQuestionComplete }}/{{
+                  unitDetail.numberQuestion
+                }}
+                câu</span
+              >
+            </p>
+            <div class="w-1/2 mb-8">
+              <a-progress
+                stroke-color="#BAE7FF"
+                stroke-linecap="square"
+                :percent="questionProcess"
+              />
             </div>
-            <div class="my-4 relative" v-else>
-              <p class="text-lg">
-                Hoàn thành:
-                <span class="text-xl text-indigo font-bold"
-                  >{{ unitDetail.numberQuestionComplete }}/{{
-                    unitDetail.numberQuestion
-                  }}
-                  câu</span
+            <div class="flex w-full gap-x-5">
+              <router-link class="w-1/3" :to="`/practice/${unitDetail.id}`">
+                <a-button class="!h-11.5 w-full !font-medium">Làm lại</a-button>
+              </router-link>
+              <router-link class="w-2/3" :to="`/practice/${unitDetail.id}`">
+                <a-button class="!h-11.5 w-full !font-medium" type="primary"
+                  >Làm tiếp</a-button
                 >
-              </p>
-              <div class="w-full bg-grey-lighter rounded-lg h-2 absolute"></div>
-              <div
-                ref="questionProcess"
-                class="bg-blue-lighter rounded-lg h-2 absolute"
-              ></div>
+              </router-link>
             </div>
           </div>
-          <router-link :to="`/practice/${unitDetail.id}`">
-            <button
-              class="text-white py-2 bg-indigo rounded border-indigo border-2 w-full mb-8 text-base font-medium hover:bg-white hover:text-indigo"
-            >
-              Làm bài
-            </button>
-          </router-link>
         </div>
       </div>
     </div>
@@ -66,26 +151,35 @@
 
 <script lang="ts">
 import { storeToRefs } from "pinia";
-import { defineComponent, nextTick, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useUnitStore } from "../store/unitStore";
 export default defineComponent({
   name: "UnitView",
   setup() {
-    const questionProcess = ref(null);
+    const questionProcess = ref(0);
+    const correctProcess = ref(0);
     const { unitDetail } = storeToRefs(useUnitStore());
     const setProcess = () => {
       if (unitDetail.value.numberQuestionComplete > 0) {
-        nextTick(() => {
-          questionProcess.value.style.width =
-            (unitDetail.value.numberQuestionComplete /
-              unitDetail.value.numberQuestion) *
-              100 +
-            "%";
-        });
+        questionProcess.value = Math.round(
+          (unitDetail.value.numberQuestionComplete /
+            unitDetail.value.numberQuestion) *
+            100
+        );
+      }
+    };
+    const setCorrectProcess = () => {
+      if (unitDetail.value.numberQuestionComplete > 0) {
+        correctProcess.value = Math.round(
+          (unitDetail.value.numberQuestionCorrect /
+            unitDetail.value.numberQuestion) *
+            100
+        );
       }
     };
     onMounted(setProcess);
-    return { unitDetail, questionProcess };
+    onMounted(setCorrectProcess);
+    return { unitDetail, questionProcess, correctProcess, setCorrectProcess };
   },
 });
 </script>

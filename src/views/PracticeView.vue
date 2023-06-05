@@ -40,7 +40,7 @@
           </button>
         </div>
         <div
-          @click="unitDetail.currentIndex++"
+          @click="goNextPartQuestion"
           class="flex gap-x-3"
           v-else-if="currentPartQuestion.status == 'true'"
         >
@@ -48,7 +48,7 @@
         </div>
         <div class="flex gap-x-3" v-else>
           <button
-            @click="unitDetail.currentIndex++"
+            @click="goNextPartQuestion"
             class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
           >
             Bỏ qua
@@ -66,14 +66,16 @@
           <div v-html="currentPartQuestion.partContent"></div>
         </div>
         <div class="w-1/2 h-full px-4 relative">
-          <MutipleChoice
-            v-for="(question, index) in currentPartQuestion.questions"
-            :key="question.questionID"
-            :updateSelectedAnswer="updateSelectedAnswer"
-            :question="question"
-            :index="index"
-            :partID="currentPartQuestion.id"
-          />
+          <div class="question-wrapper">
+            <MutipleChoice
+              v-for="(question, index) in currentPartQuestion.questions"
+              :key="question.questionID"
+              :updateSelectedAnswer="updateSelectedAnswer"
+              :question="question"
+              :index="index"
+              :partID="currentPartQuestion.id"
+            />
+          </div>
           <div
             class="checking-btn-wrapper"
             v-if="currentPartQuestion.status == 'unmake'"
@@ -90,13 +92,13 @@
             class="checking-btn-wrapper"
             v-else-if="currentPartQuestion.status == 'true'"
           >
-            <button @click="unitDetail.currentIndex++" class="check-btn btn">
+            <button @click="goNextPartQuestion" class="check-btn btn">
               Tiếp tục
             </button>
           </div>
           <div class="checking-btn-wrapper" v-else>
             <button
-              @click="unitDetail.currentIndex++"
+              @click="goNextPartQuestion"
               class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
             >
               Bỏ qua
@@ -129,7 +131,7 @@
             :disabled="
               unitDetail.currentIndex == unitDetail.questionPart.length - 1
             "
-            @click="unitDetail.currentIndex++"
+            @click="goNextPartQuestion"
             class="btn btn-primary flex items-center gap-x-2"
           >
             <span class="whitespace-nowrap">Câu sau</span>
@@ -140,9 +142,9 @@
       <!-- List question -->
       <div v-if="showAnswer" class="list-question-wrapper">
         <div class="flex items-center mb-6 justify-between">
-          <p class="text-lg text-indigo-darker font-medium">
+          <div class="text-lg text-indigo-darker font-medium">
             Danh sách câu hỏi
-          </p>
+          </div>
           <span
             @click="showAnswer = false"
             class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
@@ -150,7 +152,10 @@
         </div>
 
         <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
-          Đã trả lời 3/{{ unitDetail.numberQuestion }} câu
+          Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+            unitDetail.numberQuestion
+          }}
+          câu
         </p>
         <div class="">
           <div v-for="(part, index) in unitDetail.questionPart" :key="part.id">
@@ -198,6 +203,7 @@ import { storeToRefs } from "pinia";
 import theoryIcon from "../assets/images/theory-icon.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
+import router from "@/router";
 export default defineComponent({
   name: "PracticeView",
   components: {
@@ -226,7 +232,15 @@ export default defineComponent({
       });
     };
     const goNextPartQuestion = () => {
-      unitDetail.value.currentIndex++;
+      if (
+        unitDetail.value.currentIndex <
+        unitDetail.value.questionPart.length - 1
+      ) {
+        unitDetail.value.currentIndex++;
+      } else {
+        unitDetail.value.completed = true;
+        router.push(`/unit/${unitDetail.value.id}`);
+      }
     };
     const checkAnswer = () => {
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
@@ -234,6 +248,7 @@ export default defineComponent({
         currentPartQuestion.value.questions[i].correctAnswer = answer;
         if (currentPartQuestion.value.questions[i].selectedAnswer == answer) {
           currentPartQuestion.value.questions[i].status = "true";
+          unitDetail.value.numberQuestionCorrect++;
         } else {
           currentPartQuestion.value.questions[i].status = "false";
         }
@@ -347,5 +362,22 @@ export default defineComponent({
   width: calc(100% - 32px);
   column-gap: 12px;
   display: flex;
+}
+.question-wrapper {
+  height: 700px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.question-wrapper::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.question-wrapper::-webkit-scrollbar-thumb {
+  background: #555555;
+  border-radius: 10px;
+}
+.question-wrapper::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #555555;
+  border-radius: 10px;
 }
 </style>

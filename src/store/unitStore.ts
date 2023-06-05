@@ -14,9 +14,11 @@ export const useUnitStore = defineStore("unitStore", {
           unitTitle: "Bài 1: Mức độ nhận biết",
           chapterTitle: "Chương 1 - Tìm từ được gạch chân phát âm khác",
           chapterDescription: "Bài 1 - Mức độ nhận biết 1 ",
-          numberQuestion: 30,
+          numberQuestion: 4,
           numberQuestionComplete: 0,
+          numberQuestionCorrect: 0,
           url: "https://i.ibb.co/JCXbvbB/cover.jpg",
+          completed: false,
           currentIndex: 0,
           questionPart: [
             {
@@ -55,6 +57,21 @@ export const useUnitStore = defineStore("unitStore", {
                     { answerID: 8, answerValue: "D. Dude it’s a bee" },
                   ],
                 },
+                {
+                  questionID: 3,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  isChecked: false,
+                  selectedAnswer: 0,
+                  correctAnswer: 0,
+                  answers: [
+                    { answerID: 9, answerValue: "A. Yes" },
+                    { answerID: 10, answerValue: "B. No" },
+                    { answerID: 11, answerValue: "C. Depends" },
+                    { answerID: 12, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
               ],
             },
             {
@@ -64,7 +81,7 @@ export const useUnitStore = defineStore("unitStore", {
               status: "unmake",
               questions: [
                 {
-                  questionID: 1,
+                  questionID: 4,
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",

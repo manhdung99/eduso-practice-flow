@@ -26,6 +26,7 @@ export default {
         raspberry: {
           lighter: "#d0323936",
           DEFAULT: "#D03239",
+          darker: "#D54B52",
         },
         modal: {
           DEFAULT: "#8c8c8c33",
@@ -34,6 +35,9 @@ export default {
       },
       spacing: {
         2.5: "0.625rem",
+        10.5: "2.625rem",
+        11.5: "2.875rem",
+        12: "3rem",
         12.5: "3.125rem",
         40: "10rem",
         42: "10.5rem",

@@ -26,59 +26,77 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-unmake-answer:before {
-    content: "\e908";
-    color: #d9d9d9;
+.icon-left:before {
+    content: "\e90d";
+    color: currentColor;
 }
 
 .icon-right:before {
-    content: "\e90a";
-    color: #fff;
+    content: "\e90c";
+    color: currentColor;
 }
 
-.icon-close:before {
-    content: "\e907";
+.icon-book .path1:before {
+    content: "\e908";
+    color: currentColor;
+    opacity: 0.0100;
 }
 
-.icon-unmake-answer2:before {
+.icon-book .path2:before {
     content: "\e909";
-    color: #fff;
+    margin-left: -1em;
+    color: currentColor;
+    opacity: 0.85;
+}
+
+.icon-book .path3:before {
+    content: "\e90b";
+    margin-left: -1em;
+    color: currentColor;
+    opacity: 0.85;
+}
+
+.icon-unmake-answer:before {
+    content: "\e900";
+    color: #D9D9D9;
 }
 
 .icon-incorrect-answer .path1:before {
-    content: "\e902";
+    content: "\e901";
     color: rgb(208, 50, 57);
 }
 
 .icon-incorrect-answer .path2:before {
-    content: "\e903";
+    content: "\e902";
     margin-left: -1em;
     color: rgb(255, 255, 255);
 }
 
 .icon-correct-answer .path1:before {
-    content: "\e904";
+    content: "\e903";
     color: rgb(255, 255, 255);
 }
 
 .icon-correct-answer .path2:before {
-    content: "\e905";
+    content: "\e904";
     margin-left: -1em;
     color: rgb(85, 147, 75);
 }
 
 .icon-correct-answer .path3:before {
-    content: "\e906";
+    content: "\e905";
     margin-left: -1em;
     color: rgb(255, 255, 255);
 }
 
 .icon-down:before {
-    content: "\e900";
-    color: currentColor;
+    content: "\e906";
 }
 
 .icon-up:before {
-    content: "\e901";
-    color: currentColor;
+    content: "\e907";
+}
+
+.icon-close:before {
+    content: "\e90a";
 }
