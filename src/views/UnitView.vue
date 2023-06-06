@@ -1,5 +1,5 @@
 <template>
-  <div v-if="JSON.stringify(unitDetail) != '{}'">
+  <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
     <div class="px-4 py-5 relative shadow shadow-gray-300">
       <router-link to="/">
         <div
@@ -14,7 +14,7 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div v-if="unitDetail.completed">
+    <div class="px-4 lg:px-0" v-if="unitDetail.completed">
       <div
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
       >
@@ -65,7 +65,7 @@
               </div>
             </div>
           </div>
-          <router-link :to="`/practice/${unitDetail.id}`">
+          <router-link :to="`/history/${unitDetail.id}`">
             <button
               class="text-white py-2 bg-iceberg rounded border-iceberg border-2 w-full mb-8 text-base font-medium hover:bg-white hover:text-iceberg flex items-center justify-center gap-x-3"
             >
@@ -78,8 +78,10 @@
           </router-link>
         </div>
       </div>
-      <div class="w-1/2 ml-1/2 -translate-x-1/2 gap-x-4 flex mt-20">
-        <button class="btn btn-primary w-1/3">Làm lại</button>
+      <div class="w-full lg:w-1/2 ml-1/2 -translate-x-1/2 gap-x-4 flex mt-20">
+        <button @click="resetUnit" class="btn btn-primary w-1/3">
+          Làm lại
+        </button>
         <button class="btn btn-primary w-2/3 relative">
           Làm tiếp
           <span
@@ -88,7 +90,7 @@
         </button>
       </div>
     </div>
-    <div v-else>
+    <div class="px-4 lg:px-0" v-else>
       <div
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
       >
@@ -133,9 +135,9 @@
               />
             </div>
             <div class="flex w-full gap-x-5">
-              <router-link class="w-1/3" :to="`/practice/${unitDetail.id}`">
-                <a-button class="!h-11.5 w-full !font-medium">Làm lại</a-button>
-              </router-link>
+              <a-button @click="resetUnit" class="!h-11.5 w-full !font-medium"
+                >Làm lại</a-button
+              >
               <router-link class="w-2/3" :to="`/practice/${unitDetail.id}`">
                 <a-button class="!h-11.5 w-full !font-medium" type="primary"
                   >Làm tiếp</a-button
@@ -151,14 +153,16 @@
 
 <script lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { useUnitStore } from "../store/unitStore";
+import router from "@/router";
 export default defineComponent({
   name: "UnitView",
   setup() {
     const questionProcess = ref(0);
     const correctProcess = ref(0);
     const { unitDetail } = storeToRefs(useUnitStore());
+    const { getQuestion } = useUnitStore();
     const setProcess = () => {
       if (unitDetail.value.numberQuestionComplete > 0) {
         questionProcess.value = Math.round(
@@ -177,9 +181,35 @@ export default defineComponent({
         );
       }
     };
+    const resetUnit = () => {
+      unitDetail.value.currentIndex = 0;
+      unitDetail.value.completed = false;
+      unitDetail.value.numberQuestionComplete = 0;
+      unitDetail.value.numberQuestionCorrect = 0;
+      unitDetail.value.questionPart.forEach((part) => {
+        part.status = "unmake";
+        part.questions.forEach((question) => {
+          question.status = "unmake";
+          question.isChecked = false;
+          question.selectedAnswer = 0;
+        });
+      });
+      router.push(`/practice/${unitDetail.value.id}`);
+    };
+    onMounted(() => {
+      nextTick(() => {
+        getQuestion();
+      });
+    });
     onMounted(setProcess);
     onMounted(setCorrectProcess);
-    return { unitDetail, questionProcess, correctProcess, setCorrectProcess };
+    return {
+      unitDetail,
+      questionProcess,
+      correctProcess,
+      setCorrectProcess,
+      resetUnit,
+    };
   },
 });
 </script>

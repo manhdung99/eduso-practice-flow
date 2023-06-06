@@ -1,5 +1,5 @@
 <template>
-  <div v-if="JSON.stringify(unitDetail) != '{}'">
+  <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
     <div class="px-4 py-5 relative shadow shadow-gray-300">
       <div
         @click="$router.go(-1)"
@@ -16,7 +16,7 @@
     <div v-if="currentPartQuestion" class="relative">
       <div
         v-if="currentPartQuestion.questions.length < 2"
-        class="bg-white rounded-lg shadow-slate-300 shadow-md p-4 w-1/2 ml-1/2 -translate-x-1/2 mt-4 h-200"
+        class="bg-white rounded-lg shadow-slate-300 shadow-md p-8 lg:p-4 w-full lg:w-1/2 ml-1/2 -translate-x-1/2 mt-4 h-200"
       >
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
           <div v-html="currentPartQuestion.partContent"></div>
@@ -30,9 +30,12 @@
             :index="index"
           />
         </div>
-        <div v-if="currentPartQuestion.status == 'unmake'">
+        <div
+          class="checking-btn-wrapper"
+          v-if="currentPartQuestion.status == 'unmake'"
+        >
           <button
-            :disabled="currentPartQuestion.selectedAnswer == 0"
+            :disabled="!selectedAll"
             class="check-btn btn"
             @click="checkAnswer"
           >
@@ -40,13 +43,14 @@
           </button>
         </div>
         <div
-          @click="goNextPartQuestion"
-          class="flex gap-x-3"
+          class="checking-btn-wrapper"
           v-else-if="currentPartQuestion.status == 'true'"
         >
-          <button class="check-btn btn">Tiếp tục</button>
+          <button @click="goNextPartQuestion" class="check-btn btn">
+            Tiếp tục
+          </button>
         </div>
-        <div class="flex gap-x-3" v-else>
+        <div class="checking-btn-wrapper" v-else>
           <button
             @click="goNextPartQuestion"
             class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
@@ -62,10 +66,30 @@
         v-else
         class="bg-white rounded-lg shadow-slate-300 shadow-md w-full lg:w-2/3 ml-1/2 -translate-x-1/2 mt-4 h-200 flex"
       >
-        <div class="w-1/2 h-full border-r border-gray-400 px-4">
+        <div
+          :class="showTheoryMobile ? '!right-0' : ''"
+          class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all"
+        >
+          <span
+            v-if="showTheoryMobile"
+            @click="showTheoryMobile = false"
+            class="absolute top-2/5 left-0"
+          >
+            <img :src="circleRightIcon" alt=""
+          /></span>
           <div v-html="currentPartQuestion.partContent"></div>
         </div>
-        <div class="w-1/2 h-full px-4 relative">
+        <div
+          :class="showTheoryMobile ? '!-left-full' : ''"
+          class="w-full lg:w-1/2 h-full px-8 lg:px-4 lg:relative absolute transition-all"
+        >
+          <span
+            v-if="!showTheoryMobile"
+            @click="showTheoryMobile = true"
+            class="absolute top-2/5 right-0"
+          >
+            <img :src="circleLeftIcon" alt=""
+          /></span>
           <div class="question-wrapper">
             <MutipleChoice
               v-for="(question, index) in currentPartQuestion.questions"
@@ -109,14 +133,24 @@
           </div>
         </div>
       </div>
-      <div class="w-1/2 ml-1/2 -translate-x-1/2 mt-4 flex justify-between">
+      <!-- Desktop -->
+      <div
+        class="w-1/2 ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex"
+      >
         <div class="w-1/3 relative">
-          <p>Câu 1/{{ unitDetail.numberQuestion }}</p>
-          <div class="w-full bg-grey-lighter rounded-lg h-2 absolute"></div>
-          <div
-            ref="questionProcess"
-            class="w-1/2 bg-blue-lighter rounded-lg h-2 absolute"
-          ></div>
+          <div>
+            Câu <span>{{ currentQuestion + 1 }}</span> /
+            {{ unitDetail.numberQuestion }}
+          </div>
+          <div>
+            <a-progress
+              stroke-color="#3699CF"
+              stroke-linecap="square"
+              :percent="
+                ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+              "
+            />
+          </div>
         </div>
         <div class="flex gap-x-4">
           <button
@@ -139,51 +173,114 @@
           </button>
         </div>
       </div>
+      <!-- Mobile -->
+      <div class="flex py-2 justify-between px-4 items-center lg:hidden">
+        <div class="flex w-full gap-x-2 items-center">
+          <span @click="showAnswer = true"
+            ><img :src="showListIcon" alt=""
+          /></span>
+          <div class="relative w-1/2">
+            <div class="text-indigo text-sm font-semibold">
+              Câu <span>{{ currentQuestion + 1 }}</span> /
+              {{ unitDetail.numberQuestion }}
+            </div>
+            <div>
+              <a-progress
+                stroke-color="#3699CF"
+                stroke-linecap="square"
+                :percent="
+                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                "
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-x-2">
+          <button
+            @click="unitDetail.currentIndex--"
+            :disabled="unitDetail.currentIndex == 0"
+          >
+            <img
+              :src="
+                unitDetail.currentIndex == 0
+                  ? circleTopDisableIcon
+                  : circleTopIcon
+              "
+              alt=""
+            />
+          </button>
+          <button
+            :disabled="
+              unitDetail.currentIndex == unitDetail.questionPart.length - 1
+            "
+            @click="goNextPartQuestion"
+          >
+            <img
+              :src="
+                unitDetail.currentIndex == unitDetail.questionPart.length - 1
+                  ? circleDownDisableIcon
+                  : circleDownIcon
+              "
+              alt=""
+            />
+          </button>
+        </div>
+      </div>
       <!-- List question -->
       <div v-if="showAnswer" class="list-question-wrapper">
-        <div class="flex items-center mb-6 justify-between">
-          <div class="text-lg text-indigo-darker font-medium">
-            Danh sách câu hỏi
+        <div class="list-question">
+          <div class="flex items-center mb-6 justify-between">
+            <div class="text-lg text-indigo-darker font-medium">
+              Danh sách câu hỏi
+            </div>
+            <span
+              @click="showAnswer = false"
+              class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
+            ></span>
           </div>
-          <span
-            @click="showAnswer = false"
-            class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
-          ></span>
-        </div>
-
-        <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
-          Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
-            unitDetail.numberQuestion
-          }}
-          câu
-        </p>
-        <div class="">
-          <div v-for="(part, index) in unitDetail.questionPart" :key="part.id">
-            <h3 class="text-indigo font-semibold mb-2">Phần {{ index + 1 }}</h3>
-            <!-- Question -->
+          <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
+            Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+              unitDetail.numberQuestion
+            }}
+            câu
+          </p>
+          <div class="list-question-part">
             <div
-              v-for="(question, questionIndex) in part.questions"
-              :key="question.questionID"
-              @click="moveToChoosedQuestion(part.id)"
-              class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
+              v-for="(part, index) in unitDetail.questionPart"
+              :key="part.id"
             >
-              <span v-if="question.status == 'true'" class="icon-correct-answer"
-                ><span class="path1"></span><span class="path2"></span
-                ><span class="path3"></span
-              ></span>
-              <span
-                v-else-if="question.status == 'false'"
-                class="icon-incorrect-answer"
-                ><span class="path1"></span><span class="path2"></span
-              ></span>
-              <span class="icon-unmake-answer" v-else></span>
-              <span>Câu {{ questionIndex + 1 }}</span>
+              <h3 class="text-indigo font-semibold mb-2">
+                Phần {{ index + 1 }}
+              </h3>
+              <!-- Question -->
+              <div
+                v-for="(question, questionIndex) in part.questions"
+                :key="question.questionID"
+                @click="moveToChoosedQuestion(part.id)"
+                class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
+              >
+                <span
+                  v-if="question.status == 'true'"
+                  class="icon-correct-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                  ><span class="path3"></span
+                ></span>
+                <span
+                  v-else-if="question.status == 'false'"
+                  class="icon-incorrect-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                ></span>
+                <span class="icon-unmake-answer" v-else></span>
+                <span class="text-sm text-indigo"
+                  >Câu {{ questionIndex + 1 }}</span
+                >
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        class="absolute -left-40 hover:left-0 top-0 bg-indigo text-white flex items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all"
+        class="absolute -left-40 hover:left-0 top-0 bg-indigo text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
         @click="showAnswer = true"
         v-else
       >
@@ -201,6 +298,13 @@ import { useUnitStore } from "../store/unitStore";
 import { useModalStore } from "../store/modalStore";
 import { storeToRefs } from "pinia";
 import theoryIcon from "../assets/images/theory-icon.svg";
+import circleTopDisableIcon from "../assets/images/circle-top-disable.svg";
+import circleTopIcon from "../assets/images/circle-top.svg";
+import circleDownIcon from "../assets/images/circle-down.svg";
+import circleLeftIcon from "../assets/images/circle-left.svg";
+import circleRightIcon from "../assets/images/circle-right.svg";
+import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
+import showListIcon from "../assets/images/show-list.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 import router from "@/router";
@@ -211,12 +315,14 @@ export default defineComponent({
     TheoryModal,
   },
   setup() {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { unitDetail, questions } = storeToRefs(useUnitStore());
     const { openTheoryModal } = storeToRefs(useModalStore());
     const prevRoute = ref("");
     const showAnswer = ref(false);
     const currentPartQuestion = ref(null);
+    const currentQuestion = ref(null);
     const selectedAll = ref(false);
+    const showTheoryMobile = ref(false);
     const updateSelectedAnswer = (questionID, answerID) => {
       const question = currentPartQuestion.value.questions.find(
         (data) => data.questionID == questionID
@@ -244,9 +350,12 @@ export default defineComponent({
     };
     const checkAnswer = () => {
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-        const answer = Math.floor(Math.random() * 4) + 1 + 4 * i;
-        currentPartQuestion.value.questions[i].correctAnswer = answer;
-        if (currentPartQuestion.value.questions[i].selectedAnswer == answer) {
+        // const answer = Math.floor(Math.random() * 4) + 1 + 4 * i;
+        // currentPartQuestion.value.questions[i].correctAnswer = answer;
+        if (
+          currentPartQuestion.value.questions[i].selectedAnswer ==
+          currentPartQuestion.value.questions[i].correctAnswer
+        ) {
           currentPartQuestion.value.questions[i].status = "true";
           unitDetail.value.numberQuestionCorrect++;
         } else {
@@ -265,8 +374,11 @@ export default defineComponent({
       currentPartQuestion.value.status = "unmake";
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
         currentPartQuestion.value.questions[i].selectedAnswer = 0;
-        currentPartQuestion.value.questions[i].correctAnswer = 0;
+        if (currentPartQuestion.value.questions[i].status == "true") {
+          unitDetail.value.numberQuestionCorrect--;
+        }
         currentPartQuestion.value.questions[i].status = "unmake";
+        unitDetail.value.numberQuestionComplete--;
       }
     };
     const moveToChoosedQuestion = (id) => {
@@ -274,31 +386,53 @@ export default defineComponent({
         (unit) => unit.id == id
       );
       unitDetail.value.currentIndex = index;
+      showAnswer.value = false;
     };
     onMounted(() => {
       currentPartQuestion.value =
         unitDetail.value.questionPart[unitDetail.value.currentIndex];
+      // Current Question
+      currentQuestion.value = questions.value.findIndex(
+        (question) =>
+          question.questionID ==
+          currentPartQuestion.value.questions[0].questionID
+      );
     });
     watch(
       () => unitDetail.value.currentIndex,
       () => {
         currentPartQuestion.value =
           unitDetail.value.questionPart[unitDetail.value.currentIndex];
+        // Current Question
+        currentQuestion.value = questions.value.findIndex(
+          (question) =>
+            question.questionID ==
+            currentPartQuestion.value.questions[0].questionID
+        );
       }
     );
     return {
       unitDetail,
       prevRoute,
       theoryIcon,
+      circleTopIcon,
+      circleDownIcon,
+      showListIcon,
+      circleTopDisableIcon,
+      circleDownDisableIcon,
+      circleLeftIcon,
+      circleRightIcon,
       showAnswer,
       currentPartQuestion,
       openTheoryModal,
       selectedAll,
+      showTheoryMobile,
       checkAnswer,
       updateSelectedAnswer,
       redoQuestion,
       goNextPartQuestion,
       moveToChoosedQuestion,
+      currentQuestion,
     };
   },
 });
@@ -368,16 +502,49 @@ export default defineComponent({
   overflow-y: auto;
   padding-right: 4px;
 }
+.list-question-part {
+  overflow-y: auto;
+  max-height: calc(100% - 75px);
+}
+.list-question-part::-webkit-scrollbar,
 .question-wrapper::-webkit-scrollbar {
   height: 6px;
-  width: 6px;
+  width: 2px;
 }
+.list-question-part::-webkit-scrollbar-thumb,
 .question-wrapper::-webkit-scrollbar-thumb {
   background: #555555;
   border-radius: 10px;
 }
+.list-question-part::-webkit-scrollbar-track,
 .question-wrapper::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px #555555;
   border-radius: 10px;
+}
+@media screen and (max-width: 767px) {
+  .list-question-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    padding: 0;
+    width: auto;
+    background: #00000080;
+    height: auto;
+  }
+  .list-question {
+    padding: 24px;
+    background: white;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    height: 75%;
+  }
+  .checking-btn-wrapper {
+    width: calc(100% - 64px);
+  }
 }
 </style>

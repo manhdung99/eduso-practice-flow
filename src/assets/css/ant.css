@@ -1,6 +1,19 @@
-/* .ant-progress-text {
+.ant-progress-text {
     display: none !important;
-} */
+}
+
+.ant-progress-circle .ant-progress-text {
+    display: inline-block !important;
+}
+
+.ant-progress-inner {
+    background-color: #ededed !important;
+}
+
+.ant-progress-show-info .ant-progress-outer {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+}
 
 .ant-btn-primary {
     border-color: #105277 !important;

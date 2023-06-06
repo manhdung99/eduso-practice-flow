@@ -6,6 +6,7 @@ export default interface Unit {
   numberQuestion: number;
   numberQuestionComplete: number;
   numberQuestionCorrect: number;
+  currentQuestion: number;
   completed: boolean;
   currentIndex: number;
   url: string;

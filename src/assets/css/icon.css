@@ -26,14 +26,14 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-left:before {
-    content: "\e90d";
-    color: currentColor;
+.icon-show-list:before {
+    content: "\e900";
+    color: #19455d;
 }
 
 .icon-right:before {
     content: "\e90c";
-    color: currentColor;
+    color: #fff;
 }
 
 .icon-book .path1:before {
@@ -57,8 +57,8 @@
 }
 
 .icon-unmake-answer:before {
-    content: "\e900";
-    color: #D9D9D9;
+    content: "\e90d";
+    color: #d9d9d9;
 }
 
 .icon-incorrect-answer .path1:before {

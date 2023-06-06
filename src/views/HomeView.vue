@@ -28,6 +28,7 @@ export default defineComponent({
     const { units } = storeToRefs(useUnitStore());
     const { getUnits, setUnitDetail } = useUnitStore();
     onMounted(getUnits);
+    onMounted(getUnits);
     return { units, getUnits, setUnitDetail };
   },
   components: { CartUnit },

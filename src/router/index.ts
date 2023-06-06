@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import UnitView from "../views/UnitView.vue";
 import PracticeView from "../views/PracticeView.vue";
+import HistoryView from "../views/PracticeHistory.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,6 +22,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "practice",
     component: PracticeView,
     meta: { title: "Luyện tập" },
+  },
+  {
+    path: "/history/:id",
+    name: "history",
+    component: HistoryView,
+    meta: { title: "Lịch sử luyện tập" },
   },
 ];
 
