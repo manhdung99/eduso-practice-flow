@@ -13,11 +13,12 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div class="relative pb-6">
+    <div @scroll="onScroll($event)" ref="el" class="history-question-wrapper">
       <div
         v-for="questionPart in unitDetail.questionPart"
         :key="questionPart.id"
         class="list-answer-wrapper"
+        :id="questionPart.id"
       >
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
           <div v-html="questionPart.partContent"></div>
@@ -31,9 +32,101 @@
           />
         </div>
       </div>
-
+      <!-- Desktop bottom  -->
+      <div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-1/2">
+        <div class="mt-4 justify-between hidden lg:flex">
+          <div class="w-1/3 relative">
+            <div>
+              Câu <span>{{ currentQuestion + 1 }}</span> /
+              {{ unitDetail.numberQuestion }}
+            </div>
+            <div>
+              <a-progress
+                stroke-color="#3699CF"
+                stroke-linecap="square"
+                :percent="
+                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                "
+              />
+            </div>
+          </div>
+          <div class="flex gap-x-4">
+            <button
+              :disabled="currentPartQuestion == 0"
+              @click="moveToPart(-1)"
+              class="btn btn-primary flex items-center gap-x-2"
+            >
+              <span class="icon-up"></span>
+              <span class="whitespace-nowrap">Câu trước</span>
+            </button>
+            <button
+              @click="moveToPart(1)"
+              :disabled="
+                lastPart ||
+                currentPartQuestion == unitDetail.questionPart.length - 1
+              "
+              class="btn btn-primary flex items-center gap-x-2"
+            >
+              <span class="whitespace-nowrap">Câu sau</span>
+              <span class="icon-down"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile bottom  -->
+      <div
+        class="fixed w-full flex py-2 justify-between bottom-2 px-4 items-center lg:hidden"
+      >
+        <div class="flex w-full gap-x-2 items-center">
+          <span @click="showListQuestion = true"
+            ><img :src="showListIcon" alt=""
+          /></span>
+          <div class="relative w-1/2">
+            <div class="text-indigo text-sm font-semibold">
+              Câu <span>{{ currentQuestion + 1 }}</span> /
+              {{ unitDetail.numberQuestion }}
+            </div>
+            <div>
+              <a-progress
+                stroke-color="#3699CF"
+                stroke-linecap="square"
+                :percent="
+                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                "
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-x-2">
+          <button @click="moveToPart(-1)" :disabled="currentPartQuestion == 0">
+            <img
+              :src="
+                currentPartQuestion == 0 ? circleTopDisableIcon : circleTopIcon
+              "
+              alt=""
+            />
+          </button>
+          <button
+            :disabled="
+              lastPart ||
+              currentPartQuestion == unitDetail.questionPart.length - 1
+            "
+            @click="moveToPart(1)"
+          >
+            <img
+              :src="
+                lastPart ||
+                currentPartQuestion == unitDetail.questionPart.length - 1
+                  ? circleDownDisableIcon
+                  : circleDownIcon
+              "
+              alt=""
+            />
+          </button>
+        </div>
+      </div>
       <!-- List question -->
-      <div v-if="showListQuestion" class="list-question-wrapper">
+      <div v-show="showListQuestion" class="list-question-wrapper">
         <div class="list-question">
           <div class="flex items-center mb-6 justify-between">
             <div class="text-lg text-indigo-darker font-medium">
@@ -54,6 +147,7 @@
             <div
               v-for="(part, index) in unitDetail.questionPart"
               :key="part.id"
+              @click.prevent="scrollToSection(part.id)"
             >
               <h3 class="text-indigo font-semibold mb-2">
                 Phần {{ index + 1 }}
@@ -62,7 +156,6 @@
               <div
                 v-for="(question, questionIndex) in part.questions"
                 :key="question.questionID"
-                @click="moveToChoosedQuestion(part.id)"
                 class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
               >
                 <span
@@ -86,9 +179,9 @@
         </div>
       </div>
       <div
-        class="fixed -left-40 hover:left-0 top-24 bg-indigo text-white flex items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all"
+        v-show="!showListQuestion"
+        class="fixed -left-40 hover:left-0 top-24 bg-indigo text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
         @click="showListQuestion = true"
-        v-else
       >
         <span class="text-sm">Xem danh sách câu hỏi</span>
         <span class="icon-right"></span>
@@ -104,6 +197,12 @@ import { useUnitStore } from "../store/unitStore";
 import { useModalStore } from "../store/modalStore";
 import { storeToRefs } from "pinia";
 import theoryIcon from "../assets/images/theory-icon.svg";
+import circleTopDisableIcon from "../assets/images/circle-top-disable.svg";
+import circleTopIcon from "../assets/images/circle-top.svg";
+import circleDownIcon from "../assets/images/circle-down.svg";
+import circleLeftIcon from "../assets/images/circle-left.svg";
+import showListIcon from "../assets/images/show-list.svg";
+import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import MutipleChoiceHistory from "@/components/question/MutipleChoiceHistory.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 export default defineComponent({
@@ -113,35 +212,76 @@ export default defineComponent({
     TheoryModal,
   },
   setup() {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { unitDetail, questions } = storeToRefs(useUnitStore());
     const { openTheoryModal } = storeToRefs(useModalStore());
-    const prevRoute = ref("");
     const showListQuestion = ref(false);
-    const currentPartQuestion = ref(null);
+    const currentPartQuestion = ref(0);
     const currentQuestion = ref(null);
     const selectedAll = ref(false);
-
-    const moveToChoosedQuestion = (id) => {
-      const index = unitDetail.value.questionPart.findIndex(
-        (unit) => unit.id == id
-      );
-      unitDetail.value.currentIndex = index;
+    const lastPart = ref(false);
+    const el = ref(null);
+    const scrollToSection = (id) => {
+      const section = document.getElementById(id);
+      el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
+    };
+    const onScroll = (event) => {
+      const scrollTop = event.target.scrollTop;
+      const clientHeight = event.target.clientHeight;
+      const scrollHeight = event.target.scrollHeight;
+      if (scrollTop + clientHeight == scrollHeight) {
+        lastPart.value = true;
+      } else {
+        lastPart.value = false;
+      }
+      unitDetail.value.questionPart.forEach((part) => {
+        const section = document.getElementById(part.id);
+        if (
+          section.offsetTop <= scrollTop &&
+          section.offsetTop + section.offsetHeight > scrollTop
+        ) {
+          currentPartQuestion.value = unitDetail.value.questionPart.findIndex(
+            (data) => data.id == part.id
+          );
+        }
+      });
+    };
+    const moveToPart = (number) => {
+      currentPartQuestion.value = currentPartQuestion.value + number;
+      const id = unitDetail.value.questionPart[currentPartQuestion.value].id;
+      const section = document.getElementById(id);
+      el.value.scrollTo({ top: section.offsetTop, behavior: "smooth" });
     };
     return {
       unitDetail,
-      prevRoute,
       theoryIcon,
       showListQuestion,
       currentPartQuestion,
       openTheoryModal,
       selectedAll,
-      moveToChoosedQuestion,
       currentQuestion,
+      el,
+      questions,
+      lastPart,
+      circleTopDisableIcon,
+      circleDownDisableIcon,
+      circleTopIcon,
+      circleDownIcon,
+      circleLeftIcon,
+      showListIcon,
+      scrollToSection,
+      onScroll,
+      moveToPart,
     };
   },
 });
 </script>
 <style>
+.history-question-wrapper {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
 .list-answer-wrapper {
   background: white;
   border-radius: 8px;

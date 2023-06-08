@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
+  <div class="overflow-hidden pb-2" v-if="JSON.stringify(unitDetail) != '{}'">
     <div class="px-4 py-5 relative shadow shadow-gray-300">
       <router-link to="/">
         <div
@@ -95,8 +95,8 @@
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
       >
         <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
-        <div class="px-6 pb-6">
-          <div class="w-full lg:w-1/2">
+        <div class="md:px-2 lg:px-6 pb-6">
+          <div class="w-full">
             <p class="text-xl text-indigo font-bold truncate">
               {{ unitDetail.chapterTitle }}
             </p>
@@ -135,13 +135,16 @@
               />
             </div>
             <div class="flex w-full gap-x-5">
-              <a-button @click="resetUnit" class="!h-11.5 w-full !font-medium"
+              <a-button @click="resetUnit" class="!h-11.5 !font-medium w-1/3"
                 >Làm lại</a-button
               >
               <router-link class="w-2/3" :to="`/practice/${unitDetail.id}`">
                 <a-button class="!h-11.5 w-full !font-medium" type="primary"
-                  >Làm tiếp</a-button
-                >
+                  >Làm tiếp
+                  <span
+                    class="icon-right absolute right-5 top-1/2 -translate-y-1/2"
+                  ></span>
+                </a-button>
               </router-link>
             </div>
           </div>

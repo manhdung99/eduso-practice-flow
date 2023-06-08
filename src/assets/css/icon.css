@@ -33,7 +33,7 @@
 
 .icon-right:before {
     content: "\e90c";
-    color: #fff;
+    color: currentColor;
 }
 
 .icon-book .path1:before {

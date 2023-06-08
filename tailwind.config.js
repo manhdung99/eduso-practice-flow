@@ -60,6 +60,9 @@ export default {
         "2/5": "40%",
         "1/2": "50%",
       },
+      lineHeight: {
+        12: "3rem",
+      },
     },
   },
   plugins: [],

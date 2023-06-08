@@ -14,20 +14,35 @@
       </div>
     </div>
     <div v-if="currentPartQuestion" class="relative">
+      <!-- One question  -->
       <div
         v-if="currentPartQuestion.questions.length < 2"
-        class="bg-white rounded-lg shadow-slate-300 shadow-md p-8 lg:p-4 w-full lg:w-1/2 ml-1/2 -translate-x-1/2 mt-4 h-200"
+        class="one-question-wrapper"
       >
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
           <div v-html="currentPartQuestion.partContent"></div>
         </div>
-        <div>
+        <div v-if="currentPartQuestion.type == 'QUIZ1'">
           <MutipleChoice
             v-for="(question, index) in currentPartQuestion.questions"
             :key="question.questionID"
             :updateSelectedAnswer="updateSelectedAnswer"
             :question="question"
             :index="index"
+            :partID="currentPartQuestion.id"
+          />
+        </div>
+        <div v-if="currentPartQuestion.type == 'QUIZ2'">
+          <FillInBlank
+            :class="
+              currentPartQuestion.questions.length < 2 ? 'one-question' : ''
+            "
+            v-for="(question, index) in currentPartQuestion.questions"
+            :key="question.questionID"
+            :updateSelectedAnswer="updateSelectedAnswer"
+            :question="question"
+            :index="index"
+            :partID="currentPartQuestion.id"
           />
         </div>
         <div
@@ -62,18 +77,16 @@
           </button>
         </div>
       </div>
-      <div
-        v-else
-        class="bg-white rounded-lg shadow-slate-300 shadow-md w-full lg:w-2/3 ml-1/2 -translate-x-1/2 mt-4 h-200 flex"
-      >
+      <!-- 2 Question  -->
+      <div v-else class="two-question-wrapper">
         <div
           :class="showTheoryMobile ? '!right-0' : ''"
-          class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all"
+          class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all question-part-content"
         >
           <span
             v-if="showTheoryMobile"
             @click="showTheoryMobile = false"
-            class="absolute top-2/5 left-0"
+            class="absolute top-2/5 left-0 lg:hidden"
           >
             <img :src="circleRightIcon" alt=""
           /></span>
@@ -86,19 +99,31 @@
           <span
             v-if="!showTheoryMobile"
             @click="showTheoryMobile = true"
-            class="absolute top-2/5 right-0"
+            class="absolute top-2/5 right-0 lg:hidden"
           >
             <img :src="circleLeftIcon" alt=""
           /></span>
           <div class="question-wrapper">
-            <MutipleChoice
-              v-for="(question, index) in currentPartQuestion.questions"
-              :key="question.questionID"
-              :updateSelectedAnswer="updateSelectedAnswer"
-              :question="question"
-              :index="index"
-              :partID="currentPartQuestion.id"
-            />
+            <div v-if="currentPartQuestion.type == 'QUIZ1'">
+              <MutipleChoice
+                v-for="(question, index) in currentPartQuestion.questions"
+                :key="question.questionID"
+                :updateSelectedAnswer="updateSelectedAnswer"
+                :question="question"
+                :index="index"
+                :partID="currentPartQuestion.id"
+              />
+            </div>
+            <div v-if="currentPartQuestion.type == 'QUIZ2'">
+              <FillInBlank
+                v-for="(question, index) in currentPartQuestion.questions"
+                :key="question.questionID"
+                :updateSelectedAnswer="updateSelectedAnswer"
+                :question="question"
+                :index="index"
+                :partID="currentPartQuestion.id"
+              />
+            </div>
           </div>
           <div
             class="checking-btn-wrapper"
@@ -306,6 +331,7 @@ import circleRightIcon from "../assets/images/circle-right.svg";
 import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import showListIcon from "../assets/images/show-list.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
+import FillInBlank from "@/components/question/FillInBlank.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 import router from "@/router";
 export default defineComponent({
@@ -313,6 +339,7 @@ export default defineComponent({
   components: {
     MutipleChoice,
     TheoryModal,
+    FillInBlank,
   },
   setup() {
     const { unitDetail, questions } = storeToRefs(useUnitStore());
@@ -478,10 +505,10 @@ export default defineComponent({
   color: #555555;
 }
 .list-question-wrapper {
-  position: absolute;
+  position: fixed;
   width: 250px;
   left: 0;
-  top: 0;
+  top: 85px;
   background: white;
   height: calc(100vh - 84px);
   padding: 24px;
@@ -498,7 +525,7 @@ export default defineComponent({
   display: flex;
 }
 .question-wrapper {
-  height: 700px;
+  height: calc(100% - 65px);
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -506,20 +533,62 @@ export default defineComponent({
   overflow-y: auto;
   max-height: calc(100% - 75px);
 }
+.question-part-content {
+  overflow-y: auto;
+}
+.one-question-wrapper {
+  background: white;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  width: 50%;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 16px;
+  height: calc(100vh - 160px);
+  padding: 16px 16px 0;
+}
+.two-question-wrapper {
+  background: white;
+  display: flex;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  width: 66%;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 16px;
+  padding-top: 16px;
+  height: calc(100vh - 160px);
+}
+.question-part-content::-webkit-scrollbar,
 .list-question-part::-webkit-scrollbar,
 .question-wrapper::-webkit-scrollbar {
   height: 6px;
   width: 2px;
 }
+.question-part-content::-webkit-scrollbar-thumb,
 .list-question-part::-webkit-scrollbar-thumb,
 .question-wrapper::-webkit-scrollbar-thumb {
   background: #555555;
   border-radius: 10px;
 }
+
+.question-part-content::-webkit-scrollbar-track,
 .list-question-part::-webkit-scrollbar-track,
 .question-wrapper::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px #555555;
   border-radius: 10px;
+}
+@media screen and (max-width: 1023px) {
+  .two-question-wrapper {
+    width: 100%;
+  }
+  .one-question-wrapper {
+    width: 100%;
+  }
+  .checking-btn-wrapper {
+    width: calc(100% - 64px);
+    bottom: 24px;
+  }
 }
 @media screen and (max-width: 767px) {
   .list-question-wrapper {
@@ -542,9 +611,6 @@ export default defineComponent({
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     height: 75%;
-  }
-  .checking-btn-wrapper {
-    width: calc(100% - 64px);
   }
 }
 </style>
