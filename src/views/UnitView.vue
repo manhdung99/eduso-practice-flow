@@ -112,7 +112,9 @@
               >
             </p>
             <router-link :to="`/practice/${unitDetail.id}`">
-              <a-button class="" type="primary !h-11.5 w-full !font-medium"
+              <a-button
+                class=""
+                type="primary !h-11.5 w-full !font-medium text-center"
                 >Làm bài</a-button
               >
             </router-link>
