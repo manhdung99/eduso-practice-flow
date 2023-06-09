@@ -114,7 +114,7 @@
             <router-link :to="`/practice/${unitDetail.id}`">
               <a-button
                 class=""
-                type="primary !h-11.5 w-full !font-medium text-center"
+                type="primary !h-11.5 w-full !font-medium text-center flex justify-center"
                 >Làm bài</a-button
               >
             </router-link>
@@ -142,7 +142,7 @@
               >
               <router-link class="w-2/3" :to="`/practice/${unitDetail.id}`">
                 <a-button
-                  class="!h-11.5 w-full !font-medium text-center"
+                  class="!h-11.5 w-full !font-medium text-center flex justify-center"
                   type="primary"
                   >Làm tiếp
                   <span
