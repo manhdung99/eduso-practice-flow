@@ -28,15 +28,30 @@ export default defineComponent({
     question: Object,
     updateSelectedAnswer: Function,
     partID: [Number, String],
+    answerList: Array,
   },
-  setup() {
+  setup(props) {
     const { unitDetail } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     const setPlaceholder = () => {
+      const answers = props.answerList as Array<any>;
+      console.log(answers);
+
       const elements = document.getElementsByClassName("fillquiz");
       for (let i = 0; i < elements.length; i++) {
-        elements[i].setAttribute("placeholder", "Trả lời");
+        const element = elements[i] as HTMLInputElement;
+        if (props.question.status != "unmake") {
+          element.setAttribute("disabled", "");
+        }
+        element.setAttribute("placeholder", "Trả lời");
+        element.id = answers[i].answerID;
+        element.value = answers[i].currentAnswer;
+        if (answers[i].status == "true") {
+          element.classList.add("true");
+        } else if (answers[i].status == "false") {
+          element.classList.add("false");
+        }
       }
     };
     onMounted(() => {
@@ -64,6 +79,14 @@ export default defineComponent({
   outline: none;
   padding-left: 4px;
   position: relative;
+}
+.fillquiz.false {
+  border-color: #d03239;
+  background: #fbebec;
+}
+.fillquiz.true {
+  border-color: #55934b;
+  background: #eaf1e9;
 }
 .fillquiz::placeholder {
   color: #c2c2c2;

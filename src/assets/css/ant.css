@@ -10,6 +10,10 @@
     background-color: #ededed !important;
 }
 
+.ant-progress-circle.ant-progress-inner {
+    background-color: transparent !important;
+}
+
 .ant-progress-show-info .ant-progress-outer {
     margin-right: 0 !important;
     padding-right: 0 !important;
@@ -17,7 +21,7 @@
 
 .ant-btn-primary {
     border-color: #105277 !important;
-    background: #105277 !important;
+    background: linear-gradient(#105277, #00314C) !important;
     border-radius: 5px !important;
     font-size: 16px !important;
     display: flex;
@@ -32,7 +36,7 @@
 
 .ant-btn-primary:hover {
     border-color: #105277d4 !important;
-    background: #105277d4 !important;
+    background: linear-gradient(#105277, #00314C) !important;
     color: white !important;
 
 }

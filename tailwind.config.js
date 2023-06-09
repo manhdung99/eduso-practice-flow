@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         indigo: {
-          lighter: "#385768",
+          lighter: "#105277",
           DEFAULT: "#19455D",
           darker: "#00314C",
         },

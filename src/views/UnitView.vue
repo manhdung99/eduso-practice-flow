@@ -139,7 +139,9 @@
                 >Làm lại</a-button
               >
               <router-link class="w-2/3" :to="`/practice/${unitDetail.id}`">
-                <a-button class="!h-11.5 w-full !font-medium" type="primary"
+                <a-button
+                  class="!h-11.5 w-full !font-medium text-center"
+                  type="primary"
                   >Làm tiếp
                   <span
                     class="icon-right absolute right-5 top-1/2 -translate-y-1/2"

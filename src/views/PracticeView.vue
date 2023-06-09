@@ -43,6 +43,7 @@
             :question="question"
             :index="index"
             :partID="currentPartQuestion.id"
+            :answerList="answerList"
           />
         </div>
         <div
@@ -122,6 +123,7 @@
                 :question="question"
                 :index="index"
                 :partID="currentPartQuestion.id"
+                :answerList="answerList"
               />
             </div>
           </div>
@@ -305,7 +307,7 @@
         </div>
       </div>
       <div
-        class="absolute -left-40 hover:left-0 top-0 bg-indigo text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+        class="absolute -left-40 hover:left-0 top-0 bg-primary text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
         @click="showAnswer = true"
         v-else
       >
@@ -318,7 +320,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, nextTick, onMounted, ref, watch } from "vue";
 import { useUnitStore } from "../store/unitStore";
 import { useModalStore } from "../store/modalStore";
 import { storeToRefs } from "pinia";
@@ -350,6 +352,7 @@ export default defineComponent({
     const currentQuestion = ref(null);
     const selectedAll = ref(false);
     const showTheoryMobile = ref(false);
+    const answerList = ref([]);
     const updateSelectedAnswer = (questionID, answerID) => {
       const question = currentPartQuestion.value.questions.find(
         (data) => data.questionID == questionID
@@ -376,44 +379,102 @@ export default defineComponent({
       }
     };
     const checkAnswer = () => {
-      for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-        // const answer = Math.floor(Math.random() * 4) + 1 + 4 * i;
-        // currentPartQuestion.value.questions[i].correctAnswer = answer;
-        if (
-          currentPartQuestion.value.questions[i].selectedAnswer ==
-          currentPartQuestion.value.questions[i].correctAnswer
-        ) {
-          currentPartQuestion.value.questions[i].status = "true";
-          unitDetail.value.numberQuestionCorrect++;
-        } else {
-          currentPartQuestion.value.questions[i].status = "false";
+      // Mutiple check
+      if (currentPartQuestion.value.type == "QUIZ1") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          if (
+            currentPartQuestion.value.questions[i].selectedAnswer ==
+            currentPartQuestion.value.questions[i].correctAnswer
+          ) {
+            currentPartQuestion.value.questions[i].status = "true";
+            unitDetail.value.numberQuestionCorrect++;
+          } else {
+            currentPartQuestion.value.questions[i].status = "false";
+          }
+          unitDetail.value.numberQuestionComplete++;
         }
-        unitDetail.value.numberQuestionComplete++;
+        currentPartQuestion.value.status = "true";
+        currentPartQuestion.value.questions.forEach((question) => {
+          if (question.selectedAnswer != question.correctAnswer) {
+            currentPartQuestion.value.status = "false";
+          }
+        });
       }
-      currentPartQuestion.value.status = "true";
-      currentPartQuestion.value.questions.forEach((question) => {
-        if (question.selectedAnswer != question.correctAnswer) {
-          currentPartQuestion.value.status = "false";
-        }
-      });
+      // Type fill in blank
+      else if (currentPartQuestion.value.type == "QUIZ2") {
+        currentPartQuestion.value.status = "true";
+        currentPartQuestion.value.questions.forEach((question) => {
+          question.status = "true";
+          unitDetail.value.numberQuestionComplete++;
+          const answers = question.answers;
+          answers.forEach((answer) => {
+            const input = document.getElementById(
+              answer.answerID
+            ) as HTMLInputElement;
+            answer.currentAnswer = input.value;
+            input.setAttribute("disabled", "");
+            if (input.value == answer.answerValue) {
+              input.classList.add("true");
+              answer.status = "true";
+            } else {
+              input.classList.add("false");
+              answer.status = "false";
+              currentPartQuestion.value.status = "false";
+              question.status = "false";
+            }
+          });
+        });
+      }
     };
+    // reset question
     const redoQuestion = () => {
       currentPartQuestion.value.status = "unmake";
-      for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-        currentPartQuestion.value.questions[i].selectedAnswer = 0;
-        if (currentPartQuestion.value.questions[i].status == "true") {
-          unitDetail.value.numberQuestionCorrect--;
+      //Type choice
+      if (currentPartQuestion.value.type == "QUIZ1") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          currentPartQuestion.value.questions[i].selectedAnswer = 0;
+          if (currentPartQuestion.value.questions[i].status == "true") {
+            unitDetail.value.numberQuestionCorrect--;
+          }
+          currentPartQuestion.value.questions[i].status = "unmake";
+          unitDetail.value.numberQuestionComplete--;
         }
-        currentPartQuestion.value.questions[i].status = "unmake";
-        unitDetail.value.numberQuestionComplete--;
+      }
+      //Type fill in blank
+      else if (currentPartQuestion.value.type == "QUIZ2") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          currentPartQuestion.value.questions[i].selectedAnswer = 0;
+          if (currentPartQuestion.value.questions[i].status == "true") {
+            unitDetail.value.numberQuestionCorrect--;
+          }
+          currentPartQuestion.value.questions[i].status = "unmake";
+          unitDetail.value.numberQuestionComplete--;
+        }
       }
     };
+    // Move to click part question
     const moveToChoosedQuestion = (id) => {
       const index = unitDetail.value.questionPart.findIndex(
         (unit) => unit.id == id
       );
       unitDetail.value.currentIndex = index;
       showAnswer.value = false;
+    };
+    // Check all input filled
+    const checkFillAllInput = () => {
+      const myInputs = document.getElementsByClassName("fillquiz");
+      for (let i = 0; i < myInputs.length; i++) {
+        const inputElement = myInputs[i] as HTMLInputElement;
+        inputElement.addEventListener("blur", () => {
+          selectedAll.value = true;
+          for (let j = 0; j < myInputs.length; j++) {
+            const currentInput = myInputs[j] as HTMLInputElement;
+            if (currentInput.value.length < 1) {
+              selectedAll.value = false;
+            }
+          }
+        });
+      }
     };
     onMounted(() => {
       currentPartQuestion.value =
@@ -424,18 +485,42 @@ export default defineComponent({
           question.questionID ==
           currentPartQuestion.value.questions[0].questionID
       );
+      if (currentPartQuestion.value.type == "QUIZ2") {
+        answerList.value = [];
+        currentPartQuestion.value.questions.forEach((question) => {
+          answerList.value = [...answerList.value, ...question.answers];
+        });
+      }
+    });
+    onMounted(() => {
+      nextTick(() => {
+        checkFillAllInput();
+      });
     });
     watch(
       () => unitDetail.value.currentIndex,
       () => {
         currentPartQuestion.value =
           unitDetail.value.questionPart[unitDetail.value.currentIndex];
+        //Disable check button
+        if (currentPartQuestion.value.status == "unmake") {
+          selectedAll.value = false;
+        }
         // Current Question
         currentQuestion.value = questions.value.findIndex(
           (question) =>
             question.questionID ==
             currentPartQuestion.value.questions[0].questionID
         );
+        if (currentPartQuestion.value.type == "QUIZ2") {
+          answerList.value = [];
+          currentPartQuestion.value.questions.forEach((question) => {
+            answerList.value = [...answerList.value, ...question.answers];
+          });
+          nextTick(() => {
+            checkFillAllInput();
+          });
+        }
       }
     );
     return {
@@ -460,6 +545,7 @@ export default defineComponent({
       goNextPartQuestion,
       moveToChoosedQuestion,
       currentQuestion,
+      answerList,
     };
   },
 });
@@ -470,40 +556,51 @@ export default defineComponent({
   border-radius: 4px;
   font-size: 16px;
 }
+
 .btn-primary {
   color: white;
-  background: #00314c;
+  background: linear-gradient(#105277, #00314c);
   border: #00314c 2px solid;
 }
+.bg-primary {
+  background: linear-gradient(#105277, #00314c);
+}
+
 .btn-disable {
   border: 2px solid #dfdfdf;
   background: #dfdfdf;
   color: #555555;
 }
+
 .btn-primary:hover {
   color: #00314c;
   background: white;
 }
+
 .check-btn {
   width: 100%;
   background: #00314c;
   color: white;
   border: #00314c 2px solid;
 }
+
 .check-btn:hover {
   color: #00314c;
   background: white;
 }
+
 .check-btn:disabled {
   border: 1px solid #d9d9d9;
   background: #f5f5f5;
   color: #d9d9d9;
 }
+
 .btn:disabled {
   border: #dfdfdf 2px solid;
   background: #dfdfdf;
   color: #555555;
 }
+
 .list-question-wrapper {
   position: fixed;
   width: 250px;
@@ -513,10 +610,12 @@ export default defineComponent({
   height: calc(100vh - 84px);
   padding: 24px;
 }
+
 .part-title {
   font-weight: 600;
   color: #002235;
 }
+
 .checking-btn-wrapper {
   position: absolute;
   bottom: 8px;
@@ -524,18 +623,22 @@ export default defineComponent({
   column-gap: 12px;
   display: flex;
 }
+
 .question-wrapper {
   height: calc(100% - 65px);
   overflow-y: auto;
   padding-right: 4px;
 }
+
 .list-question-part {
   overflow-y: auto;
   max-height: calc(100% - 75px);
 }
+
 .question-part-content {
   overflow-y: auto;
 }
+
 .one-question-wrapper {
   background: white;
   border-radius: 8px;
@@ -547,6 +650,7 @@ export default defineComponent({
   height: calc(100vh - 160px);
   padding: 16px 16px 0;
 }
+
 .two-question-wrapper {
   background: white;
   display: flex;
@@ -559,12 +663,14 @@ export default defineComponent({
   padding-top: 16px;
   height: calc(100vh - 160px);
 }
+
 .question-part-content::-webkit-scrollbar,
 .list-question-part::-webkit-scrollbar,
 .question-wrapper::-webkit-scrollbar {
   height: 6px;
   width: 2px;
 }
+
 .question-part-content::-webkit-scrollbar-thumb,
 .list-question-part::-webkit-scrollbar-thumb,
 .question-wrapper::-webkit-scrollbar-thumb {
@@ -578,18 +684,22 @@ export default defineComponent({
   box-shadow: inset 0 0 2px #555555;
   border-radius: 10px;
 }
+
 @media screen and (max-width: 1023px) {
   .two-question-wrapper {
     width: 100%;
   }
+
   .one-question-wrapper {
     width: 100%;
   }
+
   .checking-btn-wrapper {
     width: calc(100% - 64px);
     bottom: 24px;
   }
 }
+
 @media screen and (max-width: 767px) {
   .list-question-wrapper {
     position: fixed;
@@ -602,6 +712,7 @@ export default defineComponent({
     background: #00000080;
     height: auto;
   }
+
   .list-question {
     padding: 24px;
     background: white;
