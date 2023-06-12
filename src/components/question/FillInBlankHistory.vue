@@ -22,7 +22,7 @@ import { useUnitStore } from "../../store/unitStore";
 import { useModalStore } from "../../store/modalStore";
 
 export default defineComponent({
-  name: "FillInBlank",
+  name: "FillInBlankHistory",
   props: {
     index: Number,
     question: Object,
@@ -34,7 +34,7 @@ export default defineComponent({
     const { unitDetail } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
-    const setPlaceholder = () => {
+    const setAnswer = () => {
       const answers = props.answerList as Array<any>;
       const elements = document.getElementsByClassName("fillquiz");
       for (let i = 0; i < elements.length; i++) {
@@ -42,19 +42,30 @@ export default defineComponent({
         if (props.question.status != "unmake") {
           element.setAttribute("disabled", "");
         }
-        element.setAttribute("placeholder", "Trả lời");
         element.id = answers[i].answerID;
         element.value = answers[i].currentAnswer;
+        element.style.width = answers[i].currentAnswer.length + 4 + "ch";
         if (answers[i].status == "true") {
           element.classList.add("true");
         } else if (answers[i].status == "false") {
+          const siblingElement = element.nextSibling;
+          if (siblingElement == null) {
+            const newSpan = document.createElement("span");
+            newSpan.textContent = answers[i].answerValue;
+            newSpan.classList.add("true-answer");
+            element.parentNode.appendChild(newSpan);
+          }
           element.classList.add("false");
+        } else {
+          element.value = answers[i].answerValue;
+          element.style.width = answers[i].answerValue.length + 4 + "ch";
+          element.classList.add("unmake");
         }
       }
     };
     onMounted(() => {
       nextTick(() => {
-        setPlaceholder();
+        setAnswer();
       });
     });
     return {
@@ -66,47 +77,13 @@ export default defineComponent({
 });
 </script>
 <style>
-.one-question {
-  height: 650px;
-  overflow-y: auto;
-  position: relative;
+.true-answer {
+  color: #55934b;
+  margin-left: 8px;
 }
-.fillquiz {
-  border: 1px solid #d9d9d9;
-  height: 40px;
-  outline: none;
-  padding-left: 12px;
-  position: relative;
-}
-.fillquiz.false {
-  border-color: #d03239;
-  background: #fbebec;
-  color: #d03239;
-}
-.fillquiz.true {
-  border-color: #55934b;
-  background: #eaf1e9;
-}
-.fillquiz::placeholder {
-  color: #c2c2c2;
-  font-style: italic;
-  font-weight: 400;
-}
-.fillquiz:focus {
-  border-color: #40a9ff;
-}
-.one-question::-webkit-scrollbar {
-  height: 6px;
-  width: 2px;
-}
-
-.one-question::-webkit-scrollbar-thumb {
-  background: #555555;
-  border-radius: 10px;
-}
-
-.one-question::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px #555555;
-  border-radius: 10px;
+.fillquiz.unmake {
+  background: white;
+  border: 1px #55934b dashed;
+  color: #55934b;
 }
 </style>

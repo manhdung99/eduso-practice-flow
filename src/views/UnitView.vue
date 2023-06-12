@@ -197,8 +197,15 @@ export default defineComponent({
         part.status = "unmake";
         part.questions.forEach((question) => {
           question.status = "unmake";
-          question.isChecked = false;
-          question.selectedAnswer = 0;
+          if (part.type == "QUIZ1") {
+            question.isChecked = false;
+            question.selectedAnswer = 0;
+          } else if (part.type == "QUIZ2") {
+            question.answers.forEach((answer) => {
+              answer.currentAnswer = "";
+              answer.status = "unmake";
+            });
+          }
         });
       });
       router.push(`/practice/${unitDetail.value.id}`);

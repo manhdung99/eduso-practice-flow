@@ -23,12 +23,22 @@
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
           <div v-html="questionPart.partContent"></div>
         </div>
-        <div>
+        <div v-if="questionPart.type == 'QUIZ1'">
           <MutipleChoiceHistory
             v-for="(question, index) in questionPart.questions"
             :key="question.questionID"
             :question="question"
             :index="index"
+          />
+        </div>
+        <div v-if="questionPart.type == 'QUIZ2'">
+          <FillInBlankHistory
+            v-for="(question, index) in questionPart.questions"
+            :key="question.questionID"
+            :question="question"
+            :index="index"
+            :partID="questionPart.id"
+            :answerList="answerList"
           />
         </div>
       </div>
@@ -192,7 +202,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useUnitStore } from "../store/unitStore";
 import { useModalStore } from "../store/modalStore";
 import { storeToRefs } from "pinia";
@@ -204,11 +214,13 @@ import circleLeftIcon from "../assets/images/circle-left.svg";
 import showListIcon from "../assets/images/show-list.svg";
 import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import MutipleChoiceHistory from "@/components/question/MutipleChoiceHistory.vue";
+import FillInBlankHistory from "@/components/question/FillInBlankHistory.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 export default defineComponent({
   name: "PracticeHistory",
   components: {
     MutipleChoiceHistory,
+    FillInBlankHistory,
     TheoryModal,
   },
   setup() {
@@ -220,6 +232,7 @@ export default defineComponent({
     const selectedAll = ref(false);
     const lastPart = ref(false);
     const el = ref(null);
+    const answerList = ref([]);
     const scrollToSection = (id) => {
       const section = document.getElementById(id);
       el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
@@ -251,6 +264,16 @@ export default defineComponent({
       const section = document.getElementById(id);
       el.value.scrollTo({ top: section.offsetTop, behavior: "smooth" });
     };
+    onMounted(() => {
+      unitDetail.value.questionPart.forEach((part) => {
+        if (part.type == "QUIZ2") {
+          part.questions.forEach(
+            (question) =>
+              (answerList.value = [...answerList.value, ...question.answers])
+          );
+        }
+      });
+    });
     return {
       unitDetail,
       theoryIcon,
@@ -268,6 +291,7 @@ export default defineComponent({
       circleDownIcon,
       circleLeftIcon,
       showListIcon,
+      answerList,
       scrollToSection,
       onScroll,
       moveToPart,

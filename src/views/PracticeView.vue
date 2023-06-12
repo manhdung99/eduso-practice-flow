@@ -119,7 +119,6 @@
               <FillInBlank
                 v-for="(question, index) in currentPartQuestion.questions"
                 :key="question.questionID"
-                :updateSelectedAnswer="updateSelectedAnswer"
                 :question="question"
                 :index="index"
                 :partID="currentPartQuestion.id"
@@ -357,9 +356,14 @@ export default defineComponent({
       const question = currentPartQuestion.value.questions.find(
         (data) => data.questionID == questionID
       );
-      if (question.status == "unmake") {
-        question.selectedAnswer = answerID;
+      if (question.selectedAnswer.includes(answerID)) {
+        question.selectedAnswer = question.selectedAnswer.filter(
+          (answer) => answer !== answerID
+        );
+      } else {
+        question.selectedAnswer = [...question.selectedAnswer, answerID];
       }
+
       selectedAll.value = true;
       currentPartQuestion.value.questions.forEach((question) => {
         if (question.selectedAnswer == 0) {
@@ -382,15 +386,20 @@ export default defineComponent({
       // Mutiple check
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          if (
-            currentPartQuestion.value.questions[i].selectedAnswer ==
-            currentPartQuestion.value.questions[i].correctAnswer
-          ) {
-            currentPartQuestion.value.questions[i].status = "true";
-            unitDetail.value.numberQuestionCorrect++;
-          } else {
-            currentPartQuestion.value.questions[i].status = "false";
-          }
+          currentPartQuestion.value.questions[i].selectedAnswer.forEach(
+            (answer) => {
+              currentPartQuestion.value.questions[i].status = "true";
+              if (
+                currentPartQuestion.value.questions[i].correctAnswer.includes(
+                  answer
+                )
+              ) {
+                unitDetail.value.numberQuestionCorrect++;
+              } else {
+                currentPartQuestion.value.questions[i].status = "false";
+              }
+            }
+          );
           unitDetail.value.numberQuestionComplete++;
         }
         currentPartQuestion.value.status = "true";
@@ -423,6 +432,9 @@ export default defineComponent({
               question.status = "false";
             }
           });
+          if (question.status == "true") {
+            unitDetail.value.numberQuestionCorrect++;
+          }
         });
       }
     };
@@ -432,7 +444,7 @@ export default defineComponent({
       //Type choice
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          currentPartQuestion.value.questions[i].selectedAnswer = 0;
+          currentPartQuestion.value.questions[i].selectedAnswer = [];
           if (currentPartQuestion.value.questions[i].status == "true") {
             unitDetail.value.numberQuestionCorrect--;
           }
@@ -442,8 +454,14 @@ export default defineComponent({
       }
       //Type fill in blank
       else if (currentPartQuestion.value.type == "QUIZ2") {
+        answerList.value.forEach((answer) => {
+          const input = document.getElementById(answer.answerID);
+          if (input.classList.contains("false")) {
+            input.classList.remove("false");
+            input.removeAttribute("disabled");
+          }
+        });
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          currentPartQuestion.value.questions[i].selectedAnswer = 0;
           if (currentPartQuestion.value.questions[i].status == "true") {
             unitDetail.value.numberQuestionCorrect--;
           }
@@ -466,6 +484,15 @@ export default defineComponent({
       for (let i = 0; i < myInputs.length; i++) {
         const inputElement = myInputs[i] as HTMLInputElement;
         inputElement.addEventListener("blur", () => {
+          selectedAll.value = true;
+          for (let j = 0; j < myInputs.length; j++) {
+            const currentInput = myInputs[j] as HTMLInputElement;
+            if (currentInput.value.length < 1) {
+              selectedAll.value = false;
+            }
+          }
+        });
+        inputElement.addEventListener("focus", () => {
           selectedAll.value = true;
           for (let j = 0; j < myInputs.length; j++) {
             const currentInput = myInputs[j] as HTMLInputElement;

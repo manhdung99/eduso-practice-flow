@@ -36,8 +36,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 2,
+                  selectedAnswer: [],
+                  correctAnswer: [1, 2],
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -51,8 +51,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 6,
+                  selectedAnswer: [],
+                  correctAnswer: [6],
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },
@@ -66,8 +66,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 12,
+                  selectedAnswer: [],
+                  correctAnswer: [12],
                   answers: [
                     { answerID: 9, answerValue: "A. Yes" },
                     { answerID: 10, answerValue: "B. No" },
@@ -90,8 +90,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 3,
+                  selectedAnswer: [],
+                  correctAnswer: [3],
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -105,8 +105,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 5,
+                  selectedAnswer: [],
+                  correctAnswer: [5],
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },
@@ -129,8 +129,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 2,
+                  selectedAnswer: [],
+                  correctAnswer: [2],
                   activeLink: false,
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
@@ -154,8 +154,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 3,
+                  selectedAnswer: [],
+                  correctAnswer: [3],
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -169,8 +169,8 @@ export const useUnitStore = defineStore("unitStore", {
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
                   isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 7,
+                  selectedAnswer: [],
+                  correctAnswer: [7],
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },
@@ -187,7 +187,7 @@ export const useUnitStore = defineStore("unitStore", {
           unitTitle: "Bài 2: Mức độ nhận biết",
           chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
           chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
-          numberQuestion: 8,
+          numberQuestion: 3,
           numberQuestionComplete: 0,
           numberQuestionCorrect: 0,
           currentQuestion: 0,
@@ -340,68 +340,6 @@ export const useUnitStore = defineStore("unitStore", {
                       currentAnswer: "",
                       status: "unmake",
                     },
-                  ],
-                },
-              ],
-            },
-            {
-              id: "part3",
-              partContent:
-                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
-              status: "unmake",
-              questions: [
-                {
-                  questionID: 6,
-                  status: "unmake",
-                  questionValue:
-                    "Is the aerial capability of bees dependent on human logic?",
-                  isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 2,
-                  activeLink: false,
-                  answers: [
-                    { answerID: 1, answerValue: "A. Yes" },
-                    { answerID: 2, answerValue: "B. No" },
-                    { answerID: 3, answerValue: "C. Depends" },
-                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
-                  ],
-                },
-              ],
-            },
-            {
-              id: "part4",
-              partContent:
-                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
-              status: "unmake",
-              questions: [
-                {
-                  questionID: 7,
-                  status: "unmake",
-                  questionValue:
-                    "Is the aerial capability of bees dependent on human logic?",
-                  isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 3,
-                  answers: [
-                    { answerID: 1, answerValue: "A. Yes" },
-                    { answerID: 2, answerValue: "B. No" },
-                    { answerID: 3, answerValue: "C. Depends" },
-                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
-                  ],
-                },
-                {
-                  questionID: 8,
-                  status: "unmake",
-                  questionValue:
-                    "Is the aerial capability of bees dependent on human logic?",
-                  isChecked: false,
-                  selectedAnswer: 0,
-                  correctAnswer: 7,
-                  answers: [
-                    { answerID: 5, answerValue: "A. Yes" },
-                    { answerID: 6, answerValue: "B. No" },
-                    { answerID: 7, answerValue: "C. Depends" },
-                    { answerID: 8, answerValue: "D. Dude it’s a bee" },
                   ],
                 },
               ],

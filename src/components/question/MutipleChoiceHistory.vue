@@ -17,20 +17,16 @@
         v-for="answer in question.answers"
         :key="answer.answerID"
         :class="[
-          answer.answerID == question.selectedAnswer &&
-          question.status == 'true'
+          question.selectedAnswer.includes(answer.answerID) &&
+          question.correctAnswer.includes(answer.answerID)
             ? 'bg-green-lighter border-green'
             : '',
-          answer.answerID == question.selectedAnswer &&
-          question.status == 'false'
+          question.selectedAnswer.includes(answer.answerID) &&
+          !question.correctAnswer.includes(answer.answerID)
             ? 'bg-raspberry-lighter border-raspberry'
             : '',
-          answer.answerID == question.correctAnswer &&
-          question.status == 'false'
-            ? '!border-green border-dashed'
-            : '',
-          answer.answerID == question.correctAnswer &&
-          question.status == 'unmake'
+          !question.selectedAnswer.includes(answer.answerID) &&
+          question.correctAnswer.includes(answer.answerID)
             ? '!border-green border-dashed'
             : '',
         ]"
