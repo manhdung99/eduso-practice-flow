@@ -198,9 +198,13 @@ export default defineComponent({
         part.questions.forEach((question) => {
           question.status = "unmake";
           if (part.type == "QUIZ1") {
-            question.isChecked = false;
-            question.selectedAnswer = 0;
+            question.selectedAnswer = [];
           } else if (part.type == "QUIZ2") {
+            question.answers.forEach((answer) => {
+              answer.currentAnswer = "";
+              answer.status = "unmake";
+            });
+          } else if (part.type == "QUIZ3") {
             question.answers.forEach((answer) => {
               answer.currentAnswer = "";
               answer.status = "unmake";

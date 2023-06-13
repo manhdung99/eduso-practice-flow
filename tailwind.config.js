@@ -17,6 +17,7 @@ export default {
           lighter: "#47474717",
         },
         iceberg: {
+          lighter: "#99AFC3",
           DEFAULT: "#73AFD0",
         },
         green: {

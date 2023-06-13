@@ -41,6 +41,16 @@
             :answerList="answerList"
           />
         </div>
+        <div v-if="questionPart.type == 'QUIZ3'">
+          <DropboxHistory
+            v-for="(question, index) in questionPart.questions"
+            :key="question.questionID"
+            :question="question"
+            :index="index"
+            :partID="questionPart.id"
+            :optionList="optionList"
+          />
+        </div>
       </div>
       <!-- Desktop bottom  -->
       <div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-1/2">
@@ -215,12 +225,14 @@ import showListIcon from "../assets/images/show-list.svg";
 import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import MutipleChoiceHistory from "@/components/question/MutipleChoiceHistory.vue";
 import FillInBlankHistory from "@/components/question/FillInBlankHistory.vue";
+import DropboxHistory from "@/components/question/DropboxHistory.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 export default defineComponent({
   name: "PracticeHistory",
   components: {
     MutipleChoiceHistory,
     FillInBlankHistory,
+    DropboxHistory,
     TheoryModal,
   },
   setup() {
@@ -233,6 +245,7 @@ export default defineComponent({
     const lastPart = ref(false);
     const el = ref(null);
     const answerList = ref([]);
+    const optionList = ref([]);
     const scrollToSection = (id) => {
       const section = document.getElementById(id);
       el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
@@ -272,6 +285,12 @@ export default defineComponent({
               (answerList.value = [...answerList.value, ...question.answers])
           );
         }
+        if (part.type == "QUIZ3") {
+          part.questions.forEach(
+            (question) =>
+              (optionList.value = [...optionList.value, ...question.answers])
+          );
+        }
       });
     });
     return {
@@ -292,6 +311,7 @@ export default defineComponent({
       circleLeftIcon,
       showListIcon,
       answerList,
+      optionList,
       scrollToSection,
       onScroll,
       moveToPart,

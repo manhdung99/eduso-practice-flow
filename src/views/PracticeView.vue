@@ -13,7 +13,7 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div v-if="currentPartQuestion" class="relative">
+    <div v-if="currentPartQuestion && !showWorkbook" class="relative">
       <!-- One question  -->
       <div
         v-if="currentPartQuestion.questions.length < 2"
@@ -22,7 +22,7 @@
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
           <div v-html="currentPartQuestion.partContent"></div>
         </div>
-        <div v-if="currentPartQuestion.type == 'QUIZ1'">
+        <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ1'">
           <MutipleChoice
             v-for="(question, index) in currentPartQuestion.questions"
             :key="question.questionID"
@@ -32,7 +32,7 @@
             :partID="currentPartQuestion.id"
           />
         </div>
-        <div v-if="currentPartQuestion.type == 'QUIZ2'">
+        <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ2'">
           <FillInBlank
             :class="
               currentPartQuestion.questions.length < 2 ? 'one-question' : ''
@@ -44,6 +44,19 @@
             :index="index"
             :partID="currentPartQuestion.id"
             :answerList="answerList"
+          />
+        </div>
+        <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
+          <DropBox
+            :class="
+              currentPartQuestion.questions.length < 2 ? 'one-question' : ''
+            "
+            v-for="(question, index) in currentPartQuestion.questions"
+            :key="question.questionID"
+            :question="question"
+            :index="index"
+            :partID="currentPartQuestion.id"
+            :optionList="optionList"
           />
         </div>
         <div
@@ -123,6 +136,16 @@
                 :index="index"
                 :partID="currentPartQuestion.id"
                 :answerList="answerList"
+              />
+            </div>
+            <div v-if="currentPartQuestion.type == 'QUIZ3'">
+              <DropBox
+                v-for="(question, index) in currentPartQuestion.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+                :partID="currentPartQuestion.id"
+                :optionList="optionList"
               />
             </div>
           </div>
@@ -314,6 +337,67 @@
         <span class="icon-right"></span>
       </div>
     </div>
+    <div class="pb-4" v-if="currentPartQuestion && showWorkbook">
+      <div class="one-question-wrapper">
+        <h2>Bạn đã làm rất tốt</h2>
+        <h3>
+          Hãy nhấn vào nút “Hoàn thành” để xem lại đáp án và đánh giá kết quả
+          của mình.
+        </h3>
+        <p class="text-sm text-indigo-lighter mb-5 font-medium">
+          Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+            unitDetail.numberQuestion
+          }}
+          câu
+          <span class="text-raspberry italic"
+            >(còn
+            {{ unitDetail.numberQuestion - unitDetail.numberQuestionComplete }}
+            câu)</span
+          >
+        </p>
+        <div class="list-question-part">
+          <div v-for="(part, index) in unitDetail.questionPart" :key="part.id">
+            <h3 class="text-indigo font-semibold mb-2">Phần {{ index + 1 }}</h3>
+            <!-- Question -->
+            <div
+              v-for="(question, questionIndex) in part.questions"
+              :key="question.questionID"
+              class="flex justify-between"
+            >
+              <div class="flex items-center gap-x-2.5 py-2">
+                <span
+                  v-if="question.status == 'true'"
+                  class="icon-correct-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                  ><span class="path3"></span
+                ></span>
+                <span
+                  v-else-if="question.status == 'false'"
+                  class="icon-incorrect-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                ></span>
+                <span class="icon-unmake-answer" v-else></span>
+                <span class="text-sm text-indigo"
+                  >Câu {{ questionIndex + 1 }}</span
+                >
+              </div>
+              <span
+                v-if="question.status == 'unmake'"
+                @click="
+                  moveToChoosedQuestion(part.id);
+                  showWorkbook = false;
+                "
+                class="text-iceberg-lighter italic hover:underline cursor-pointer"
+                >Làm ngay</span
+              >
+            </div>
+          </div>
+        </div>
+        <router-link :to="`/unit/${unitDetail.id}`">
+          <button class="btn btn-primary complete-btn">Hoàn thành</button>
+        </router-link>
+      </div>
+    </div>
   </div>
   <TheoryModal v-if="openTheoryModal" />
 </template>
@@ -333,6 +417,7 @@ import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import showListIcon from "../assets/images/show-list.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
 import FillInBlank from "@/components/question/FillInBlank.vue";
+import DropBox from "@/components/question/Dropbox.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 import router from "@/router";
 export default defineComponent({
@@ -341,6 +426,7 @@ export default defineComponent({
     MutipleChoice,
     TheoryModal,
     FillInBlank,
+    DropBox,
   },
   setup() {
     const { unitDetail, questions } = storeToRefs(useUnitStore());
@@ -352,6 +438,8 @@ export default defineComponent({
     const selectedAll = ref(false);
     const showTheoryMobile = ref(false);
     const answerList = ref([]);
+    const optionList = ref([]);
+    const showWorkbook = ref(false);
     const updateSelectedAnswer = (questionID, answerID) => {
       const question = currentPartQuestion.value.questions.find(
         (data) => data.questionID == questionID
@@ -379,7 +467,7 @@ export default defineComponent({
         unitDetail.value.currentIndex++;
       } else {
         unitDetail.value.completed = true;
-        router.push(`/unit/${unitDetail.value.id}`);
+        showWorkbook.value = true;
       }
     };
     const checkAnswer = () => {
@@ -409,8 +497,11 @@ export default defineComponent({
           }
         });
       }
-      // Type fill in blank
-      else if (currentPartQuestion.value.type == "QUIZ2") {
+      // Type fill in blank & select box
+      else if (
+        currentPartQuestion.value.type == "QUIZ2" ||
+        currentPartQuestion.value.type == "QUIZ3"
+      ) {
         currentPartQuestion.value.status = "true";
         currentPartQuestion.value.questions.forEach((question) => {
           question.status = "true";
@@ -445,11 +536,6 @@ export default defineComponent({
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
           currentPartQuestion.value.questions[i].selectedAnswer = [];
-          if (currentPartQuestion.value.questions[i].status == "true") {
-            unitDetail.value.numberQuestionCorrect--;
-          }
-          currentPartQuestion.value.questions[i].status = "unmake";
-          unitDetail.value.numberQuestionComplete--;
         }
       }
       //Type fill in blank
@@ -461,13 +547,23 @@ export default defineComponent({
             input.removeAttribute("disabled");
           }
         });
-        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          if (currentPartQuestion.value.questions[i].status == "true") {
-            unitDetail.value.numberQuestionCorrect--;
+      }
+      //Type Select box
+      else if (currentPartQuestion.value.type == "QUIZ3") {
+        optionList.value.forEach((answer) => {
+          const select = document.getElementById(answer.answerID);
+          if (select.classList.contains("false")) {
+            select.classList.remove("false");
+            select.removeAttribute("disabled");
           }
-          currentPartQuestion.value.questions[i].status = "unmake";
-          unitDetail.value.numberQuestionComplete--;
+        });
+      }
+      for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+        if (currentPartQuestion.value.questions[i].status == "true") {
+          unitDetail.value.numberQuestionCorrect--;
         }
+        currentPartQuestion.value.questions[i].status = "unmake";
+        unitDetail.value.numberQuestionComplete--;
       }
     };
     // Move to click part question
@@ -503,6 +599,21 @@ export default defineComponent({
         });
       }
     };
+    const checkSelectAllInput = () => {
+      const mySelects = document.getElementsByClassName("selectquiz");
+      for (let i = 0; i < mySelects.length; i++) {
+        const selectElement = mySelects[i] as HTMLSelectElement;
+        selectElement.addEventListener("change", () => {
+          selectedAll.value = true;
+          for (let j = 0; j < mySelects.length; j++) {
+            const currentInput = mySelects[j] as HTMLSelectElement;
+            if (currentInput.value.length < 1) {
+              selectedAll.value = false;
+            }
+          }
+        });
+      }
+    };
     onMounted(() => {
       currentPartQuestion.value =
         unitDetail.value.questionPart[unitDetail.value.currentIndex];
@@ -518,10 +629,26 @@ export default defineComponent({
           answerList.value = [...answerList.value, ...question.answers];
         });
       }
+      if (currentPartQuestion.value.type == "QUIZ3") {
+        optionList.value = [];
+        currentPartQuestion.value.questions.forEach((question) => {
+          question.answers.forEach((answer) => {
+            optionList.value = [...optionList.value, answer];
+          });
+        });
+        nextTick(() => {
+          checkSelectAllInput();
+        });
+      }
     });
     onMounted(() => {
       nextTick(() => {
         checkFillAllInput();
+      });
+    });
+    onMounted(() => {
+      nextTick(() => {
+        checkSelectAllInput();
       });
     });
     watch(
@@ -546,6 +673,17 @@ export default defineComponent({
           });
           nextTick(() => {
             checkFillAllInput();
+          });
+        }
+        if (currentPartQuestion.value.type == "QUIZ3") {
+          optionList.value = [];
+          currentPartQuestion.value.questions.forEach((question) => {
+            question.answers.forEach((answer) => {
+              optionList.value = [...optionList.value, answer];
+            });
+          });
+          nextTick(() => {
+            checkSelectAllInput();
           });
         }
       }
@@ -573,6 +711,8 @@ export default defineComponent({
       moveToChoosedQuestion,
       currentQuestion,
       answerList,
+      optionList,
+      showWorkbook,
     };
   },
 });
@@ -643,12 +783,14 @@ export default defineComponent({
   color: #002235;
 }
 
-.checking-btn-wrapper {
+.checking-btn-wrapper,
+.complete-btn {
   position: absolute;
   bottom: 8px;
   width: calc(100% - 32px);
   column-gap: 12px;
   display: flex;
+  justify-content: center;
 }
 
 .question-wrapper {
@@ -669,7 +811,7 @@ export default defineComponent({
 .one-question-wrapper {
   background: white;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
   width: 50%;
   margin-left: 50%;
   transform: translateX(-50%);
@@ -682,7 +824,7 @@ export default defineComponent({
   background: white;
   display: flex;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
   width: 66%;
   margin-left: 50%;
   transform: translateX(-50%);
