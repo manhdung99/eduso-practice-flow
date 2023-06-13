@@ -12,7 +12,7 @@ export const useUnitStore = defineStore("unitStore", {
       const data = [
         {
           id: 1,
-          unitTitle: "Bài 1: Mức độ nhận biết",
+          unitTitle: "Bài 1: Mức độ nhận biết - Mutiple choice",
           chapterTitle: "Chương 1 - Tìm từ được gạch chân phát âm khác",
           chapterDescription: "Bài 1 - Mức độ nhận biết 1 ",
           numberQuestion: 8,
@@ -176,7 +176,7 @@ export const useUnitStore = defineStore("unitStore", {
         },
         {
           id: 2,
-          unitTitle: "Bài 2: Mức độ nhận biết",
+          unitTitle: "Bài 2: Mức độ nhận biết - Fill in blank",
           chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
           chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
           numberQuestion: 3,
@@ -340,7 +340,7 @@ export const useUnitStore = defineStore("unitStore", {
         },
         {
           id: 3,
-          unitTitle: "Bài 2: Mức độ nhận biết",
+          unitTitle: "Bài 2: Mức độ nhận biết - dropdown",
           chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
           chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
           numberQuestion: 3,
@@ -521,7 +521,7 @@ export const useUnitStore = defineStore("unitStore", {
         },
         {
           id: 4,
-          unitTitle: "Bài 2: Mức độ nhận biết",
+          unitTitle: "Bài 2: Mức độ nhận biết - mix 3 dang",
           chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
           chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
           numberQuestion: 7,
