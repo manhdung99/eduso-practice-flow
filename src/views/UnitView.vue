@@ -82,7 +82,7 @@
         <button @click="resetUnit" class="btn btn-primary w-1/3">
           Làm lại
         </button>
-        <button class="btn btn-primary w-2/3 relative">
+        <button @click="moveToNextUnit" class="btn btn-primary w-2/3 relative">
           Làm tiếp
           <span
             class="icon-right absolute top-1/2 -translate-y-1/2 right-4"
@@ -168,8 +168,8 @@ export default defineComponent({
   setup() {
     const questionProcess = ref(0);
     const correctProcess = ref(0);
-    const { unitDetail } = storeToRefs(useUnitStore());
-    const { getQuestion } = useUnitStore();
+    const { units, unitDetail } = storeToRefs(useUnitStore());
+    const { getQuestion, setUnitDetail } = useUnitStore();
     const setProcess = () => {
       if (unitDetail.value.numberQuestionComplete > 0) {
         questionProcess.value = Math.round(
@@ -214,6 +214,13 @@ export default defineComponent({
       });
       router.push(`/practice/${unitDetail.value.id}`);
     };
+    const moveToNextUnit = () => {
+      const currentUnitIndex = units.value.findIndex(
+        (unit) => unit.id == unitDetail.value.id
+      );
+      const nextUnitID = units.value[currentUnitIndex + 1].id;
+      setUnitDetail(nextUnitID);
+    };
     onMounted(() => {
       nextTick(() => {
         getQuestion();
@@ -225,6 +232,7 @@ export default defineComponent({
       unitDetail,
       questionProcess,
       correctProcess,
+      moveToNextUnit,
       setCorrectProcess,
       resetUnit,
     };
