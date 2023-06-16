@@ -4,6 +4,7 @@ import UnitView from "../views/UnitView.vue";
 import PracticeView from "../views/PracticeView.vue";
 import WorkbookView from "../views/WorkbookView.vue";
 import HistoryView from "../views/PracticeHistory.vue";
+import TestVue from "../views/TestVue.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -34,6 +35,12 @@ const routes: Array<RouteRecordRaw> = [
     path: "/history/:id",
     name: "history",
     component: HistoryView,
+    meta: { title: "Lịch sử luyện tập" },
+  },
+  {
+    path: "/test",
+    name: "test",
+    component: TestVue,
     meta: { title: "Lịch sử luyện tập" },
   },
 ];

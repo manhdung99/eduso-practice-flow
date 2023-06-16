@@ -679,6 +679,73 @@ export const useUnitStore = defineStore("unitStore", {
             },
           ],
         },
+        {
+          id: 5,
+          unitTitle: "Bài 2: Mức độ nhận biết - Matching",
+          chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
+          chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
+          numberQuestion: 3,
+          numberQuestionComplete: 0,
+          numberQuestionCorrect: 0,
+          currentQuestion: 0,
+          url: "https://i.ibb.co/JCXbvbB/cover.jpg",
+          completed: false,
+          currentIndex: 0,
+          questionPart: [
+            {
+              id: "part1",
+              type: "QUIZ4",
+              partContent:
+                "<div class='vocab-box'><b class='word-title'>This audio track describes a list of various objects.</b> Which photo corresponds with which object? Select down below.<div class='vocab-audio'><button onclick='PlayPronun(this)'><i class='ic fas fa-volume-up'></i></button><audio class='d-none' id='audio' controls><source src='https://dictionary.cambridge.org/vi/media/english/us_pron/v/voy/voyag/voyage.mp3' type='audio/mpeg' />Your browser does not support the audio tag</audio></div></div>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 1,
+                  status: "unmake",
+                  Description: "",
+                  questionValue: "",
+                  answers: [
+                    {
+                      answerID: 1,
+                      answerValue: "cat",
+                      currentAnswer: "",
+                      status: "unmake",
+                    },
+                    {
+                      answerID: 1,
+                      answerValue: "clock",
+                      currentAnswer: "",
+                      status: "unmake",
+                    },
+                    {
+                      answerID: 1,
+                      answerValue: "table",
+                      currentAnswer: "",
+                      status: "unmake",
+                    },
+                  ],
+                  images: [
+                    {
+                      id: "1",
+                      value: "cat",
+                      answerImage: "https://i.ibb.co/Yt8sMXY/cat.jpg",
+                    },
+                    {
+                      id: "2",
+                      value: "clock",
+                      answerImage: "https://i.ibb.co/7xcW3fz/clock.jpg",
+                    },
+                    {
+                      id: "3",
+                      value: "table",
+                      answerImage: "https://i.ibb.co/QF16Fjd/table.jpg",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       ];
       this.units = data;
     },
