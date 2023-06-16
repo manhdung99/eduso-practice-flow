@@ -39,7 +39,6 @@
             "
             v-for="(question, index) in currentPartQuestion.questions"
             :key="question.questionID"
-            :updateSelectedAnswer="updateSelectedAnswer"
             :question="question"
             :index="index"
             :partID="currentPartQuestion.id"
@@ -48,6 +47,19 @@
         </div>
         <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
           <DropBox
+            :class="
+              currentPartQuestion.questions.length < 2 ? 'one-question' : ''
+            "
+            v-for="(question, index) in currentPartQuestion.questions"
+            :key="question.questionID"
+            :question="question"
+            :index="index"
+            :partID="currentPartQuestion.id"
+            :optionList="optionList"
+          />
+        </div>
+        <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ4'">
+          <Matching
             :class="
               currentPartQuestion.questions.length < 2 ? 'one-question' : ''
             "
@@ -148,6 +160,16 @@
                 :optionList="optionList"
               />
             </div>
+            <div v-if="currentPartQuestion.type == 'QUIZ4'">
+              <Matching
+                v-for="(question, index) in currentPartQuestion.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+                :partID="currentPartQuestion.id"
+                :optionList="optionList"
+              />
+            </div>
           </div>
           <div
             class="checking-btn-wrapper"
@@ -184,7 +206,8 @@
       </div>
       <!-- Desktop -->
       <div
-        class="w-1/2 ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex"
+        :class="currentPartQuestion.questions.length < 2 ? 'w-1/2' : 'w-2/3'"
+        class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex"
       >
         <div class="w-1/3 relative">
           <div>
@@ -418,8 +441,8 @@ import showListIcon from "../assets/images/show-list.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
 import FillInBlank from "@/components/question/FillInBlank.vue";
 import DropBox from "@/components/question/Dropbox.vue";
+import Matching from "@/components/question/Matching.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
-import router from "@/router";
 export default defineComponent({
   name: "PracticeView",
   components: {
@@ -427,6 +450,7 @@ export default defineComponent({
     TheoryModal,
     FillInBlank,
     DropBox,
+    Matching,
   },
   setup() {
     const { unitDetail, questions } = storeToRefs(useUnitStore());
@@ -441,23 +465,25 @@ export default defineComponent({
     const optionList = ref([]);
     const showWorkbook = ref(false);
     const updateSelectedAnswer = (questionID, answerID) => {
-      const question = currentPartQuestion.value.questions.find(
-        (data) => data.questionID == questionID
-      );
-      if (question.selectedAnswer.includes(answerID)) {
-        question.selectedAnswer = question.selectedAnswer.filter(
-          (answer) => answer !== answerID
+      if (currentPartQuestion.value.status == "unmake") {
+        const question = currentPartQuestion.value.questions.find(
+          (data) => data.questionID == questionID
         );
-      } else {
-        question.selectedAnswer = [...question.selectedAnswer, answerID];
-      }
-
-      selectedAll.value = true;
-      currentPartQuestion.value.questions.forEach((question) => {
-        if (question.selectedAnswer == 0) {
-          selectedAll.value = false;
+        if (question.selectedAnswer.includes(answerID)) {
+          question.selectedAnswer = question.selectedAnswer.filter(
+            (answer) => answer !== answerID
+          );
+        } else {
+          question.selectedAnswer = [...question.selectedAnswer, answerID];
         }
-      });
+
+        selectedAll.value = true;
+        currentPartQuestion.value.questions.forEach((question) => {
+          if (question.selectedAnswer == 0) {
+            selectedAll.value = false;
+          }
+        });
+      }
     };
     const goNextPartQuestion = () => {
       if (
@@ -492,7 +518,7 @@ export default defineComponent({
         }
         currentPartQuestion.value.status = "true";
         currentPartQuestion.value.questions.forEach((question) => {
-          if (question.selectedAnswer != question.correctAnswer) {
+          if (question.status == "false") {
             currentPartQuestion.value.status = "false";
           }
         });
