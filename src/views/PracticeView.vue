@@ -177,7 +177,7 @@
           >
             <img :src="circleLeftIcon" alt=""
           /></span>
-          <div class="question-wrapper">
+          <div class="question-wrapper scroll-area">
             <div v-if="currentPartQuestion.type == 'QUIZ1'">
               <MutipleChoice
                 v-for="(question, index) in currentPartQuestion.questions"
@@ -274,9 +274,6 @@
             <span class="whitespace-nowrap">Câu trước</span>
           </button>
           <button
-            :disabled="
-              unitDetail.currentIndex == unitDetail.questionPart.length - 1
-            "
             @click="goNextPartQuestion"
             class="btn btn-primary flex items-center gap-x-2"
           >
@@ -909,7 +906,7 @@ export default defineComponent({
   margin-top: 16px;
   height: calc(100vh - 160px);
 }
-.scroll-area::-webkit-scrollbar {
+.scroll-area {
   overflow-y: auto;
 }
 .scroll-area::-webkit-scrollbar {
@@ -961,8 +958,8 @@ export default defineComponent({
   }
 
   .checking-btn-wrapper {
-    width: calc(100% - 64px);
-    bottom: 24px;
+    width: calc(100% - 76px);
+    bottom: 12px;
   }
 }
 
@@ -988,9 +985,6 @@ export default defineComponent({
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     height: 75%;
-  }
-  .question-wrapper {
-    overflow-y: auto !important;
   }
 }
 </style>

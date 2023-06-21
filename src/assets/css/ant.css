@@ -10,7 +10,7 @@
     background-color: #ededed !important;
 }
 
-.ant-progress-circle.ant-progress-inner {
+.ant-progress-circle .ant-progress-inner {
     background-color: transparent !important;
 }
 

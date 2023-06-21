@@ -32,7 +32,7 @@
             ? 'bg-raspberry-lighter border-raspberry'
             : '',
           question.status == 'unmake'
-            ? 'hover:bg-iceberg hover:text-white'
+            ? 'hover:border-iceberg hover:text-iceberg'
             : '',
         ]"
         @click="updateSelectedAnswer(question.questionID, answer.answerID)"

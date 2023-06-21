@@ -97,7 +97,7 @@
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden"
       >
         <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
-        <div class="md:px-2 lg:px-6 pb-6">
+        <div class="px-2 lg:px-6 pb-6">
           <div class="w-full">
             <p class="text-xl text-indigo font-bold truncate">
               {{ unitDetail.chapterTitle }}
