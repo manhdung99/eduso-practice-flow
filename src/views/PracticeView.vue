@@ -21,7 +21,7 @@
         v-if="currentPartQuestion.type == 'QUIZ4'"
         class="two-question-wrapper"
       >
-        <div class="w-full h-full px-8 lg:px-4 lg:relative">
+        <div class="w-full h-full px-8 lg:px-0 lg:relative">
           <div class="question-wrapper scroll-area">
             <Matching
               v-for="(question, index) in currentPartQuestion.questions"
@@ -31,10 +31,11 @@
               :index="index"
               :partID="currentPartQuestion.id"
               :currentPartQuestion="currentPartQuestion"
+              :setAllSelectd="setAllSelectd"
             />
           </div>
           <div
-            class="checking-btn-wrapper"
+            class="checking-btn-wrapper matching"
             v-if="currentPartQuestion.status == 'unmake'"
           >
             <button
@@ -46,14 +47,14 @@
             </button>
           </div>
           <div
-            class="checking-btn-wrapper"
+            class="checking-btn-wrapper matching"
             v-else-if="currentPartQuestion.status == 'true'"
           >
             <button @click="goNextPartQuestion" class="check-btn btn">
               Tiếp tục
             </button>
           </div>
-          <div class="checking-btn-wrapper" v-else>
+          <div class="checking-btn-wrapper matching" v-else>
             <button
               @click="goNextPartQuestion"
               class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
@@ -244,7 +245,12 @@
       </div>
       <!-- Desktop -->
       <div
-        :class="currentPartQuestion.questions.length < 2 ? 'w-1/2' : 'w-2/3'"
+        :class="
+          currentPartQuestion.questions.length < 2 &&
+          currentPartQuestion.type != 'QUIZ4'
+            ? 'w-1/2'
+            : 'w-2/3'
+        "
         class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex"
       >
         <div class="w-1/3 relative">
@@ -501,6 +507,8 @@ export default defineComponent({
     const answerList = ref([]);
     const optionList = ref([]);
     const showWorkbook = ref(false);
+
+    //Update answer type Mutiple choice
     const updateSelectedAnswer = (questionID, answerID) => {
       if (currentPartQuestion.value.status == "unmake") {
         const question = currentPartQuestion.value.questions.find(
@@ -590,6 +598,27 @@ export default defineComponent({
             unitDetail.value.numberQuestionCorrect++;
           }
         });
+      } else if (currentPartQuestion.value.type == "QUIZ4") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          currentPartQuestion.value.status = "true";
+          currentPartQuestion.value.questions[i].status = "true";
+          currentPartQuestion.value.questions[i].answers.forEach((answer) => {
+            answer.status = true;
+            const htmlString = answer.currentContent;
+            const regex = /data-index-number="([^"]*)"/;
+            const match = htmlString.match(regex);
+            const dataIndexNumber = match ? match[1] : null;
+            if (dataIndexNumber != answer.answerID) {
+              answer.status = false;
+              currentPartQuestion.value.questions[i].status = "false";
+              currentPartQuestion.value.status = "false";
+            }
+          });
+          unitDetail.value.numberQuestionComplete++;
+          if (currentPartQuestion.value.questions[i].status == "true") {
+            unitDetail.value.numberQuestionCorrect++;
+          }
+        }
       }
     };
     // reset question
@@ -620,6 +649,14 @@ export default defineComponent({
             select.removeAttribute("disabled");
           }
         });
+      } else if (currentPartQuestion.value.type == "QUIZ4") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          currentPartQuestion.value.questions[i].answers.forEach((answer) => {
+            answer.currentContent = "";
+            answer.status = "unmake";
+            answer.choosedContent = false;
+          });
+        }
       }
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
         if (currentPartQuestion.value.questions[i].status == "true") {
@@ -727,6 +764,9 @@ export default defineComponent({
         });
       });
     });
+    const setAllSelectd = (status: boolean) => {
+      selectedAll.value = status;
+    };
     watch(
       () => unitDetail.value.currentIndex,
       () => {
@@ -789,6 +829,7 @@ export default defineComponent({
       answerList,
       optionList,
       showWorkbook,
+      setAllSelectd,
     };
   },
 });
@@ -924,26 +965,6 @@ export default defineComponent({
 .scroll-area.scrollbar-invisible::-webkit-scrollbar-thumb {
   background-color: #555555;
 }
-/* .question-part-content::-webkit-scrollbar,
-.list-question-part::-webkit-scrollbar,
-.question-wrapper::-webkit-scrollbar {
-  height: 6px;
-  width: 2px;
-}
-
-.question-part-content::-webkit-scrollbar-thumb,
-.list-question-part::-webkit-scrollbar-thumb,
-.question-wrapper::-webkit-scrollbar-thumb {
-  background: #ffffff;
-  border-radius: 10px;
-}
-
-.question-part-content::-webkit-scrollbar-track,
-.list-question-part::-webkit-scrollbar-track,
-.question-wrapper::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px #ffffff;
-  border-radius: 10px;
-} */
 .question-wrapper.scrollbar-invisible::-webkit-scrollbar-thumb {
   background-color: #555555; /* Set the color of the scroll bar thumb when visible */
 }

@@ -715,6 +715,8 @@ export const useUnitStore = defineStore("unitStore", {
                       image:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
                       isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
                     },
                     {
                       answerID: 2,
@@ -725,6 +727,8 @@ export const useUnitStore = defineStore("unitStore", {
                       image:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/7xcW3fz/clock.jpg" width="280" /></p>\n',
                       isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
                     },
                     {
                       answerID: 3,
@@ -735,6 +739,8 @@ export const useUnitStore = defineStore("unitStore", {
                       image:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
                       isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
                     },
                   ],
                 },

@@ -1,20 +1,21 @@
 <template lang="">
   <div class="flex" v-if="question">
     <div
-      class="w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all question-part-content scroll-area"
+      class="w-1/2 h-full lg:border-r lg:border-gray-400 px-8 pt-4 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all question-part-content scroll-area"
     >
       <div v-html="currentPartQuestion.partContent"></div>
       <div
-        v-for="answer in question.answers"
+        v-for="(answer, index) in question.answers"
         :key="answer.answerID"
-        v-html="answer.image"
         :id="answer.answerID"
         class="font-medium pt-4 leading-12 target-div cursor-pointer"
-        @click="setImage($event)"
-      ></div>
+        @click="setImage($event, index)"
+      >
+        <div v-show="!answer.choosedContent" v-html="answer.image"></div>
+      </div>
     </div>
     <div
-      class="w-full lg:w-1/2 h-full px-8 lg:px-4 lg:relative absolute transition-all"
+      class="w-full lg:w-1/2 h-full px-8 lg:pl-4 lg:pr-1 lg:relative absolute transition-all lg:pt-4"
     >
       <div class="">
         <div
@@ -26,11 +27,17 @@
             <p class="font-medium">{{ answer.content }}</p>
             <div
               @click="currentIndex = index"
-              :class="index == currentIndex ? 'active' : ''"
+              :class="[
+                index == currentIndex && answer.status == 'unmake'
+                  ? 'active'
+                  : '',
+                answer.status == false ? 'false' : '',
+                answer.status == true ? 'true' : '',
+              ]"
               class="matching-input"
             >
               <span
-                @click="removeImage(index)"
+                @click="removeImage($event, index)"
                 :class="answer.status != 'answered' ? 'hidden' : ''"
                 class="w-6 h-6 absolute right-0 top-1"
                 ><img :src="removeIcon" alt=""
@@ -45,6 +52,10 @@
                     : "Đáp án"
                 }}
               </span>
+              <div
+                v-if="answer.status != 'unmake'"
+                v-html="answer.currentContent"
+              ></div>
             </div>
           </div>
         </div>
@@ -68,6 +79,7 @@ export default defineComponent({
     partID: [Number, String],
     answerList: Array,
     currentPartQuestion: Object,
+    setAllSelectd: Function,
   },
   setup(props) {
     const modal = useModalStore();
@@ -76,7 +88,10 @@ export default defineComponent({
     const currentIndex = ref(0);
     const currentAnswerSelected = ref(null);
     const currentAnswer = ref(null);
-    const setImage = (event) => {
+
+    //Set image answer when click
+
+    const setImage = (event, index) => {
       if (currentAnswer.value.status == "unmake") {
         const targetDiv = event.target.closest(".target-div");
         if (targetDiv) {
@@ -84,27 +99,42 @@ export default defineComponent({
           const newImageElement = document.createElement("img");
           newImageElement.src = imageElement.src;
           newImageElement.classList.add("new-image");
+          newImageElement.width = imageElement.width;
           newImageElement.dataset.indexNumber = targetDiv.id;
-          imageElement.style.display = "none";
-          currentAnswerSelected.value.appendChild(newImageElement);
           currentAnswer.value.status = "answered";
+          currentAnswer.value.currentContent = newImageElement.outerHTML;
+          const currentImageAnswer = props.question.answers[index];
+          currentImageAnswer.choosedContent = true;
+          if (currentIndex.value < props.question.answers.length - 1) {
+            currentIndex.value++;
+          }
         }
+        props.setAllSelectd(true);
+        props.question.answers.forEach((answer) => {
+          if (answer.status == "unmake") {
+            props.setAllSelectd(false);
+          }
+        });
       }
     };
+    // Set current answer when click
     const setCurrentAnswer = (index = currentIndex.value) => {
       const elements = document.getElementsByClassName("matching-input");
       currentAnswerSelected.value = elements[index];
       currentAnswer.value = props.question.answers[index];
     };
-    const removeImage = async (index) => {
+    //Remove image in div
+    const removeImage = async (event, index) => {
+      const currentDiv = event.target.closest(".matching-input");
+      const currentImg = currentDiv.querySelector(".new-image");
       await setCurrentAnswer(index);
-      const imgElement =
-        currentAnswerSelected.value.querySelector(".new-image");
-      currentAnswerSelected.value.removeChild(imgElement);
       currentAnswer.value.status = "unmake";
-      const targetDiv = document.getElementById(currentAnswer.value.answerID);
-      const imageElement = targetDiv.querySelector("img");
-      imageElement.style.display = "block";
+      const answerIndex = props.question.answers.findIndex(
+        (answer) => answer.answerID == currentImg.dataset.indexNumber
+      );
+      const currentAnswerImage = props.question.answers[answerIndex];
+      currentAnswerImage.choosedContent = false;
+      props.setAllSelectd(false);
     };
     onMounted(() => {
       setCurrentAnswer();
@@ -149,5 +179,15 @@ export default defineComponent({
 .matching-input-text {
   font-style: italic;
   color: #0009;
+}
+.checking-btn-wrapper.matching {
+  width: calc(50% - 32px);
+  right: 16px;
+}
+.matching-input.false {
+  border: 1px solid #d03239;
+}
+.matching-input.true {
+  border: 1px solid #55934b;
 }
 </style>

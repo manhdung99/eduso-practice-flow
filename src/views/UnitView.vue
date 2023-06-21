@@ -211,6 +211,12 @@ export default defineComponent({
               answer.currentAnswer = "";
               answer.status = "unmake";
             });
+          } else if (part.type == "QUIZ4") {
+            question.answers.forEach((answer) => {
+              answer.currentContent = "";
+              answer.status = "unmake";
+              answer.choosedContent = false;
+            });
           }
         });
       });
