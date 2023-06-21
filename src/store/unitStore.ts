@@ -35,8 +35,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [1, 2],
+                  selectedAnswer: 0,
+                  correctAnswer: 1,
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -49,8 +49,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [6],
+                  selectedAnswer: 0,
+                  correctAnswer: 6,
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },
@@ -63,8 +63,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [12],
+                  selectedAnswer: 0,
+                  correctAnswer: 12,
                   answers: [
                     { answerID: 9, answerValue: "A. Yes" },
                     { answerID: 10, answerValue: "B. No" },
@@ -86,8 +86,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [3],
+                  selectedAnswer: 0,
+                  correctAnswer: 3,
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -100,8 +100,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [5],
+                  selectedAnswer: 0,
+                  correctAnswer: 6,
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },
@@ -123,8 +123,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [2],
+                  selectedAnswer: 0,
+                  correctAnswer: 2,
                   activeLink: false,
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
@@ -147,8 +147,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [3],
+                  selectedAnswer: 0,
+                  correctAnswer: 4,
                   answers: [
                     { answerID: 1, answerValue: "A. Yes" },
                     { answerID: 2, answerValue: "B. No" },
@@ -161,8 +161,8 @@ export const useUnitStore = defineStore("unitStore", {
                   status: "unmake",
                   questionValue:
                     "Is the aerial capability of bees dependent on human logic?",
-                  selectedAnswer: [],
-                  correctAnswer: [7],
+                  selectedAnswer: 0,
+                  correctAnswer: 7,
                   answers: [
                     { answerID: 5, answerValue: "A. Yes" },
                     { answerID: 6, answerValue: "B. No" },

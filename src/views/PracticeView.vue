@@ -514,14 +514,7 @@ export default defineComponent({
         const question = currentPartQuestion.value.questions.find(
           (data) => data.questionID == questionID
         );
-        if (question.selectedAnswer.includes(answerID)) {
-          question.selectedAnswer = question.selectedAnswer.filter(
-            (answer) => answer !== answerID
-          );
-        } else {
-          question.selectedAnswer = [...question.selectedAnswer, answerID];
-        }
-
+        question.selectedAnswer = answerID;
         selectedAll.value = true;
         currentPartQuestion.value.questions.forEach((question) => {
           if (question.selectedAnswer == 0) {
@@ -545,20 +538,15 @@ export default defineComponent({
       // Mutiple check
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          currentPartQuestion.value.questions[i].selectedAnswer.forEach(
-            (answer) => {
-              currentPartQuestion.value.questions[i].status = "true";
-              if (
-                currentPartQuestion.value.questions[i].correctAnswer.includes(
-                  answer
-                )
-              ) {
-                unitDetail.value.numberQuestionCorrect++;
-              } else {
-                currentPartQuestion.value.questions[i].status = "false";
-              }
-            }
-          );
+          if (
+            currentPartQuestion.value.questions[i].selectedAnswer ==
+            currentPartQuestion.value.questions[i].correctAnswer
+          ) {
+            unitDetail.value.numberQuestionCorrect++;
+            currentPartQuestion.value.questions[i].status = "true";
+          } else {
+            currentPartQuestion.value.questions[i].status = "false";
+          }
           unitDetail.value.numberQuestionComplete++;
         }
         currentPartQuestion.value.status = "true";
@@ -627,7 +615,7 @@ export default defineComponent({
       //Type choice
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          currentPartQuestion.value.questions[i].selectedAnswer = [];
+          currentPartQuestion.value.questions[i].selectedAnswer = 0;
         }
       }
       //Type fill in blank

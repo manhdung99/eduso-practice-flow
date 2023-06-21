@@ -200,7 +200,7 @@ export default defineComponent({
         part.questions.forEach((question) => {
           question.status = "unmake";
           if (part.type == "QUIZ1") {
-            question.selectedAnswer = [];
+            question.selectedAnswer = 0;
           } else if (part.type == "QUIZ2") {
             question.answers.forEach((answer) => {
               answer.currentAnswer = "";

@@ -17,21 +17,22 @@
         v-for="answer in question.answers"
         :key="answer.answerID"
         :class="[
-          question.selectedAnswer.includes(answer.answerID) &&
+          question.selectedAnswer == answer.answerID &&
           question.status == 'unmake'
             ? 'bg-iceberg text-white'
             : '',
-          question.selectedAnswer.includes(answer.answerID) &&
-          question.correctAnswer.includes(answer.answerID) &&
+          question.selectedAnswer == answer.answerID &&
+          question.correctAnswer == answer.answerID &&
           question.status != 'unmake'
             ? 'bg-green-lighter border-green'
             : '',
-          question.selectedAnswer.includes(answer.answerID) &&
-          !question.correctAnswer.includes(answer.answerID) &&
+          question.selectedAnswer == answer.answerID &&
+          question.correctAnswer != answer.answerID &&
           question.status != 'unmake'
             ? 'bg-raspberry-lighter border-raspberry'
             : '',
-          question.status == 'unmake'
+          question.status == 'unmake' &&
+          question.selectedAnswer != answer.answerID
             ? 'hover:border-iceberg hover:text-iceberg'
             : '',
         ]"
