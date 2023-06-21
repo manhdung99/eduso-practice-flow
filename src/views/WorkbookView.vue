@@ -1,6 +1,8 @@
 <template>
   <div class="overflow-hidden pb-2" v-if="JSON.stringify(unitDetail) != '{}'">
-    <div class="px-4 py-5 relative shadow shadow-gray-300">
+    <div
+      class="px-4 py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
+    >
       <router-link to="/">
         <div
           class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -9,7 +11,7 @@
         </div>
       </router-link>
       <div
-        class="ml-1/2 -translate-x-1/2 inline-block text-indigo text-xl font-semibold whitespace-nowrap"
+        class="ml-10 inline-block text-indigo text-xl font-semibold whitespace-nowrap truncate"
       >
         {{ unitDetail.unitTitle }}
       </div>

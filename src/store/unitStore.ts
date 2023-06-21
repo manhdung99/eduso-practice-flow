@@ -702,7 +702,8 @@ export const useUnitStore = defineStore("unitStore", {
                 {
                   questionID: 1,
                   status: "unmake",
-                  Description: "",
+                  Description:
+                    '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
                   questionValue: "",
                   answers: [
                     {
@@ -710,35 +711,30 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "cat",
                       currentAnswer: "",
                       status: "unmake",
+                      content: "1. A street cat",
+                      image:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                      isSelected: false,
                     },
                     {
-                      answerID: 1,
+                      answerID: 2,
                       answerValue: "clock",
                       currentAnswer: "",
                       status: "unmake",
+                      content: "2. A wall of clocks",
+                      image:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/7xcW3fz/clock.jpg" width="280" /></p>\n',
+                      isSelected: false,
                     },
                     {
-                      answerID: 1,
+                      answerID: 3,
                       answerValue: "table",
                       currentAnswer: "",
                       status: "unmake",
-                    },
-                  ],
-                  images: [
-                    {
-                      id: "1",
-                      value: "cat",
-                      answerImage: "https://i.ibb.co/Yt8sMXY/cat.jpg",
-                    },
-                    {
-                      id: "2",
-                      value: "clock",
-                      answerImage: "https://i.ibb.co/7xcW3fz/clock.jpg",
-                    },
-                    {
-                      id: "3",
-                      value: "table",
-                      answerImage: "https://i.ibb.co/QF16Fjd/table.jpg",
+                      content: "3. A work setup",
+                      image:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
+                      isSelected: false,
                     },
                   ],
                 },

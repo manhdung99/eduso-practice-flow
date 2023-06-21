@@ -1,6 +1,8 @@
 <template>
   <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
-    <div class="px-4 py-5 relative shadow shadow-gray-300">
+    <div
+      class="px-4 py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
+    >
       <div
         @click="$router.go(-1)"
         class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -8,15 +10,68 @@
         <img src="../assets/images/left.svg" alt="" />
       </div>
       <div
-        class="ml-1/2 -translate-x-1/2 inline-block text-indigo text-xl font-semibold whitespace-nowrap"
+        class="ml-10 inline-block text-indigo text-xl font-semibold whitespace-nowrap truncate"
       >
         {{ unitDetail.unitTitle }}
       </div>
     </div>
     <div v-if="currentPartQuestion && !showWorkbook" class="relative">
+      <!-- Matching  -->
+      <div
+        v-if="currentPartQuestion.type == 'QUIZ4'"
+        class="two-question-wrapper"
+      >
+        <div class="w-full h-full px-8 lg:px-4 lg:relative">
+          <div class="question-wrapper scroll-area">
+            <Matching
+              v-for="(question, index) in currentPartQuestion.questions"
+              :key="question.questionID"
+              :updateSelectedAnswer="updateSelectedAnswer"
+              :question="question"
+              :index="index"
+              :partID="currentPartQuestion.id"
+              :currentPartQuestion="currentPartQuestion"
+            />
+          </div>
+          <div
+            class="checking-btn-wrapper"
+            v-if="currentPartQuestion.status == 'unmake'"
+          >
+            <button
+              :disabled="!selectedAll"
+              class="check-btn btn"
+              @click="checkAnswer"
+            >
+              Kiểm tra
+            </button>
+          </div>
+          <div
+            class="checking-btn-wrapper"
+            v-else-if="currentPartQuestion.status == 'true'"
+          >
+            <button @click="goNextPartQuestion" class="check-btn btn">
+              Tiếp tục
+            </button>
+          </div>
+          <div class="checking-btn-wrapper" v-else>
+            <button
+              @click="goNextPartQuestion"
+              class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+            >
+              Bỏ qua
+            </button>
+            <button @click="redoQuestion" class="btn btn-primary w-2/3">
+              Làm lại
+            </button>
+          </div>
+        </div>
+      </div>
       <!-- One question  -->
       <div
-        v-if="currentPartQuestion.questions.length < 2"
+        v-if="
+          currentPartQuestion.questions.length < 2 &&
+          currentPartQuestion.type != 'QUIZ4'
+        "
         class="one-question-wrapper"
       >
         <div class="px-1 pb-8 border-b border-gray-300 text-sm">
@@ -47,19 +102,6 @@
         </div>
         <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
           <DropBox
-            :class="
-              currentPartQuestion.questions.length < 2 ? 'one-question' : ''
-            "
-            v-for="(question, index) in currentPartQuestion.questions"
-            :key="question.questionID"
-            :question="question"
-            :index="index"
-            :partID="currentPartQuestion.id"
-            :optionList="optionList"
-          />
-        </div>
-        <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ4'">
-          <Matching
             :class="
               currentPartQuestion.questions.length < 2 ? 'one-question' : ''
             "
@@ -104,10 +146,16 @@
         </div>
       </div>
       <!-- 2 Question  -->
-      <div v-else class="two-question-wrapper">
+      <div
+        v-if="
+          currentPartQuestion.questions.length >= 2 &&
+          currentPartQuestion.type != 'QUIZ4'
+        "
+        class="two-question-wrapper"
+      >
         <div
           :class="showTheoryMobile ? '!right-0' : ''"
-          class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all question-part-content"
+          class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:pt-4 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all duration-500 question-part-content scroll-area"
         >
           <span
             v-if="showTheoryMobile"
@@ -120,7 +168,7 @@
         </div>
         <div
           :class="showTheoryMobile ? '!-left-full' : ''"
-          class="w-full lg:w-1/2 h-full px-8 lg:px-4 lg:relative absolute transition-all"
+          class="w-full lg:w-1/2 h-full px-8 pt-4 lg:px-4 lg:pr-1 lg:relative absolute transition-all duration-500"
         >
           <span
             v-if="!showTheoryMobile"
@@ -152,16 +200,6 @@
             </div>
             <div v-if="currentPartQuestion.type == 'QUIZ3'">
               <DropBox
-                v-for="(question, index) in currentPartQuestion.questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-                :partID="currentPartQuestion.id"
-                :optionList="optionList"
-              />
-            </div>
-            <div v-if="currentPartQuestion.type == 'QUIZ4'">
-              <Matching
                 v-for="(question, index) in currentPartQuestion.questions"
                 :key="question.questionID"
                 :question="question"
@@ -219,7 +257,9 @@
               stroke-color="#3699CF"
               stroke-linecap="square"
               :percent="
-                ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                (unitDetail.numberQuestionComplete /
+                  unitDetail.numberQuestion) *
+                100
               "
             />
           </div>
@@ -316,7 +356,7 @@
             }}
             câu
           </p>
-          <div class="list-question-part">
+          <div class="list-question-part scroll-area">
             <div
               v-for="(part, index) in unitDetail.questionPart"
               :key="part.id"
@@ -378,7 +418,7 @@
             câu)</span
           >
         </p>
-        <div class="list-question-part">
+        <div class="list-question-part scroll-area">
           <div v-for="(part, index) in unitDetail.questionPart" :key="part.id">
             <h3 class="text-indigo font-semibold mb-2">Phần {{ index + 1 }}</h3>
             <!-- Question -->
@@ -677,6 +717,19 @@ export default defineComponent({
         checkSelectAllInput();
       });
     });
+    onMounted(() => {
+      nextTick(() => {
+        const container = document.querySelector(".scroll-area") as HTMLElement;
+
+        container.addEventListener("scroll", function () {
+          container.classList.add("scrollbar-invisible");
+        });
+
+        container.addEventListener("mouseleave", function () {
+          container.classList.remove("scrollbar-invisible");
+        });
+      });
+    });
     watch(
       () => unitDetail.value.currentIndex,
       () => {
@@ -801,7 +854,7 @@ export default defineComponent({
   top: 85px;
   background: white;
   height: calc(100vh - 84px);
-  padding: 24px;
+  padding: 0 24px 24px 24px;
 }
 
 .part-title {
@@ -821,8 +874,7 @@ export default defineComponent({
 
 .question-wrapper {
   height: calc(100% - 65px);
-  overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 12px;
 }
 
 .list-question-part {
@@ -855,11 +907,27 @@ export default defineComponent({
   margin-left: 50%;
   transform: translateX(-50%);
   margin-top: 16px;
-  padding-top: 16px;
   height: calc(100vh - 160px);
 }
-
-.question-part-content::-webkit-scrollbar,
+.scroll-area::-webkit-scrollbar {
+  overflow-y: auto;
+}
+.scroll-area::-webkit-scrollbar {
+  height: 6px;
+  width: 2px;
+}
+.scroll-area::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+}
+.scroll-area::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #ffffff;
+  border-radius: 10px;
+}
+.scroll-area.scrollbar-invisible::-webkit-scrollbar-thumb {
+  background-color: #555555;
+}
+/* .question-part-content::-webkit-scrollbar,
 .list-question-part::-webkit-scrollbar,
 .question-wrapper::-webkit-scrollbar {
   height: 6px;
@@ -869,15 +937,18 @@ export default defineComponent({
 .question-part-content::-webkit-scrollbar-thumb,
 .list-question-part::-webkit-scrollbar-thumb,
 .question-wrapper::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: #ffffff;
   border-radius: 10px;
 }
 
 .question-part-content::-webkit-scrollbar-track,
 .list-question-part::-webkit-scrollbar-track,
 .question-wrapper::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px #555555;
+  box-shadow: inset 0 0 2px #ffffff;
   border-radius: 10px;
+} */
+.question-wrapper.scrollbar-invisible::-webkit-scrollbar-thumb {
+  background-color: #555555; /* Set the color of the scroll bar thumb when visible */
 }
 
 @media screen and (max-width: 1023px) {
@@ -917,6 +988,9 @@ export default defineComponent({
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     height: 75%;
+  }
+  .question-wrapper {
+    overflow-y: auto !important;
   }
 }
 </style>
