@@ -5,12 +5,14 @@
         ><strong>Question {{ index + 1 }}.</strong>
         {{ question.questionValue }}</span
       >
-      <img
-        @click="updateTheoryModalStatus(true)"
-        class="hover:opacity-80 cursor-pointer"
-        :src="theoryIcon"
-        alt=""
-      />
+      <span>
+        <img
+          @click="updateTheoryModalStatus(true)"
+          class="hover:opacity-80 cursor-pointer"
+          :src="theoryIcon"
+          alt=""
+        />
+      </span>
     </div>
     <div class="font-medium">
       <div

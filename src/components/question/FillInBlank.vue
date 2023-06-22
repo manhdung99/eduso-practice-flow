@@ -68,7 +68,6 @@ export default defineComponent({
 <style>
 .one-question {
   height: calc(100% - 128px);
-  overflow-y: auto;
   position: relative;
 }
 .fillquiz {
