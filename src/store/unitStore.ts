@@ -684,7 +684,7 @@ export const useUnitStore = defineStore("unitStore", {
           unitTitle: "Bài 2: Mức độ nhận biết - Matching",
           chapterTitle: "Chương 2 - Điền từ thích hợp vào chỗ trống",
           chapterDescription: "Bài 2 - Mức độ nhận biết 1 ",
-          numberQuestion: 3,
+          numberQuestion: 4,
           numberQuestionComplete: 0,
           numberQuestionCorrect: 0,
           currentQuestion: 0,
@@ -711,8 +711,8 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "cat",
                       currentAnswer: "",
                       status: "unmake",
-                      content: "1. A street cat",
-                      image:
+                      contentAnswer: "<p>1. A street cat</p>\n",
+                      contentQuestion:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
                       isSelected: false,
                       currentContent: "",
@@ -723,8 +723,8 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "clock",
                       currentAnswer: "",
                       status: "unmake",
-                      content: "2. A wall of clocks",
-                      image:
+                      contentAnswer: "<p>2. A wall of clocks</p>\n",
+                      contentQuestion:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/7xcW3fz/clock.jpg" width="280" /></p>\n',
                       isSelected: false,
                       currentContent: "",
@@ -735,8 +735,171 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "table",
                       currentAnswer: "",
                       status: "unmake",
-                      content: "3. A work setup",
-                      image:
+                      contentAnswer: '<p>3. A work setup"</p>\n',
+                      contentQuestion:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part2",
+              type: "QUIZ4",
+              partContent:
+                "<div class='vocab-box'><b class='word-title'>This audio track describes a list of various objects.</b> Which photo corresponds with which object? Select down below.<div class='vocab-audio'><button onclick='PlayPronun(this)'><i class='ic fas fa-volume-up'></i></button><audio class='d-none' id='audio' controls><source src='https://dictionary.cambridge.org/vi/media/english/us_pron/v/voy/voyag/voyage.mp3' type='audio/mpeg' />Your browser does not support the audio tag</audio></div></div>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 1,
+                  status: "unmake",
+                  Description:
+                    '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                  questionValue: "",
+                  answers: [
+                    {
+                      answerID: 1,
+                      answerValue: "cat",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion: "<p>1. A street cat</p>\n",
+                      contentAnswer:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 2,
+                      answerValue: "clock",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion: "<p>2. A wall of clocks</p>\n",
+                      contentAnswer:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/7xcW3fz/clock.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 3,
+                      answerValue: "table",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion: "<p>3. A work setup</p>\n",
+                      contentAnswer:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part1",
+              type: "QUIZ4",
+              partContent:
+                "<div class='vocab-box'><b class='word-title'>This audio track describes a list of various objects.</b> Which photo corresponds with which object? Select down below.<div class='vocab-audio'><button onclick='PlayPronun(this)'><i class='ic fas fa-volume-up'></i></button><audio class='d-none' id='audio' controls><source src='https://dictionary.cambridge.org/vi/media/english/us_pron/v/voy/voyag/voyage.mp3' type='audio/mpeg' />Your browser does not support the audio tag</audio></div></div>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 1,
+                  status: "unmake",
+                  Description:
+                    '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                  questionValue: "",
+                  answers: [
+                    {
+                      answerID: 1,
+                      answerValue: "cat",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentAnswer: "<p>1. A street cat</p>\n",
+                      contentQuestion: "<p>Fluffy and matted black fur</p>\n",
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 2,
+                      answerValue: "clock",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentAnswer: "<p>2. A wall of clocks</p>\n",
+                      contentQuestion:
+                        "<p>Countless hands, long and short</p>\n",
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 3,
+                      answerValue: "table",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentAnswer: '<p>3. A work setup"</p>\n',
+                      contentQuestion: "<p>A laptop, phone and notebook</p>\n",
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part4",
+              type: "QUIZ4",
+              partContent:
+                "<div class='vocab-box'><b class='word-title'>This audio track describes a list of various objects.</b> Which photo corresponds with which object? Select down below.<div class='vocab-audio'><button onclick='PlayPronun(this)'><i class='ic fas fa-volume-up'></i></button><audio class='d-none' id='audio' controls><source src='https://dictionary.cambridge.org/vi/media/english/us_pron/v/voy/voyag/voyage.mp3' type='audio/mpeg' />Your browser does not support the audio tag</audio></div></div>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 1,
+                  status: "unmake",
+                  Description:
+                    '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                  questionValue: "",
+                  answers: [
+                    {
+                      answerID: 1,
+                      answerValue: "cat",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/5MkVJK7/Frame-342.jpg" width="280" /></p>\n',
+                      contentAnswer:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/Yt8sMXY/cat.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 2,
+                      answerValue: "clock",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/2vJJwjy/Frame-340.jpg" width="280" /></p>\n',
+                      contentAnswer:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/7xcW3fz/clock.jpg" width="280" /></p>\n',
+                      isSelected: false,
+                      currentContent: "",
+                      choosedContent: false,
+                    },
+                    {
+                      answerID: 3,
+                      answerValue: "table",
+                      currentAnswer: "",
+                      status: "unmake",
+                      contentQuestion:
+                        '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/0K4BJm0/Frame-341.jpg" width="280" /></p>\n',
+                      contentAnswer:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
                       isSelected: false,
                       currentContent: "",

@@ -15,13 +15,16 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div v-if="currentPartQuestion && !showWorkbook" class="relative">
+    <div
+      v-if="currentPartQuestion && !showWorkbook"
+      class="relative px-3 lg:px-0"
+    >
       <!-- Matching  -->
       <div
         v-if="currentPartQuestion.type == 'QUIZ4'"
         class="two-question-wrapper"
       >
-        <div class="w-full h-full px-8 lg:px-0 lg:relative">
+        <div class="w-full h-full px-0 relative">
           <div class="question-wrapper scroll-area">
             <Matching
               v-for="(question, index) in currentPartQuestion.questions"
@@ -32,6 +35,7 @@
               :partID="currentPartQuestion.id"
               :currentPartQuestion="currentPartQuestion"
               :setAllSelectd="setAllSelectd"
+              :unitIndex="unitDetail.currentIndex"
             />
           </div>
           <div
@@ -324,12 +328,7 @@
               alt=""
             />
           </button>
-          <button
-            :disabled="
-              unitDetail.currentIndex == unitDetail.questionPart.length - 1
-            "
-            @click="goNextPartQuestion"
-          >
+          <button @click="goNextPartQuestion">
             <img
               :src="
                 unitDetail.currentIndex == unitDetail.questionPart.length - 1
