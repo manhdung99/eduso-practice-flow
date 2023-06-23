@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
     <div
-      class="px-4 py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
+      class="px-4 py-3 lg:py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
     >
       <div
         @click="$router.go(-1)"
@@ -15,140 +15,64 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div @scroll="onScroll($event)" ref="el" class="history-question-wrapper">
-      <div
-        v-for="questionPart in unitDetail.questionPart"
-        :key="questionPart.id"
-        class="list-answer-wrapper"
-        :id="questionPart.id"
-      >
-        <div class="px-1 pb-8 border-b border-gray-300 text-sm">
-          <div v-html="questionPart.partContent"></div>
-        </div>
-        <div v-if="questionPart.type == 'QUIZ1'">
-          <MutipleChoiceHistory
-            v-for="(question, index) in questionPart.questions"
-            :key="question.questionID"
-            :question="question"
-            :index="index"
-          />
-        </div>
-        <div v-if="questionPart.type == 'QUIZ2'">
-          <FillInBlankHistory
-            v-for="(question, index) in questionPart.questions"
-            :key="question.questionID"
-            :question="question"
-            :index="index"
-            :partID="questionPart.id"
-            :answerList="answerList"
-          />
-        </div>
-        <div v-if="questionPart.type == 'QUIZ3'">
-          <DropboxHistory
-            v-for="(question, index) in questionPart.questions"
-            :key="question.questionID"
-            :question="question"
-            :index="index"
-            :partID="questionPart.id"
-            :optionList="optionList"
-          />
-        </div>
-      </div>
-      <!-- Desktop bottom  -->
-      <div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-1/2">
-        <div class="mt-4 justify-between hidden lg:flex">
-          <div class="w-1/3 relative">
-            <div>
-              Câu <span>{{ currentQuestion + 1 }}</span> /
-              {{ unitDetail.numberQuestion }}
-            </div>
-            <div>
-              <a-progress
-                stroke-color="#3699CF"
-                stroke-linecap="square"
-                :percent="
-                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
-                "
-              />
-            </div>
-          </div>
-          <div class="flex gap-x-4">
-            <button
-              :disabled="currentPartQuestion == 0"
-              @click="moveToPart(-1)"
-              class="btn btn-primary flex items-center gap-x-2"
-            >
-              <span class="icon-up"></span>
-              <span class="whitespace-nowrap">Câu trước</span>
-            </button>
-            <button
-              @click="moveToPart(1)"
-              :disabled="
-                lastPart ||
-                currentPartQuestion == unitDetail.questionPart.length - 1
-              "
-              class="btn btn-primary flex items-center gap-x-2"
-            >
-              <span class="whitespace-nowrap">Câu sau</span>
-              <span class="icon-down"></span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- Mobile bottom  -->
-      <div
-        class="fixed w-full flex py-2 justify-between bottom-2 px-4 items-center lg:hidden"
-      >
-        <div class="flex w-full gap-x-2 items-center">
-          <span @click="showListQuestion = true"
-            ><img :src="showListIcon" alt=""
-          /></span>
-          <div class="relative w-1/2">
-            <div class="text-indigo text-sm font-semibold">
-              Câu <span>{{ currentQuestion + 1 }}</span> /
-              {{ unitDetail.numberQuestion }}
-            </div>
-            <div>
-              <a-progress
-                stroke-color="#3699CF"
-                stroke-linecap="square"
-                :percent="
-                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
-                "
-              />
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-x-2">
-          <button @click="moveToPart(-1)" :disabled="currentPartQuestion == 0">
-            <img
-              :src="
-                currentPartQuestion == 0 ? circleTopDisableIcon : circleTopIcon
-              "
-              alt=""
-            />
-          </button>
-          <button
-            :disabled="
-              lastPart ||
-              currentPartQuestion == unitDetail.questionPart.length - 1
-            "
-            @click="moveToPart(1)"
-          >
-            <img
-              :src="
-                lastPart ||
-                currentPartQuestion == unitDetail.questionPart.length - 1
-                  ? circleDownDisableIcon
-                  : circleDownIcon
-              "
-              alt=""
-            />
-          </button>
-        </div>
-      </div>
+    <div class="flex relative pt-2.5">
       <!-- List question -->
-      <div v-show="showListQuestion" class="list-question-wrapper">
+      <div v-show="showListQuestion" class="list-question-wrapper lg:!hidden">
+        <div class="list-question">
+          <div class="flex items-center mb-6 justify-between">
+            <div class="text-lg text-indigo-darker font-medium">
+              Danh sách câu hỏi
+            </div>
+            <span
+              @click="showListQuestion = false"
+              class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
+            ></span>
+          </div>
+          <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
+            Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+              unitDetail.numberQuestion
+            }}
+            câu
+          </p>
+          <div class="list-question-part scroll-area">
+            <div
+              v-for="(part, index) in unitDetail.questionPart"
+              :key="part.id"
+              @click.prevent="scrollToSectionMobile(part.id)"
+            >
+              <h3 class="text-indigo font-semibold mb-2">
+                Phần {{ index + 1 }}
+              </h3>
+              <!-- Question -->
+              <div
+                v-for="(question, questionIndex) in part.questions"
+                :key="question.questionID"
+                class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
+              >
+                <span
+                  v-if="question.status == 'true'"
+                  class="icon-correct-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                  ><span class="path3"></span
+                ></span>
+                <span
+                  v-else-if="question.status == 'false'"
+                  class="icon-incorrect-answer"
+                  ><span class="path1"></span><span class="path2"></span
+                ></span>
+                <span class="icon-unmake-answer" v-else></span>
+                <span class="text-sm text-indigo"
+                  >Câu {{ questionIndex + 1 }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-show="showListQuestion"
+        class="list-question-wrapper hidden lg:block"
+      >
         <div class="list-question">
           <div class="flex items-center mb-6 justify-between">
             <div class="text-lg text-indigo-darker font-medium">
@@ -202,11 +126,153 @@
       </div>
       <div
         v-show="!showListQuestion"
-        class="fixed -left-40 hover:left-0 top-24 bg-indigo text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+        class="absolute -left-42 hover:left-0 top-2.5 bg-primary text-white items-center gap-x-5 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
         @click="showListQuestion = true"
       >
         <span class="text-sm">Xem danh sách câu hỏi</span>
         <span class="icon-right"></span>
+      </div>
+      <div class="w-full">
+        <div
+          @scroll="onScroll($event)"
+          ref="el"
+          class="history-question-wrapper mx-auto scroll-area"
+        >
+          <div
+            v-for="questionPart in unitDetail.questionPart"
+            :key="questionPart.id"
+            class="list-answer-wrapper"
+            :id="questionPart.id"
+          >
+            <div class="px-1 pb-8 border-b border-gray-300 text-sm">
+              <div v-html="questionPart.partContent"></div>
+            </div>
+            <div v-if="questionPart.type == 'QUIZ1'">
+              <MutipleChoiceHistory
+                v-for="(question, index) in questionPart.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+              />
+            </div>
+            <div v-if="questionPart.type == 'QUIZ2'">
+              <FillInBlankHistory
+                v-for="(question, index) in questionPart.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+                :partID="questionPart.id"
+                :answerList="answerList"
+              />
+            </div>
+            <div v-if="questionPart.type == 'QUIZ3'">
+              <DropboxHistory
+                v-for="(question, index) in questionPart.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+                :partID="questionPart.id"
+                :optionList="optionList"
+              />
+            </div>
+          </div>
+          <!-- Mobile bottom  -->
+          <div class="mobile-next-previous-part">
+            <div class="flex w-full gap-x-2 items-center">
+              <span @click="showListQuestion = true"
+                ><img :src="showListIcon" alt=""
+              /></span>
+              <div class="relative w-1/2">
+                <div class="text-indigo text-sm font-semibold">
+                  Câu <span>{{ currentQuestion + 1 }}</span> /
+                  {{ unitDetail.numberQuestion }}
+                </div>
+                <div>
+                  <a-progress
+                    stroke-color="#3699CF"
+                    stroke-linecap="square"
+                    :percent="
+                      ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-x-2">
+              <button
+                @click="moveToPart(-1)"
+                :disabled="currentPartQuestion == 0"
+              >
+                <img
+                  :src="
+                    currentPartQuestion == 0
+                      ? circleTopDisableIcon
+                      : circleTopIcon
+                  "
+                  alt=""
+                />
+              </button>
+              <button
+                :disabled="
+                  lastPart ||
+                  currentPartQuestion == unitDetail.questionPart.length - 1
+                "
+                @click="moveToPart(1)"
+              >
+                <img
+                  :src="
+                    lastPart ||
+                    currentPartQuestion == unitDetail.questionPart.length - 1
+                      ? circleDownDisableIcon
+                      : circleDownIcon
+                  "
+                  alt=""
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Desktop bottom  -->
+        <div class="relative bottom-2 ml-1/2 -translate-x-1/2 w-1/2 mt-6 px-2">
+          <div class="mt-4 justify-between hidden lg:flex">
+            <div class="w-1/3 relative">
+              <div>
+                Câu <span>{{ currentQuestion + 1 }}</span> /
+                {{ unitDetail.numberQuestion }}
+              </div>
+              <div>
+                <a-progress
+                  stroke-color="#3699CF"
+                  stroke-linecap="square"
+                  :percent="
+                    ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+                  "
+                />
+              </div>
+            </div>
+            <div class="flex gap-x-4">
+              <button
+                :disabled="currentPartQuestion == 0"
+                @click="moveToPart(-1)"
+                class="btn btn-primary flex items-center gap-x-2"
+              >
+                <span class="icon-up"></span>
+                <span class="whitespace-nowrap">Câu trước</span>
+              </button>
+              <button
+                @click="moveToPart(1)"
+                :disabled="
+                  lastPart ||
+                  currentPartQuestion == unitDetail.questionPart.length - 1
+                "
+                class="btn btn-primary flex items-center gap-x-2"
+              >
+                <span class="whitespace-nowrap">Câu sau</span>
+                <span class="icon-down"></span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -251,6 +317,11 @@ export default defineComponent({
     const scrollToSection = (id) => {
       const section = document.getElementById(id);
       el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
+    };
+    const scrollToSectionMobile = (id) => {
+      const section = document.getElementById(id);
+      el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
+      showListQuestion.value = false;
     };
     const onScroll = (event) => {
       const scrollTop = event.target.scrollTop;
@@ -317,6 +388,7 @@ export default defineComponent({
       scrollToSection,
       onScroll,
       moveToPart,
+      scrollToSectionMobile,
     };
   },
 });
@@ -324,17 +396,20 @@ export default defineComponent({
 <style>
 .history-question-wrapper {
   height: calc(100vh - 150px);
-  overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  padding: 0 8px;
+  width: 50%;
+}
+.list-answer-wrapper {
+  margin-top: 0;
 }
 .list-answer-wrapper {
   background: white;
   border-radius: 8px;
   padding: 16px;
-  width: 50%;
-  transform: translateX(-50%);
-  margin: 10px 0 10px 50%;
+  width: 100%;
+  margin-bottom: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
@@ -342,6 +417,10 @@ export default defineComponent({
   .list-answer-wrapper {
     width: 100%;
     padding: 16px 40px;
+  }
+  .history-question-wrapper {
+    width: 100%;
+    height: calc(100vh - 136px);
   }
 }
 </style>

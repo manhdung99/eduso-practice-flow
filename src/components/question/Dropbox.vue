@@ -10,7 +10,7 @@
     </div>
     <div
       v-html="question.Description"
-      class="font-medium pr-14 pt-4 leading-12"
+      class="font-medium lg:pr-14 pt-4 leading-12"
     ></div>
   </div>
 </template>

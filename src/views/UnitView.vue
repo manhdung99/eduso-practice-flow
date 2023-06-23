@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-hidden pb-2" v-if="JSON.stringify(unitDetail) != '{}'">
     <div
-      class="px-4 py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
+      class="px-4 py-3 lg:py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
     >
       <router-link to="/">
         <div

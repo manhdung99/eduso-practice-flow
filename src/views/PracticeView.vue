@@ -1,7 +1,10 @@
 <template>
-  <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
+  <div
+    class="overflow-hidden px-4 lg:px-0 pb-2 lg:pb-0"
+    v-if="JSON.stringify(unitDetail) != '{}'"
+  >
     <div
-      class="px-4 py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
+      class="px-4 py-3 lg:py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
     >
       <div
         @click="$router.go(-1)"
@@ -15,14 +18,11 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div
-      v-if="currentPartQuestion && !showWorkbook"
-      class="relative px-3 lg:px-0"
-    >
+    <div v-if="currentPartQuestion && !showWorkbook" class="relative px-0">
       <!-- Matching  -->
       <div
         v-if="currentPartQuestion.type == 'QUIZ4'"
-        class="two-question-wrapper"
+        class="two-question-wrapper lg:mx-auto mt-4"
       >
         <div class="w-full h-full px-0 relative">
           <div class="question-wrapper scroll-area">
@@ -127,7 +127,7 @@
             </div>
           </div>
           <div
-            class="absolute -left-40 hover:left-0 top-0 bg-primary text-white items-center gap-x-4 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+            class="absolute -left-42 hover:left-0 top-0 bg-primary text-white items-center gap-x-5 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
             @click="showAnswer = true"
             v-else
           >
@@ -135,7 +135,7 @@
             <span class="icon-right"></span>
           </div>
         </div>
-        <div>
+        <div class="px-0 pb-2 w-full">
           <!-- One question  -->
           <div
             v-if="
@@ -144,79 +144,81 @@
             "
             class="one-question-wrapper"
           >
-            <div class="px-1 pb-8 border-b border-gray-300 text-sm">
-              <div v-html="currentPartQuestion.partContent"></div>
-            </div>
-            <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ1'">
-              <MutipleChoice
-                v-for="(question, index) in currentPartQuestion.questions"
-                :key="question.questionID"
-                :updateSelectedAnswer="updateSelectedAnswer"
-                :question="question"
-                :index="index"
-                :partID="currentPartQuestion.id"
-              />
-            </div>
-            <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ2'">
-              <FillInBlank
-                :class="
-                  currentPartQuestion.questions.length < 2
-                    ? 'one-question scroll-area'
-                    : ''
-                "
-                v-for="(question, index) in currentPartQuestion.questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-                :partID="currentPartQuestion.id"
-                :answerList="answerList"
-              />
-            </div>
-            <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
-              <DropBox
-                :class="
-                  currentPartQuestion.questions.length < 2
-                    ? 'one-question scroll-area'
-                    : ''
-                "
-                v-for="(question, index) in currentPartQuestion.questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-                :partID="currentPartQuestion.id"
-                :optionList="optionList"
-              />
-            </div>
-            <div
-              class="checking-btn-wrapper"
-              v-if="currentPartQuestion.status == 'unmake'"
-            >
-              <button
-                :disabled="!selectedAll"
-                class="check-btn btn"
-                @click="checkAnswer"
+            <div class="content-question-part scroll-area">
+              <div class="px-1 pb-2 lg:pb-8 border-b border-gray-300 text-sm">
+                <div v-html="currentPartQuestion.partContent"></div>
+              </div>
+              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ1'">
+                <MutipleChoice
+                  v-for="(question, index) in currentPartQuestion.questions"
+                  :key="question.questionID"
+                  :updateSelectedAnswer="updateSelectedAnswer"
+                  :question="question"
+                  :index="index"
+                  :partID="currentPartQuestion.id"
+                />
+              </div>
+              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ2'">
+                <FillInBlank
+                  :class="
+                    currentPartQuestion.questions.length < 2
+                      ? 'one-question scroll-area'
+                      : ''
+                  "
+                  v-for="(question, index) in currentPartQuestion.questions"
+                  :key="question.questionID"
+                  :question="question"
+                  :index="index"
+                  :partID="currentPartQuestion.id"
+                  :answerList="answerList"
+                />
+              </div>
+              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
+                <DropBox
+                  :class="
+                    currentPartQuestion.questions.length < 2
+                      ? 'one-question scroll-area'
+                      : ''
+                  "
+                  v-for="(question, index) in currentPartQuestion.questions"
+                  :key="question.questionID"
+                  :question="question"
+                  :index="index"
+                  :partID="currentPartQuestion.id"
+                  :optionList="optionList"
+                />
+              </div>
+              <div
+                class="checking-btn-wrapper"
+                v-if="currentPartQuestion.status == 'unmake'"
               >
-                Kiểm tra
-              </button>
-            </div>
-            <div
-              class="checking-btn-wrapper"
-              v-else-if="currentPartQuestion.status == 'true'"
-            >
-              <button @click="goNextPartQuestion" class="check-btn btn">
-                Tiếp tục
-              </button>
-            </div>
-            <div class="checking-btn-wrapper" v-else>
-              <button
-                @click="goNextPartQuestion"
-                class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                <button
+                  :disabled="!selectedAll"
+                  class="check-btn btn"
+                  @click="checkAnswer"
+                >
+                  Kiểm tra
+                </button>
+              </div>
+              <div
+                class="checking-btn-wrapper"
+                v-else-if="currentPartQuestion.status == 'true'"
               >
-                Bỏ qua
-              </button>
-              <button @click="redoQuestion" class="btn btn-primary w-2/3">
-                Làm lại
-              </button>
+                <button @click="goNextPartQuestion" class="check-btn btn">
+                  Tiếp tục
+                </button>
+              </div>
+              <div class="checking-btn-wrapper" v-else>
+                <button
+                  @click="goNextPartQuestion"
+                  class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                >
+                  Bỏ qua
+                </button>
+                <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                  Làm lại
+                </button>
+              </div>
             </div>
           </div>
           <!-- 2 Question  -->
@@ -225,29 +227,29 @@
               currentPartQuestion.questions.length >= 2 &&
               currentPartQuestion.type != 'QUIZ4'
             "
-            class="two-question-wrapper mx-auto"
+            class="two-question-wrapper lg:mx-auto"
           >
             <div
-              :class="showTheoryMobile ? '!right-0' : ''"
-              class="w-full lg:w-1/2 h-full lg:border-r lg:border-gray-400 px-8 lg:pt-4 lg:px-4 absolute lg:relative -right-full lg:!right-0 transition-all duration-500 question-part-content scroll-area"
+              :class="showTheoryMobile ? 'show' : ''"
+              class="theory-question-part shadow-primary"
             >
               <span
                 v-if="showTheoryMobile"
                 @click="showTheoryMobile = false"
-                class="absolute top-2/5 left-0 lg:hidden"
+                class="absolute top-1/2 -left-4 lg:hidden"
               >
                 <img :src="circleRightIcon" alt=""
               /></span>
               <div v-html="currentPartQuestion.partContent"></div>
             </div>
             <div
-              :class="showTheoryMobile ? '!-left-full' : ''"
-              class="w-full lg:w-1/2 h-full px-8 pt-4 lg:px-4 lg:pr-1 lg:relative absolute transition-all duration-500"
+              :class="!showTheoryMobile ? 'show' : ''"
+              class="answer-question-part shadow-primary"
             >
               <span
                 v-if="!showTheoryMobile"
                 @click="showTheoryMobile = true"
-                class="absolute top-2/5 right-0 lg:hidden"
+                class="absolute top-1/2 -right-4 lg:hidden"
               >
                 <img :src="circleLeftIcon" alt=""
               /></span>
@@ -324,7 +326,7 @@
                 ? 'w-1/2'
                 : 'w-2/3'
             "
-            class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex"
+            class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex lg:px-1"
           >
             <div class="w-1/3 relative">
               <div>
@@ -364,7 +366,7 @@
         </div>
       </div>
       <!-- Mobile -->
-      <div class="flex py-2 justify-between px-4 items-center lg:hidden">
+      <div class="mobile-next-previous-part">
         <div class="flex w-full gap-x-2 items-center">
           <span @click="showAnswer = true"
             ><img :src="showListIcon" alt=""
@@ -400,77 +402,79 @@
             />
           </button>
           <button @click="goNextPartQuestion">
-            <img
-              :src="
-                unitDetail.currentIndex == unitDetail.questionPart.length - 1
-                  ? circleDownDisableIcon
-                  : circleDownIcon
-              "
-              alt=""
-            />
+            <img :src="circleDownIcon" alt="" />
           </button>
         </div>
       </div>
     </div>
     <div class="pb-4" v-if="currentPartQuestion && showWorkbook">
-      <div class="one-question-wrapper">
-        <h2>Bạn đã làm rất tốt</h2>
-        <h3>
-          Hãy nhấn vào nút “Hoàn thành” để xem lại đáp án và đánh giá kết quả
-          của mình.
-        </h3>
-        <p class="text-sm text-indigo-lighter mb-5 font-medium">
-          Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
-            unitDetail.numberQuestion
-          }}
-          câu
-          <span class="text-raspberry italic"
-            >(còn
-            {{ unitDetail.numberQuestion - unitDetail.numberQuestionComplete }}
-            câu)</span
-          >
-        </p>
-        <div class="list-question-part scroll-area">
-          <div v-for="(part, index) in unitDetail.questionPart" :key="part.id">
-            <h3 class="text-indigo font-semibold mb-2">Phần {{ index + 1 }}</h3>
-            <!-- Question -->
-            <div
-              v-for="(question, questionIndex) in part.questions"
-              :key="question.questionID"
-              class="flex justify-between"
+      <div class="workbook-question-wrapper mt-4">
+        <div class="history-content">
+          <h2>Bạn đã làm rất tốt</h2>
+          <h3>
+            Hãy nhấn vào nút “Hoàn thành” để xem lại đáp án và đánh giá kết quả
+            của mình.
+          </h3>
+          <p class="text-sm text-indigo-lighter mb-5 font-medium">
+            Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+              unitDetail.numberQuestion
+            }}
+            câu
+            <span class="text-raspberry italic"
+              >(còn
+              {{
+                unitDetail.numberQuestion - unitDetail.numberQuestionComplete
+              }}
+              câu)</span
             >
-              <div class="flex items-center gap-x-2.5 py-2">
+          </p>
+          <div class="list-question-part scroll-area">
+            <div
+              v-for="(part, index) in unitDetail.questionPart"
+              :key="part.id"
+            >
+              <h3 class="text-indigo font-semibold mb-2">
+                Phần {{ index + 1 }}
+              </h3>
+              <!-- Question -->
+              <div
+                v-for="(question, questionIndex) in part.questions"
+                :key="question.questionID"
+                class="flex justify-between"
+              >
+                <div class="flex items-center gap-x-2.5 py-2">
+                  <span
+                    v-if="question.status == 'true'"
+                    class="icon-correct-answer"
+                    ><span class="path1"></span><span class="path2"></span
+                    ><span class="path3"></span
+                  ></span>
+                  <span
+                    v-else-if="question.status == 'false'"
+                    class="icon-incorrect-answer"
+                    ><span class="path1"></span><span class="path2"></span
+                  ></span>
+                  <span class="icon-unmake-answer" v-else></span>
+                  <span class="text-sm text-indigo"
+                    >Câu {{ questionIndex + 1 }}</span
+                  >
+                </div>
                 <span
-                  v-if="question.status == 'true'"
-                  class="icon-correct-answer"
-                  ><span class="path1"></span><span class="path2"></span
-                  ><span class="path3"></span
-                ></span>
-                <span
-                  v-else-if="question.status == 'false'"
-                  class="icon-incorrect-answer"
-                  ><span class="path1"></span><span class="path2"></span
-                ></span>
-                <span class="icon-unmake-answer" v-else></span>
-                <span class="text-sm text-indigo"
-                  >Câu {{ questionIndex + 1 }}</span
+                  v-if="question.status == 'unmake'"
+                  @click="
+                    moveToChoosedQuestion(part.id);
+                    showWorkbook = false;
+                  "
+                  class="text-iceberg-lighter italic hover:underline cursor-pointer"
+                  >Làm ngay</span
                 >
               </div>
-              <span
-                v-if="question.status == 'unmake'"
-                @click="
-                  moveToChoosedQuestion(part.id);
-                  showWorkbook = false;
-                "
-                class="text-iceberg-lighter italic hover:underline cursor-pointer"
-                >Làm ngay</span
-              >
             </div>
           </div>
+          <router-link :to="`/unit/${unitDetail.id}`">
+            <button class="btn btn-primary complete-btn">Hoàn thành</button>
+          </router-link>
         </div>
-        <router-link :to="`/unit/${unitDetail.id}`">
-          <button class="btn btn-primary complete-btn">Hoàn thành</button>
-        </router-link>
       </div>
     </div>
   </div>
@@ -916,10 +920,6 @@ export default defineComponent({
   max-height: calc(100% - 75px);
 }
 
-.question-part-content {
-  overflow-y: auto;
-}
-
 .one-question-wrapper {
   background: white;
   border-radius: 8px;
@@ -961,19 +961,80 @@ export default defineComponent({
 .question-wrapper.scrollbar-invisible::-webkit-scrollbar-thumb {
   background-color: #555555; /* Set the color of the scroll bar thumb when visible */
 }
-
+.mobile-next-previous-part {
+  display: none;
+}
+.theory-question-part {
+  width: 50%;
+  height: 100%;
+  border-right: 1px solid #c1c1c1;
+  padding: 0 16px;
+  position: relative;
+  right: 0;
+  transition: all ease 500ms;
+}
+.answer-question-part {
+  width: 50%;
+  height: 100%;
+  padding: 0 16px;
+  position: relative;
+  left: 0;
+  transition: all ease 500ms;
+}
+.workbook-question-wrapper {
+  position: relative;
+  width: 50%;
+  height: calc(100vh - 128px);
+  padding: 24px 24px 0;
+  margin: 0;
+  transform: unset;
+  padding-bottom: 28px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+}
+.history-content {
+  height: calc(100% - 70px);
+}
+.content-question-part {
+  height: 100%;
+}
 @media screen and (max-width: 1023px) {
   .two-question-wrapper {
     width: 100%;
+    height: calc(100vh - 200px);
+    box-shadow: unset;
   }
 
   .one-question-wrapper {
+    position: relative;
     width: 100%;
+    height: calc(100vh - 190px);
+    padding: 24px 24px 0;
+    margin: 0;
+    transform: unset;
+    padding-bottom: 28px;
   }
 
   .checking-btn-wrapper {
-    width: calc(100% - 76px);
-    bottom: 12px;
+    width: calc(100% - 48px);
+    position: absolute;
+    bottom: 16px;
+    left: 24px;
+  }
+  .mobile-next-previous-part {
+    display: flex;
+    padding: 8px 0;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 32px);
+    position: fixed;
+    bottom: 0px;
+    left: 16px;
+    background: transparent;
+  }
+  .shadow-primary {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
   }
 }
 
@@ -988,6 +1049,7 @@ export default defineComponent({
     width: auto;
     background: #00000080;
     height: auto;
+    z-index: 10;
   }
 
   .list-question {
@@ -999,6 +1061,53 @@ export default defineComponent({
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     height: 75%;
+  }
+  .theory-modal {
+    margin: 0;
+    transform: translateX(0);
+    min-height: unset;
+    width: unset;
+    position: fixed;
+    top: 8px;
+    bottom: 8px;
+    right: 8px;
+    left: 8px;
+  }
+  .content-question-part {
+    height: calc(100% - 40px);
+  }
+  .answer-question-part {
+    width: 100%;
+    border: unset;
+    padding: 0 32px;
+    position: absolute;
+    left: -105%;
+    padding-top: 8px;
+    border-radius: 8px;
+  }
+  .answer-question-part.show {
+    left: 0;
+  }
+  .theory-question-part {
+    width: 100%;
+    border: unset;
+    padding: 0 32px;
+    position: absolute;
+    right: -115%;
+    border-radius: 8px;
+    padding-top: 8px;
+  }
+  .theory-question-part.show {
+    right: 0;
+  }
+  .workbook-question-wrapper {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 72px);
+    padding: 16px 16px 0;
+    margin: 0;
+    transform: unset;
+    padding-bottom: 28px;
   }
 }
 </style>
