@@ -1,5 +1,8 @@
 <template>
-  <div class="overflow-hidden" v-if="JSON.stringify(unitDetail) != '{}'">
+  <div
+    class="overflow-hidden history-view"
+    v-if="JSON.stringify(unitDetail) != '{}'"
+  >
     <div
       class="px-4 py-3 lg:py-5 relative shadow shadow-gray-300 flex items-center lg:justify-center"
     >
@@ -175,6 +178,16 @@
                 :optionList="optionList"
               />
             </div>
+            <div v-if="questionPart.type == 'QUIZ4'">
+              <MatchingHistory
+                v-for="(question, index) in questionPart.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+                :partID="questionPart.id"
+                :currentPartQuestion="questionPart"
+              />
+            </div>
           </div>
           <!-- Mobile bottom  -->
           <div class="mobile-next-previous-part">
@@ -294,6 +307,7 @@ import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import MutipleChoiceHistory from "@/components/question/MutipleChoiceHistory.vue";
 import FillInBlankHistory from "@/components/question/FillInBlankHistory.vue";
 import DropboxHistory from "@/components/question/DropboxHistory.vue";
+import MatchingHistory from "@/components/question/MatchingHistory.vue";
 import TheoryModal from "@/components/modal/TheoryModal.vue";
 export default defineComponent({
   name: "PracticeHistory",
@@ -301,6 +315,7 @@ export default defineComponent({
     MutipleChoiceHistory,
     FillInBlankHistory,
     DropboxHistory,
+    MatchingHistory,
     TheoryModal,
   },
   setup() {
@@ -394,6 +409,9 @@ export default defineComponent({
 });
 </script>
 <style>
+.history-view p {
+  margin: 0;
+}
 .history-question-wrapper {
   height: calc(100vh - 150px);
   overflow-x: hidden;

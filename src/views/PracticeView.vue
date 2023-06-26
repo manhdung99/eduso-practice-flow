@@ -19,58 +19,6 @@
       </div>
     </div>
     <div v-if="currentPartQuestion && !showWorkbook" class="relative px-0">
-      <!-- Matching  -->
-      <div
-        v-if="currentPartQuestion.type == 'QUIZ4'"
-        class="two-question-wrapper lg:mx-auto mt-4"
-      >
-        <div class="w-full h-full px-0 relative">
-          <div class="question-wrapper scroll-area">
-            <Matching
-              v-for="(question, index) in currentPartQuestion.questions"
-              :key="question.questionID"
-              :updateSelectedAnswer="updateSelectedAnswer"
-              :question="question"
-              :index="index"
-              :partID="currentPartQuestion.id"
-              :currentPartQuestion="currentPartQuestion"
-              :setAllSelectd="setAllSelectd"
-              :unitIndex="unitDetail.currentIndex"
-            />
-          </div>
-          <div
-            class="checking-btn-wrapper matching"
-            v-if="currentPartQuestion.status == 'unmake'"
-          >
-            <button
-              :disabled="!selectedAll"
-              class="check-btn btn"
-              @click="checkAnswer"
-            >
-              Kiểm tra
-            </button>
-          </div>
-          <div
-            class="checking-btn-wrapper matching"
-            v-else-if="currentPartQuestion.status == 'true'"
-          >
-            <button @click="goNextPartQuestion" class="check-btn btn">
-              Tiếp tục
-            </button>
-          </div>
-          <div class="checking-btn-wrapper matching" v-else>
-            <button
-              @click="goNextPartQuestion"
-              class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
-            >
-              Bỏ qua
-            </button>
-            <button @click="redoQuestion" class="btn btn-primary w-2/3">
-              Làm lại
-            </button>
-          </div>
-        </div>
-      </div>
       <div class="flex mt-4">
         <div>
           <!-- List question -->
@@ -136,6 +84,58 @@
           </div>
         </div>
         <div class="px-0 pb-2 w-full">
+          <!-- Matching  -->
+          <div
+            v-if="currentPartQuestion.type == 'QUIZ4'"
+            class="two-question-wrapper lg:mx-auto mt-4"
+          >
+            <div class="w-full h-full px-0 relative">
+              <div class="question-wrapper scroll-area">
+                <Matching
+                  v-for="(question, index) in currentPartQuestion.questions"
+                  :key="question.questionID"
+                  :updateSelectedAnswer="updateSelectedAnswer"
+                  :question="question"
+                  :index="index"
+                  :partID="currentPartQuestion.id"
+                  :currentPartQuestion="currentPartQuestion"
+                  :setAllSelectd="setAllSelectd"
+                  :unitIndex="unitDetail.currentIndex"
+                />
+              </div>
+              <div
+                class="checking-btn-wrapper matching"
+                v-if="currentPartQuestion.status == 'unmake'"
+              >
+                <button
+                  :disabled="!selectedAll"
+                  class="check-btn btn"
+                  @click="checkAnswer"
+                >
+                  Kiểm tra
+                </button>
+              </div>
+              <div
+                class="checking-btn-wrapper matching"
+                v-else-if="currentPartQuestion.status == 'true'"
+              >
+                <button @click="goNextPartQuestion" class="check-btn btn">
+                  Tiếp tục
+                </button>
+              </div>
+              <div class="checking-btn-wrapper matching" v-else>
+                <button
+                  @click="goNextPartQuestion"
+                  class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                >
+                  Bỏ qua
+                </button>
+                <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                  Làm lại
+                </button>
+              </div>
+            </div>
+          </div>
           <!-- One question  -->
           <div
             v-if="

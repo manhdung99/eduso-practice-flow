@@ -735,7 +735,7 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "table",
                       currentAnswer: "",
                       status: "unmake",
-                      contentAnswer: '<p>3. A work setup"</p>\n',
+                      contentAnswer: "<p>3. A work setup</p>\n",
                       contentQuestion:
                         '<p style="text-align: center;"><img height="135" src="https://i.ibb.co/QF16Fjd/table.jpg" width="280" /></p>\n',
                       isSelected: false,
@@ -801,7 +801,7 @@ export const useUnitStore = defineStore("unitStore", {
               ],
             },
             {
-              id: "part1",
+              id: "part3",
               type: "QUIZ4",
               partContent:
                 "<div class='vocab-box'><b class='word-title'>This audio track describes a list of various objects.</b> Which photo corresponds with which object? Select down below.<div class='vocab-audio'><button onclick='PlayPronun(this)'><i class='ic fas fa-volume-up'></i></button><audio class='d-none' id='audio' controls><source src='https://dictionary.cambridge.org/vi/media/english/us_pron/v/voy/voyag/voyage.mp3' type='audio/mpeg' />Your browser does not support the audio tag</audio></div></div>",
@@ -842,7 +842,7 @@ export const useUnitStore = defineStore("unitStore", {
                       answerValue: "table",
                       currentAnswer: "",
                       status: "unmake",
-                      contentAnswer: '<p>3. A work setup"</p>\n',
+                      contentAnswer: "<p>3. A work setup</p>\n",
                       contentQuestion: "<p>A laptop, phone and notebook</p>\n",
                       isSelected: false,
                       currentContent: "",

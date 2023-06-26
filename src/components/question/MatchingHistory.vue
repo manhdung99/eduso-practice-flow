@@ -1,40 +1,18 @@
 <template lang="">
   <div class="flex flex-wrap" v-if="question">
-    <div
-      class="w-full lg:w-1/2 h-full mb-4 lg:mb-0 lg:border-r lg:border-gray-400 px-8 pt-4 lg:px-4 relative scroll-area"
-    >
-      <div v-html="currentPartQuestion.partContent"></div>
-      <div
-        v-for="(answer, index) in question.answers"
-        :key="answer.answerID"
-        :id="answer.answerID"
-        class="font-medium pt-4 leading-12 target-div cursor-pointer"
-        @click="setImage($event, index)"
-      >
-        <div
-          v-show="!answer.choosedContent"
-          v-html="answer.contentQuestion"
-        ></div>
-      </div>
-    </div>
-    <div
-      class="w-full lg:w-1/2 h-full pl-8 pr-5 lg:pl-4 lg:pr-1 relative lg:pt-4"
-    >
+    <div class="w-full h-full pl-8 pr-5 lg:pl-4 lg:pr-1 relative lg:pt-4">
       <div>
         <div v-for="(answer, index) in question.answers" :key="answer.answerID">
-          <div class="mb-4">
-            <div v-html="answer.contentAnswer" class="font-medium"></div>
+          <div class="mb-4 flex items-center">
+            <div v-html="answer.contentAnswer" class="font-medium flex-1"></div>
             <div
               @click="currentIndex = index"
               :class="[
-                index == currentIndex && answer.status == 'unmake'
-                  ? 'active'
-                  : '',
                 answer.status == false ? 'false' : '',
+                answer.status == 'unmake' ? 'unmake' : '',
                 answer.status == true ? 'true' : '',
-                answer.status == 'answered' ? 'has-content' : '',
               ]"
-              class="matching-input"
+              class="matching-input flex-1"
             >
               <span
                 @click="removeImage($event, index)"
@@ -42,16 +20,10 @@
                 class="w-6 h-6 absolute right-2 top-2"
                 ><img :src="removeIcon" alt=""
               /></span>
-              <span
-                :class="answer.status != 'unmake' ? 'hidden' : ''"
-                class="matching-input-text"
-              >
-                {{
-                  index == currentIndex
-                    ? "Chọn đáp án từ danh sách bên cạnh"
-                    : "Đáp án"
-                }}
-              </span>
+              <div
+                v-if="answer.status == 'unmake'"
+                v-html="answer.contentQuestion"
+              ></div>
               <div
                 v-if="answer.status != 'unmake'"
                 v-html="answer.currentContent"
@@ -200,6 +172,10 @@ export default defineComponent({
 .matching-input.true {
   border: 1px solid #55934b;
   background: #eaf1e9;
+}
+.matching-input.unmake {
+  border: 1px dashed #55934b;
+  color: #55934b;
 }
 .matching-input.has-content {
   border: 1px solid #a1a1a1;
