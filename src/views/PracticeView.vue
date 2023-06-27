@@ -1,6 +1,6 @@
 <template>
   <div
-    class="overflow-hidden px-4 lg:px-0 pb-2 lg:pb-0"
+    class="overflow-hidden pb-2 lg:pb-0"
     v-if="JSON.stringify(unitDetail) != '{}'"
   >
     <div
@@ -18,243 +18,138 @@
         {{ unitDetail.unitTitle }}
       </div>
     </div>
-    <div v-if="currentPartQuestion && !showWorkbook" class="relative px-0">
-      <div class="flex mt-4">
-        <div>
-          <!-- List question -->
-          <div v-if="showAnswer" class="list-question-wrapper">
-            <div class="list-question">
-              <div class="flex items-center mb-6 justify-between">
-                <div class="text-lg text-indigo-darker font-medium">
-                  Danh sách câu hỏi
+    <div class="px-4 lg:px-0">
+      <div v-if="currentPartQuestion && !showWorkbook" class="relative px-0">
+        <div class="flex mt-4">
+          <div>
+            <!-- List question -->
+            <div v-if="showAnswer" class="list-question-wrapper">
+              <div class="list-question">
+                <div class="flex items-center mb-6 justify-between">
+                  <div class="text-lg text-indigo-darker font-medium">
+                    Danh sách câu hỏi
+                  </div>
+                  <span
+                    @click="showAnswer = false"
+                    class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
+                  ></span>
                 </div>
-                <span
-                  @click="showAnswer = false"
-                  class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
-                ></span>
-              </div>
-              <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
-                Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
-                  unitDetail.numberQuestion
-                }}
-                câu
-              </p>
-              <div class="list-question-part scroll-area">
-                <div
-                  v-for="(part, index) in unitDetail.questionPart"
-                  :key="part.id"
-                >
-                  <h3 class="text-indigo font-semibold mb-2">
-                    Phần {{ index + 1 }}
-                  </h3>
-                  <!-- Question -->
+                <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
+                  Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
+                    unitDetail.numberQuestion
+                  }}
+                  câu
+                </p>
+                <div class="list-question-part scroll-area">
                   <div
-                    v-for="(question, questionIndex) in part.questions"
-                    :key="question.questionID"
-                    @click="moveToChoosedQuestion(part.id)"
-                    class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
+                    v-for="(part, index) in unitDetail.questionPart"
+                    :key="part.id"
                   >
-                    <span
-                      v-if="question.status == 'true'"
-                      class="icon-correct-answer"
-                      ><span class="path1"></span><span class="path2"></span
-                      ><span class="path3"></span
-                    ></span>
-                    <span
-                      v-else-if="question.status == 'false'"
-                      class="icon-incorrect-answer"
-                      ><span class="path1"></span><span class="path2"></span
-                    ></span>
-                    <span class="icon-unmake-answer" v-else></span>
-                    <span class="text-sm text-indigo"
-                      >Câu {{ questionIndex + 1 }}</span
+                    <h3 class="text-indigo font-semibold mb-2">
+                      Phần {{ index + 1 }}
+                    </h3>
+                    <!-- Question -->
+                    <div
+                      v-for="(question, questionIndex) in part.questions"
+                      :key="question.questionID"
+                      @click="moveToChoosedQuestion(part.id)"
+                      class="flex items-center gap-x-2.5 py-2 hover:bg-slate-200 cursor-pointer"
                     >
+                      <span
+                        v-if="question.status == 'true'"
+                        class="icon-correct-answer"
+                        ><span class="path1"></span><span class="path2"></span
+                        ><span class="path3"></span
+                      ></span>
+                      <span
+                        v-else-if="question.status == 'false'"
+                        class="icon-incorrect-answer"
+                        ><span class="path1"></span><span class="path2"></span
+                      ></span>
+                      <span class="icon-unmake-answer" v-else></span>
+                      <span class="text-sm text-indigo"
+                        >Câu {{ questionIndex + 1 }}</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            class="absolute -left-42 hover:left-0 top-0 bg-primary text-white items-center gap-x-5 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
-            @click="showAnswer = true"
-            v-else
-          >
-            <span class="text-sm">Xem danh sách câu hỏi</span>
-            <span class="icon-right"></span>
-          </div>
-        </div>
-        <div class="px-0 pb-2 w-full">
-          <!-- Matching  -->
-          <div
-            v-if="currentPartQuestion.type == 'QUIZ4'"
-            class="two-question-wrapper lg:mx-auto mt-4"
-          >
-            <div class="w-full h-full px-0 relative">
-              <div class="question-wrapper scroll-area">
-                <Matching
-                  v-for="(question, index) in currentPartQuestion.questions"
-                  :key="question.questionID"
-                  :updateSelectedAnswer="updateSelectedAnswer"
-                  :question="question"
-                  :index="index"
-                  :partID="currentPartQuestion.id"
-                  :currentPartQuestion="currentPartQuestion"
-                  :setAllSelectd="setAllSelectd"
-                  :unitIndex="unitDetail.currentIndex"
-                />
-              </div>
-              <div
-                class="checking-btn-wrapper matching"
-                v-if="currentPartQuestion.status == 'unmake'"
-              >
-                <button
-                  :disabled="!selectedAll"
-                  class="check-btn btn"
-                  @click="checkAnswer"
-                >
-                  Kiểm tra
-                </button>
-              </div>
-              <div
-                class="checking-btn-wrapper matching"
-                v-else-if="currentPartQuestion.status == 'true'"
-              >
-                <button @click="goNextPartQuestion" class="check-btn btn">
-                  Tiếp tục
-                </button>
-              </div>
-              <div class="checking-btn-wrapper matching" v-else>
-                <button
-                  @click="goNextPartQuestion"
-                  class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
-                >
-                  Bỏ qua
-                </button>
-                <button @click="redoQuestion" class="btn btn-primary w-2/3">
-                  Làm lại
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- One question  -->
-          <div
-            v-if="
-              currentPartQuestion.questions.length < 2 &&
-              currentPartQuestion.type != 'QUIZ4'
-            "
-            class="one-question-wrapper"
-          >
-            <div class="content-question-part scroll-area">
-              <div class="px-1 pb-2 lg:pb-8 border-b border-gray-300 text-sm">
-                <div v-html="currentPartQuestion.partContent"></div>
-              </div>
-              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ1'">
-                <MutipleChoice
-                  v-for="(question, index) in currentPartQuestion.questions"
-                  :key="question.questionID"
-                  :updateSelectedAnswer="updateSelectedAnswer"
-                  :question="question"
-                  :index="index"
-                  :partID="currentPartQuestion.id"
-                />
-              </div>
-              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ2'">
-                <FillInBlank
-                  :class="
-                    currentPartQuestion.questions.length < 2
-                      ? 'one-question scroll-area'
-                      : ''
-                  "
-                  v-for="(question, index) in currentPartQuestion.questions"
-                  :key="question.questionID"
-                  :question="question"
-                  :index="index"
-                  :partID="currentPartQuestion.id"
-                  :answerList="answerList"
-                />
-              </div>
-              <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
-                <DropBox
-                  :class="
-                    currentPartQuestion.questions.length < 2
-                      ? 'one-question scroll-area'
-                      : ''
-                  "
-                  v-for="(question, index) in currentPartQuestion.questions"
-                  :key="question.questionID"
-                  :question="question"
-                  :index="index"
-                  :partID="currentPartQuestion.id"
-                  :optionList="optionList"
-                />
-              </div>
-              <div
-                class="checking-btn-wrapper"
-                v-if="currentPartQuestion.status == 'unmake'"
-              >
-                <button
-                  :disabled="!selectedAll"
-                  class="check-btn btn"
-                  @click="checkAnswer"
-                >
-                  Kiểm tra
-                </button>
-              </div>
-              <div
-                class="checking-btn-wrapper"
-                v-else-if="currentPartQuestion.status == 'true'"
-              >
-                <button @click="goNextPartQuestion" class="check-btn btn">
-                  Tiếp tục
-                </button>
-              </div>
-              <div class="checking-btn-wrapper" v-else>
-                <button
-                  @click="goNextPartQuestion"
-                  class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
-                >
-                  Bỏ qua
-                </button>
-                <button @click="redoQuestion" class="btn btn-primary w-2/3">
-                  Làm lại
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- 2 Question  -->
-          <div
-            v-if="
-              currentPartQuestion.questions.length >= 2 &&
-              currentPartQuestion.type != 'QUIZ4'
-            "
-            class="two-question-wrapper lg:mx-auto"
-          >
             <div
-              :class="showTheoryMobile ? 'show' : ''"
-              class="theory-question-part shadow-primary"
+              class="absolute -left-42 hover:left-0 top-0 bg-primary text-white items-center gap-x-5 px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+              @click="showAnswer = true"
+              v-else
             >
-              <span
-                v-if="showTheoryMobile"
-                @click="showTheoryMobile = false"
-                class="absolute top-1/2 -left-4 lg:hidden"
-              >
-                <img :src="circleRightIcon" alt=""
-              /></span>
-              <div v-html="currentPartQuestion.partContent"></div>
+              <span class="text-sm">Xem danh sách câu hỏi</span>
+              <span class="icon-right"></span>
             </div>
+          </div>
+          <div class="px-0 pb-2 w-full">
+            <!-- Matching  -->
             <div
-              :class="!showTheoryMobile ? 'show' : ''"
-              class="answer-question-part shadow-primary"
+              v-if="currentPartQuestion.type == 'QUIZ4'"
+              class="two-question-wrapper lg:mx-auto mt-4"
             >
-              <span
-                v-if="!showTheoryMobile"
-                @click="showTheoryMobile = true"
-                class="absolute top-1/2 -right-4 lg:hidden"
-              >
-                <img :src="circleLeftIcon" alt=""
-              /></span>
-              <div class="question-wrapper scroll-area">
-                <div v-if="currentPartQuestion.type == 'QUIZ1'">
+              <div class="w-full h-full px-0 relative">
+                <div class="question-wrapper scroll-area">
+                  <Matching
+                    v-for="(question, index) in currentPartQuestion.questions"
+                    :key="question.questionID"
+                    :updateSelectedAnswer="updateSelectedAnswer"
+                    :question="question"
+                    :index="index"
+                    :partID="currentPartQuestion.id"
+                    :currentPartQuestion="currentPartQuestion"
+                    :setAllSelectd="setAllSelectd"
+                    :unitIndex="unitDetail.currentIndex"
+                  />
+                </div>
+                <div
+                  class="checking-btn-wrapper matching"
+                  v-if="currentPartQuestion.status == 'unmake'"
+                >
+                  <button
+                    :disabled="!selectedAll"
+                    class="check-btn btn"
+                    @click="checkAnswer"
+                  >
+                    Kiểm tra
+                  </button>
+                </div>
+                <div
+                  class="checking-btn-wrapper matching"
+                  v-else-if="currentPartQuestion.status == 'true'"
+                >
+                  <button @click="goNextPartQuestion" class="check-btn btn">
+                    Tiếp tục
+                  </button>
+                </div>
+                <div class="checking-btn-wrapper matching" v-else>
+                  <button
+                    @click="goNextPartQuestion"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                  >
+                    Bỏ qua
+                  </button>
+                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                    Làm lại
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- One question  -->
+            <div
+              v-if="
+                currentPartQuestion.questions.length < 2 &&
+                currentPartQuestion.type != 'QUIZ4'
+              "
+              class="one-question-wrapper"
+            >
+              <div class="content-question-part scroll-area">
+                <div class="px-1 pb-2 lg:pb-8 border-b border-gray-300 text-sm">
+                  <div v-html="currentPartQuestion.partContent"></div>
+                </div>
+                <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ1'">
                   <MutipleChoice
                     v-for="(question, index) in currentPartQuestion.questions"
                     :key="question.questionID"
@@ -264,8 +159,13 @@
                     :partID="currentPartQuestion.id"
                   />
                 </div>
-                <div v-if="currentPartQuestion.type == 'QUIZ2'">
+                <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ2'">
                   <FillInBlank
+                    :class="
+                      currentPartQuestion.questions.length < 2
+                        ? 'one-question scroll-area'
+                        : ''
+                    "
                     v-for="(question, index) in currentPartQuestion.questions"
                     :key="question.questionID"
                     :question="question"
@@ -274,8 +174,13 @@
                     :answerList="answerList"
                   />
                 </div>
-                <div v-if="currentPartQuestion.type == 'QUIZ3'">
+                <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ3'">
                   <DropBox
+                    :class="
+                      currentPartQuestion.questions.length < 2
+                        ? 'one-question scroll-area'
+                        : ''
+                    "
                     v-for="(question, index) in currentPartQuestion.questions"
                     :key="question.questionID"
                     :question="question"
@@ -284,52 +189,191 @@
                     :optionList="optionList"
                   />
                 </div>
-              </div>
-              <div
-                class="checking-btn-wrapper"
-                v-if="currentPartQuestion.status == 'unmake'"
-              >
-                <button
-                  :disabled="!selectedAll"
-                  class="check-btn btn"
-                  @click="checkAnswer"
+                <div
+                  class="checking-btn-wrapper"
+                  v-if="currentPartQuestion.status == 'unmake'"
                 >
-                  Kiểm tra
-                </button>
+                  <button
+                    :disabled="!selectedAll"
+                    class="check-btn btn"
+                    @click="checkAnswer"
+                  >
+                    Kiểm tra
+                  </button>
+                </div>
+                <div
+                  class="checking-btn-wrapper"
+                  v-else-if="currentPartQuestion.status == 'true'"
+                >
+                  <button @click="goNextPartQuestion" class="check-btn btn">
+                    Tiếp tục
+                  </button>
+                </div>
+                <div class="checking-btn-wrapper" v-else>
+                  <button
+                    @click="goNextPartQuestion"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                  >
+                    Bỏ qua
+                  </button>
+                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                    Làm lại
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- 2 Question  -->
+            <div
+              v-if="
+                currentPartQuestion.questions.length >= 2 &&
+                currentPartQuestion.type != 'QUIZ4'
+              "
+              class="two-question-wrapper lg:mx-auto"
+            >
+              <div
+                :class="showTheoryMobile ? 'show' : ''"
+                class="theory-question-part shadow-primary"
+              >
+                <span
+                  v-if="showTheoryMobile"
+                  @click="showTheoryMobile = false"
+                  class="absolute top-1/2 -left-4 lg:hidden"
+                >
+                  <img :src="circleRightIcon" alt=""
+                /></span>
+                <div v-html="currentPartQuestion.partContent"></div>
               </div>
               <div
-                class="checking-btn-wrapper"
-                v-else-if="currentPartQuestion.status == 'true'"
+                :class="!showTheoryMobile ? 'show' : ''"
+                class="answer-question-part shadow-primary"
               >
-                <button @click="goNextPartQuestion" class="check-btn btn">
-                  Tiếp tục
-                </button>
+                <span
+                  v-if="!showTheoryMobile"
+                  @click="showTheoryMobile = true"
+                  class="absolute top-1/2 -right-4 lg:hidden"
+                >
+                  <img :src="circleLeftIcon" alt=""
+                /></span>
+                <div class="question-wrapper scroll-area">
+                  <div v-if="currentPartQuestion.type == 'QUIZ1'">
+                    <MutipleChoice
+                      v-for="(question, index) in currentPartQuestion.questions"
+                      :key="question.questionID"
+                      :updateSelectedAnswer="updateSelectedAnswer"
+                      :question="question"
+                      :index="index"
+                      :partID="currentPartQuestion.id"
+                    />
+                  </div>
+                  <div v-if="currentPartQuestion.type == 'QUIZ2'">
+                    <FillInBlank
+                      v-for="(question, index) in currentPartQuestion.questions"
+                      :key="question.questionID"
+                      :question="question"
+                      :index="index"
+                      :partID="currentPartQuestion.id"
+                      :answerList="answerList"
+                    />
+                  </div>
+                  <div v-if="currentPartQuestion.type == 'QUIZ3'">
+                    <DropBox
+                      v-for="(question, index) in currentPartQuestion.questions"
+                      :key="question.questionID"
+                      :question="question"
+                      :index="index"
+                      :partID="currentPartQuestion.id"
+                      :optionList="optionList"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="checking-btn-wrapper"
+                  v-if="currentPartQuestion.status == 'unmake'"
+                >
+                  <button
+                    :disabled="!selectedAll"
+                    class="check-btn btn"
+                    @click="checkAnswer"
+                  >
+                    Kiểm tra
+                  </button>
+                </div>
+                <div
+                  class="checking-btn-wrapper"
+                  v-else-if="currentPartQuestion.status == 'true'"
+                >
+                  <button @click="goNextPartQuestion" class="check-btn btn">
+                    Tiếp tục
+                  </button>
+                </div>
+                <div class="checking-btn-wrapper" v-else>
+                  <button
+                    @click="goNextPartQuestion"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                  >
+                    Bỏ qua
+                  </button>
+                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                    Làm lại
+                  </button>
+                </div>
               </div>
-              <div class="checking-btn-wrapper" v-else>
+            </div>
+            <!-- Desktop next/previous part -->
+            <div
+              :class="
+                currentPartQuestion.questions.length < 2 &&
+                currentPartQuestion.type != 'QUIZ4'
+                  ? 'w-1/2'
+                  : 'w-2/3'
+              "
+              class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex lg:px-1"
+            >
+              <div class="w-1/3 relative">
+                <div>
+                  Câu <span>{{ currentQuestion + 1 }}</span> /
+                  {{ unitDetail.numberQuestion }}
+                </div>
+                <div>
+                  <a-progress
+                    stroke-color="#3699CF"
+                    stroke-linecap="square"
+                    :percent="
+                      (unitDetail.numberQuestionComplete /
+                        unitDetail.numberQuestion) *
+                      100
+                    "
+                  />
+                </div>
+              </div>
+              <div class="flex gap-x-4">
+                <button
+                  @click="unitDetail.currentIndex--"
+                  :disabled="unitDetail.currentIndex == 0"
+                  class="btn btn-primary flex items-center gap-x-2"
+                >
+                  <span class="icon-up"></span>
+                  <span class="whitespace-nowrap">Câu trước</span>
+                </button>
                 <button
                   @click="goNextPartQuestion"
-                  class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                  class="btn btn-primary flex items-center gap-x-2"
                 >
-                  Bỏ qua
-                </button>
-                <button @click="redoQuestion" class="btn btn-primary w-2/3">
-                  Làm lại
+                  <span class="whitespace-nowrap">Câu sau</span>
+                  <span class="icon-down"></span>
                 </button>
               </div>
             </div>
           </div>
-          <!-- Desktop next/previous part -->
-          <div
-            :class="
-              currentPartQuestion.questions.length < 2 &&
-              currentPartQuestion.type != 'QUIZ4'
-                ? 'w-1/2'
-                : 'w-2/3'
-            "
-            class="ml-1/2 -translate-x-1/2 mt-4 justify-between hidden lg:flex lg:px-1"
-          >
-            <div class="w-1/3 relative">
-              <div>
+        </div>
+        <!-- Mobile -->
+        <div class="mobile-next-previous-part">
+          <div class="flex w-full items-center">
+            <span class="mr-2" @click="showAnswer = true"
+              ><img :src="showListIcon" alt=""
+            /></span>
+            <div class="relative w-1/2">
+              <div class="text-indigo text-sm font-semibold">
                 Câu <span>{{ currentQuestion + 1 }}</span> /
                 {{ unitDetail.numberQuestion }}
               </div>
@@ -338,84 +382,44 @@
                   stroke-color="#3699CF"
                   stroke-linecap="square"
                   :percent="
-                    (unitDetail.numberQuestionComplete /
-                      unitDetail.numberQuestion) *
-                    100
+                    ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
                   "
                 />
               </div>
             </div>
-            <div class="flex gap-x-4">
-              <button
-                @click="unitDetail.currentIndex--"
-                :disabled="unitDetail.currentIndex == 0"
-                class="btn btn-primary flex items-center gap-x-2"
-              >
-                <span class="icon-up"></span>
-                <span class="whitespace-nowrap">Câu trước</span>
-              </button>
-              <button
-                @click="goNextPartQuestion"
-                class="btn btn-primary flex items-center gap-x-2"
-              >
-                <span class="whitespace-nowrap">Câu sau</span>
-                <span class="icon-down"></span>
-              </button>
-            </div>
           </div>
-        </div>
-      </div>
-      <!-- Mobile -->
-      <div class="mobile-next-previous-part">
-        <div class="flex w-full gap-x-2 items-center">
-          <span @click="showAnswer = true"
-            ><img :src="showListIcon" alt=""
-          /></span>
-          <div class="relative w-1/2">
-            <div class="text-indigo text-sm font-semibold">
-              Câu <span>{{ currentQuestion + 1 }}</span> /
-              {{ unitDetail.numberQuestion }}
-            </div>
-            <div>
-              <a-progress
-                stroke-color="#3699CF"
-                stroke-linecap="square"
-                :percent="
-                  ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
+          <div class="flex">
+            <button
+              @click="unitDetail.currentIndex--"
+              :disabled="unitDetail.currentIndex == 0"
+              class="mr-2"
+            >
+              <img
+                :src="
+                  unitDetail.currentIndex == 0
+                    ? circleTopDisableIcon
+                    : circleTopIcon
                 "
+                alt=""
               />
-            </div>
+            </button>
+            <button @click="goNextPartQuestion">
+              <img :src="circleDownIcon" alt="" />
+            </button>
           </div>
-        </div>
-        <div class="flex gap-x-2">
-          <button
-            @click="unitDetail.currentIndex--"
-            :disabled="unitDetail.currentIndex == 0"
-          >
-            <img
-              :src="
-                unitDetail.currentIndex == 0
-                  ? circleTopDisableIcon
-                  : circleTopIcon
-              "
-              alt=""
-            />
-          </button>
-          <button @click="goNextPartQuestion">
-            <img :src="circleDownIcon" alt="" />
-          </button>
         </div>
       </div>
     </div>
+
     <div class="pb-4" v-if="currentPartQuestion && showWorkbook">
       <div class="workbook-question-wrapper mt-4">
         <div class="history-content">
-          <h2>Bạn đã làm rất tốt</h2>
-          <h3>
+          <h2 class="text-lg text-indigo">Bạn đã làm rất tốt</h2>
+          <h3 class="italic text-indigo-lighter">
             Hãy nhấn vào nút “Hoàn thành” để xem lại đáp án và đánh giá kết quả
             của mình.
           </h3>
-          <p class="text-sm text-indigo-lighter mb-5 font-medium">
+          <p class="text-sm text-indigo-lighter mt-5 mb-5 font-medium">
             Đã trả lời {{ unitDetail.numberQuestionComplete }}/{{
               unitDetail.numberQuestion
             }}
@@ -442,7 +446,7 @@
                 :key="question.questionID"
                 class="flex justify-between"
               >
-                <div class="flex items-center gap-x-2.5 py-2">
+                <div class="flex items-center py-2">
                   <span
                     v-if="question.status == 'true'"
                     class="icon-correct-answer"
@@ -455,7 +459,7 @@
                     ><span class="path1"></span><span class="path2"></span
                   ></span>
                   <span class="icon-unmake-answer" v-else></span>
-                  <span class="text-sm text-indigo"
+                  <span class="text-sm text-indigo ml-2.5"
                     >Câu {{ questionIndex + 1 }}</span
                   >
                 </div>
@@ -1024,17 +1028,21 @@ export default defineComponent({
   }
   .mobile-next-previous-part {
     display: flex;
-    padding: 8px 0;
     justify-content: space-between;
     align-items: center;
     width: calc(100% - 32px);
     position: fixed;
-    bottom: 0px;
+    bottom: 4px;
     left: 16px;
     background: transparent;
   }
   .shadow-primary {
     box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+  }
+  @supports (-webkit-touch-callout: none) {
+    .two-question-wrapper {
+      height: calc(100vh - 210px);
+    }
   }
 }
 
@@ -1050,6 +1058,10 @@ export default defineComponent({
     background: #00000080;
     height: auto;
     z-index: 10;
+  }
+  .question-wrapper {
+    height: calc(100% - 80px);
+    padding-right: 12px;
   }
 
   .list-question {
@@ -1080,6 +1092,7 @@ export default defineComponent({
     width: 100%;
     border: unset;
     padding: 0 32px;
+    padding-right: 20px;
     position: absolute;
     left: -105%;
     padding-top: 8px;

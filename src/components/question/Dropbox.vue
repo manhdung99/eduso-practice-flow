@@ -1,6 +1,6 @@
 <template lang="">
   <div v-if="question">
-    <div class="absolute right-1 top-4">
+    <div class="absolute right-0 top-4">
       <img
         @click="updateTheoryModalStatus(true)"
         class="hover:opacity-80 cursor-pointer"

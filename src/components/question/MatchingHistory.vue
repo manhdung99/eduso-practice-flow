@@ -1,10 +1,13 @@
 <template lang="">
   <div class="flex flex-wrap" v-if="question">
-    <div class="w-full h-full pl-8 pr-5 lg:pl-4 lg:pr-1 relative lg:pt-4">
+    <div class="w-full h-full lg:pl-4 lg:pr-1 relative lg:pt-4 py-2">
       <div>
         <div v-for="(answer, index) in question.answers" :key="answer.answerID">
           <div class="mb-4 flex items-center">
-            <div v-html="answer.contentAnswer" class="font-medium flex-1"></div>
+            <div
+              v-html="answer.contentAnswer"
+              class="font-medium flex-1 mr-4"
+            ></div>
             <div
               @click="currentIndex = index"
               :class="[
@@ -139,32 +142,6 @@ export default defineComponent({
 </script>
 
 <style>
-.image-wrapper {
-  max-width: 225px;
-}
-.matching-input {
-  border: 1px dashed #a1a1a1;
-  outline: none;
-  padding: 8px 12px;
-  position: relative;
-  width: 100%;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 500;
-}
-.matching-input.active {
-  border: 1px solid #1c4c66;
-}
-.matching-input-text {
-  font-style: italic;
-  color: #0009;
-}
-.checking-btn-wrapper.matching {
-  width: calc(50% - 32px);
-  right: 16px;
-}
 .matching-input.false {
   border: 1px solid #d03239;
   background: #fbebec;
@@ -176,30 +153,5 @@ export default defineComponent({
 .matching-input.unmake {
   border: 1px dashed #55934b;
   color: #55934b;
-}
-.matching-input.has-content {
-  border: 1px solid #a1a1a1;
-  padding-right: 36px;
-}
-.new-target-element p {
-  margin: 0;
-}
-.target-div p {
-  border: 1px solid #a1a1a1;
-  padding: 0 16px;
-  border-radius: 4px;
-  margin-bottom: 0;
-}
-.target-div p:has(img):first-child {
-  border: none;
-  padding: 0;
-}
-
-@media screen and (max-width: 1023px) {
-  .checking-btn-wrapper.matching {
-    width: calc(100% - 64px);
-    right: unset;
-    margin-left: 32px;
-  }
 }
 </style>

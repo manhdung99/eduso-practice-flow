@@ -223,7 +223,6 @@ export default defineComponent({
   .checking-btn-wrapper.matching {
     width: calc(100% - 64px);
     right: unset;
-    margin-left: 32px;
   }
 }
 </style>

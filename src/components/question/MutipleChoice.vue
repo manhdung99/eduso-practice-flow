@@ -1,7 +1,7 @@
 <template lang="">
   <div v-if="question">
-    <div class="flex items-center justify-between my-4 gap-x-5">
-      <span
+    <div class="flex items-center justify-between my-4">
+      <span class="w-4/5"
         ><strong>Question {{ index + 1 }}.</strong>
         {{ question.questionValue }}</span
       >

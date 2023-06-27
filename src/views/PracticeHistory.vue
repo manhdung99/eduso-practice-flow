@@ -64,7 +64,7 @@
                   ><span class="path1"></span><span class="path2"></span
                 ></span>
                 <span class="icon-unmake-answer" v-else></span>
-                <span class="text-sm text-indigo"
+                <span class="text-sm text-indigo ml-2.5"
                   >Câu {{ questionIndex + 1 }}</span
                 >
               </div>
@@ -119,7 +119,7 @@
                   ><span class="path1"></span><span class="path2"></span
                 ></span>
                 <span class="icon-unmake-answer" v-else></span>
-                <span class="text-sm text-indigo"
+                <span class="text-sm text-indigo ml-2.5"
                   >Câu {{ questionIndex + 1 }}</span
                 >
               </div>
@@ -190,60 +190,6 @@
             </div>
           </div>
           <!-- Mobile bottom  -->
-          <div class="mobile-next-previous-part">
-            <div class="flex w-full gap-x-2 items-center">
-              <span @click="showListQuestion = true"
-                ><img :src="showListIcon" alt=""
-              /></span>
-              <div class="relative w-1/2">
-                <div class="text-indigo text-sm font-semibold">
-                  Câu <span>{{ currentQuestion + 1 }}</span> /
-                  {{ unitDetail.numberQuestion }}
-                </div>
-                <div>
-                  <a-progress
-                    stroke-color="#3699CF"
-                    stroke-linecap="square"
-                    :percent="
-                      ((currentQuestion + 1) / unitDetail.numberQuestion) * 100
-                    "
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="flex gap-x-2">
-              <button
-                @click="moveToPart(-1)"
-                :disabled="currentPartQuestion == 0"
-              >
-                <img
-                  :src="
-                    currentPartQuestion == 0
-                      ? circleTopDisableIcon
-                      : circleTopIcon
-                  "
-                  alt=""
-                />
-              </button>
-              <button
-                :disabled="
-                  lastPart ||
-                  currentPartQuestion == unitDetail.questionPart.length - 1
-                "
-                @click="moveToPart(1)"
-              >
-                <img
-                  :src="
-                    lastPart ||
-                    currentPartQuestion == unitDetail.questionPart.length - 1
-                      ? circleDownDisableIcon
-                      : circleDownIcon
-                  "
-                  alt=""
-                />
-              </button>
-            </div>
-          </div>
         </div>
         <!-- Desktop bottom  -->
         <div class="relative bottom-2 ml-1/2 -translate-x-1/2 w-1/2 mt-6 px-2">
@@ -290,6 +236,54 @@
     </div>
   </div>
   <TheoryModal v-if="openTheoryModal" />
+  <div class="mobile-next-previous-part">
+    <div class="flex w-full items-center">
+      <span class="mr-2" @click="showListQuestion = true"
+        ><img :src="showListIcon" alt=""
+      /></span>
+      <div class="relative w-1/2">
+        <div class="text-indigo text-sm font-semibold">
+          Câu <span>{{ currentQuestion + 1 }}</span> /
+          {{ unitDetail.numberQuestion }}
+        </div>
+        <div>
+          <a-progress
+            stroke-color="#3699CF"
+            stroke-linecap="square"
+            :percent="((currentQuestion + 1) / unitDetail.numberQuestion) * 100"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="flex">
+      <button
+        class="mr-2"
+        @click="moveToPart(-1)"
+        :disabled="currentPartQuestion == 0"
+      >
+        <img
+          :src="currentPartQuestion == 0 ? circleTopDisableIcon : circleTopIcon"
+          alt=""
+        />
+      </button>
+      <button
+        :disabled="
+          lastPart || currentPartQuestion == unitDetail.questionPart.length - 1
+        "
+        @click="moveToPart(1)"
+      >
+        <img
+          :src="
+            lastPart ||
+            currentPartQuestion == unitDetail.questionPart.length - 1
+              ? circleDownDisableIcon
+              : circleDownIcon
+          "
+          alt=""
+        />
+      </button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -430,6 +424,7 @@ export default defineComponent({
   margin-bottom: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  position: relative;
 }
 @media screen and (max-width: 767px) {
   .list-answer-wrapper {
@@ -438,7 +433,18 @@ export default defineComponent({
   }
   .history-question-wrapper {
     width: 100%;
-    height: calc(100vh - 136px);
+    height: calc(100vh - 120px);
+  }
+  .history-view .mobile-next-previous-part {
+    border: 1px solid #000;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  }
+  @supports (-webkit-touch-callout: none) {
+    .history-question-wrapper {
+      width: 100%;
+      height: calc(100vh - 190px);
+    }
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="">
   <div v-if="question">
-    <div class="absolute right-1 top-4">
+    <div class="absolute right-0 top-4">
       <img
         @click="updateTheoryModalStatus(true)"
         class="hover:opacity-80 cursor-pointer"
@@ -94,18 +94,8 @@ export default defineComponent({
 .fillquiz:focus {
   border-color: #40a9ff;
 }
-.one-question::-webkit-scrollbar {
-  height: 6px;
-  width: 2px;
-}
-
-.one-question::-webkit-scrollbar-thumb {
-  background: #555555;
-  border-radius: 10px;
-}
-
-.one-question::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px #555555;
-  border-radius: 10px;
+.one-question {
+  height: calc(100% - 100px);
+  position: relative;
 }
 </style>

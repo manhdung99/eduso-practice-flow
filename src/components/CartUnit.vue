@@ -9,7 +9,7 @@
         <div>
           <p className="font-bold text-tiny">{{ title }}</p>
         </div>
-        <div className="flex gap-[16px] font-semibold">
+        <div className="flex gap-4 font-semibold">
           <p className="text-sm">Số câu: {{ numberQuestion }}</p>
         </div>
       </div>

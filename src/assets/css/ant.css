@@ -40,3 +40,8 @@
     color: white !important;
 
 }
+
+.ant-progress-circle .ant-progress-inner {
+    width: 80px !important;
+    height: 80px !important;
+}

@@ -23,7 +23,7 @@
         <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
         <div class="px-6">
           <div class="w-full mb-8">
-            <p class="text-xl text-indigo font-bold truncate">
+            <p class="text-xl text-indigo font-bold truncate mt-4">
               {{ unitDetail.chapterTitle }}
             </p>
             <p class="text-lg italic text-gray-400">
@@ -31,13 +31,12 @@
             </p>
             <div>
               <p class="text-lg text-indigo font-semibold italic">Kết quả</p>
-              <div class="w-full flex gap-x-4">
-                <div class="w-20 h-20">
+              <div class="w-full flex">
+                <div style="width: 80px" class="w-20 h-20 mr-4">
                   <a-progress
                     :percent="correctProcess"
                     stroke-color="#55934B"
                     type="circle"
-                    :width="80"
                   >
                     <template #format="percent">
                       <span style="color: #55934b">{{ percent }} %</span>
@@ -80,8 +79,8 @@
           </router-link>
         </div>
       </div>
-      <div class="w-full lg:w-1/2 ml-1/2 -translate-x-1/2 gap-x-4 flex mt-20">
-        <button @click="resetUnit" class="btn btn-primary w-1/3">
+      <div class="w-full lg:w-1/2 ml-1/2 -translate-x-1/2 flex mt-20">
+        <button @click="resetUnit" class="btn btn-primary w-1/3 mr-4">
           Làm lại
         </button>
         <button @click="moveToNextUnit" class="btn btn-primary w-2/3 relative">
@@ -99,7 +98,7 @@
         <div><img src="https://i.ibb.co/P9sYjwc/cover-2.jpg" alt="" /></div>
         <div class="px-2 lg:px-6 pb-6">
           <div class="w-full">
-            <p class="text-xl text-indigo font-bold truncate">
+            <p class="text-xl text-indigo font-bold truncate mt-4">
               {{ unitDetail.chapterTitle }}
             </p>
             <p class="text-lg italic text-gray-400">
