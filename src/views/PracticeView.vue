@@ -973,6 +973,7 @@ export default defineComponent({
   height: 100%;
   border-right: 1px solid #c1c1c1;
   padding: 0 16px;
+  padding-top: 24px;
   position: relative;
   right: 0;
   transition: all ease 500ms;
@@ -980,7 +981,7 @@ export default defineComponent({
 .answer-question-part {
   width: 50%;
   height: 100%;
-  padding: 0 16px;
+  padding: 12px 4px 0 16px;
   position: relative;
   left: 0;
   transition: all ease 500ms;

@@ -3,34 +3,71 @@
     <div class="w-full h-full lg:pl-4 lg:pr-1 relative lg:pt-4 py-2">
       <div>
         <div v-for="(answer, index) in question.answers" :key="answer.answerID">
-          <div class="mb-4 flex items-center">
+          <div class="mb-4">
             <div
               v-html="answer.contentAnswer"
-              class="font-medium flex-1 mr-4"
+              class="font-medium flex-1 mr-4 mb-4"
             ></div>
-            <div
-              @click="currentIndex = index"
-              :class="[
-                answer.status == false ? 'false' : '',
-                answer.status == 'unmake' ? 'unmake' : '',
-                answer.status == true ? 'true' : '',
-              ]"
-              class="matching-input flex-1"
-            >
-              <span
-                @click="removeImage($event, index)"
-                :class="answer.status != 'answered' ? 'hidden' : ''"
-                class="w-6 h-6 absolute right-2 top-2"
-                ><img :src="removeIcon" alt=""
-              /></span>
+            <!-- Chưa làm -->
+            <div v-if="answer.status == 'unmake'">
+              <div class="text-green text-sm italic">đáp án đúng</div>
               <div
-                v-if="answer.status == 'unmake'"
-                v-html="answer.contentQuestion"
-              ></div>
+                @click="currentIndex = index"
+                class="matching-input unmake flex-1"
+              >
+                <span
+                  @click="removeImage($event, index)"
+                  :class="answer.status != 'answered' ? 'hidden' : ''"
+                  class="w-6 h-6 absolute right-2 top-2"
+                  ><img :src="removeIcon" alt=""
+                /></span>
+                <div v-html="answer.contentQuestion"></div>
+              </div>
+            </div>
+            <!-- Làm đúng -->
+            <div v-else-if="answer.status == true">
+              <div class="italic">Đáp án của bạn</div>
               <div
-                v-if="answer.status != 'unmake'"
-                v-html="answer.currentContent"
-              ></div>
+                @click="currentIndex = index"
+                class="matching-input true flex-1"
+              >
+                <span
+                  @click="removeImage($event, index)"
+                  :class="answer.status != 'answered' ? 'hidden' : ''"
+                  class="w-6 h-6 absolute right-2 top-2"
+                  ><img :src="removeIcon" alt=""
+                /></span>
+                <div v-html="answer.currentContent"></div>
+              </div>
+            </div>
+            <!-- làm sai  -->
+            <div v-else-if="answer.status == false">
+              <div class="italic">Đáp án của bạn</div>
+              <div
+                @click="currentIndex = index"
+                class="matching-input false flex-1"
+              >
+                <span
+                  @click="removeImage($event, index)"
+                  :class="answer.status != 'answered' ? 'hidden' : ''"
+                  class="w-6 h-6 absolute right-2 top-2"
+                  ><img :src="removeIcon" alt=""
+                /></span>
+                <div v-html="answer.currentContent"></div>
+              </div>
+              <div class="text-green text-sm italic mt-6">đáp án đúng</div>
+              <div
+                @click="currentIndex = index"
+                class="matching-input unmake flex-1"
+              >
+                <span
+                  @click="removeImage($event, index)"
+                  :class="answer.status != 'answered' ? 'hidden' : ''"
+                  class="w-6 h-6 absolute right-2 top-2"
+                  ><img :src="removeIcon" alt=""
+                /></span>
+                <div v-html="answer.contentQuestion"></div>
+              </div>
             </div>
           </div>
         </div>

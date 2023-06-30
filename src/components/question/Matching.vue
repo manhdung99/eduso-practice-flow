@@ -106,8 +106,12 @@ export default defineComponent({
           currentAnswer.value.currentContent = targetElement.outerHTML;
           const currentImageAnswer = props.question.answers[index];
           currentImageAnswer.choosedContent = true;
-          if (currentIndex.value < props.question.answers.length - 1) {
-            currentIndex.value++;
+          const answeredIndex = props.question.answers.findIndex((answer) => {
+            return answer.status == "unmake";
+          });
+
+          if (answeredIndex >= 0) {
+            currentIndex.value = answeredIndex;
           }
         }
         props.setAllSelectd(true);

@@ -164,11 +164,13 @@ import { storeToRefs } from "pinia";
 import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { useUnitStore } from "../store/unitStore";
 import router from "@/router";
+import { useRoute } from "vue-router";
 export default defineComponent({
   name: "UnitView",
   setup() {
     const questionProcess = ref(0);
     const correctProcess = ref(0);
+    const route = useRoute();
     const { units, unitDetail } = storeToRefs(useUnitStore());
     const { getQuestion, setUnitDetail } = useUnitStore();
     const setProcess = () => {
@@ -230,6 +232,7 @@ export default defineComponent({
     };
     onMounted(() => {
       nextTick(() => {
+        setUnitDetail(route.params.id as string);
         getQuestion();
       });
     });
