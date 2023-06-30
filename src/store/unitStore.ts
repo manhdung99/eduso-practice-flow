@@ -911,6 +911,178 @@ export const useUnitStore = defineStore("unitStore", {
             },
           ],
         },
+        {
+          id: 6,
+          unitTitle: "Bài 6: Mức độ nhận biết - Mutiple choice (Mutiple)",
+          chapterTitle: "Chương 1 - Tìm từ được gạch chân phát âm khác",
+          chapterDescription: "Bài 1 - Mức độ nhận biết 1 ",
+          numberQuestion: 8,
+          numberQuestionComplete: 0,
+          numberQuestionCorrect: 0,
+          currentQuestion: 0,
+          url: "https://i.ibb.co/JCXbvbB/cover.jpg",
+          completed: false,
+          currentIndex: 0,
+          questionPart: [
+            {
+              id: "part1",
+              type: "QUIZ5",
+              partContent:
+                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 1,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [1, 2],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 1, answerValue: "A. Yes" },
+                    { answerID: 2, answerValue: "B. No" },
+                    { answerID: 3, answerValue: "C. Depends" },
+                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+                {
+                  questionID: 2,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [5, 6],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 5, answerValue: "A. Yes" },
+                    { answerID: 6, answerValue: "B. No" },
+                    { answerID: 7, answerValue: "C. Depends" },
+                    { answerID: 8, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+                {
+                  questionID: 3,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [12, 11],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 9, answerValue: "A. Yes" },
+                    { answerID: 10, answerValue: "B. No" },
+                    { answerID: 11, answerValue: "C. Depends" },
+                    { answerID: 12, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part2",
+              type: "QUIZ5",
+              partContent:
+                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 4,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [2, 3],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 1, answerValue: "A. Yes" },
+                    { answerID: 2, answerValue: "B. No" },
+                    { answerID: 3, answerValue: "C. Depends" },
+                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+                {
+                  questionID: 5,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [5, 6, 7],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 5, answerValue: "A. Yes" },
+                    { answerID: 6, answerValue: "B. No" },
+                    { answerID: 7, answerValue: "C. Depends" },
+                    { answerID: 8, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part3",
+              type: "QUIZ5",
+              partContent:
+                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 6,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [2, 1],
+                  correctAnswerLeft: 0,
+                  activeLink: false,
+                  answers: [
+                    { answerID: 1, answerValue: "A. Yes" },
+                    { answerID: 2, answerValue: "B. No" },
+                    { answerID: 3, answerValue: "C. Depends" },
+                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "part4",
+              type: "QUIZ5",
+              partContent:
+                "<p class='italic'>Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer.</p><p><strong>According to all known laws of aviation,</strong> there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway.</p>",
+              status: "unmake",
+              questions: [
+                {
+                  questionID: 7,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [2, 1],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 1, answerValue: "A. Yes" },
+                    { answerID: 2, answerValue: "B. No" },
+                    { answerID: 3, answerValue: "C. Depends" },
+                    { answerID: 4, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+                {
+                  questionID: 8,
+                  status: "unmake",
+                  questionValue:
+                    "Is the aerial capability of bees dependent on human logic?",
+                  selectedAnswer: [],
+                  correctAnswer: [7, 5],
+                  correctAnswerLeft: 0,
+                  answers: [
+                    { answerID: 5, answerValue: "A. Yes" },
+                    { answerID: 6, answerValue: "B. No" },
+                    { answerID: 7, answerValue: "C. Depends" },
+                    { answerID: 8, answerValue: "D. Dude it’s a bee" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       ];
       this.units = data;
     },

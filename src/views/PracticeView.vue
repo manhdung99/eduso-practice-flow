@@ -189,6 +189,16 @@
                     :optionList="optionList"
                   />
                 </div>
+                <div class="h-full" v-if="currentPartQuestion.type == 'QUIZ5'">
+                  <MutipleChoiceMany
+                    v-for="(question, index) in currentPartQuestion.questions"
+                    :key="question.questionID"
+                    :updateSelectedAnswerMany="updateSelectedAnswerMany"
+                    :question="question"
+                    :index="index"
+                    :partID="currentPartQuestion.id"
+                  />
+                </div>
                 <div
                   class="checking-btn-wrapper"
                   v-if="currentPartQuestion.status == 'unmake'"
@@ -283,6 +293,16 @@
                       :index="index"
                       :partID="currentPartQuestion.id"
                       :optionList="optionList"
+                    />
+                  </div>
+                  <div v-if="currentPartQuestion.type == 'QUIZ5'">
+                    <MutipleChoiceMany
+                      v-for="(question, index) in currentPartQuestion.questions"
+                      :key="question.questionID"
+                      :updateSelectedAnswerMany="updateSelectedAnswerMany"
+                      :question="question"
+                      :index="index"
+                      :partID="currentPartQuestion.id"
                     />
                   </div>
                 </div>
@@ -499,6 +519,7 @@ import circleRightIcon from "../assets/images/circle-right.svg";
 import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import showListIcon from "../assets/images/show-list.svg";
 import MutipleChoice from "@/components/question/MutipleChoice.vue";
+import MutipleChoiceMany from "@/components/question/MutipleChoiceMany.vue";
 import FillInBlank from "@/components/question/FillInBlank.vue";
 import DropBox from "@/components/question/Dropbox.vue";
 import Matching from "@/components/question/Matching.vue";
@@ -511,6 +532,7 @@ export default defineComponent({
     FillInBlank,
     DropBox,
     Matching,
+    MutipleChoiceMany,
   },
   setup() {
     const { unitDetail, questions } = storeToRefs(useUnitStore());
@@ -540,6 +562,25 @@ export default defineComponent({
         });
       }
     };
+    const updateSelectedAnswerMany = (questionID, answerID) => {
+      const question = currentPartQuestion.value.questions.find(
+        (data) => data.questionID == questionID
+      );
+      if (question.selectedAnswer.includes(answerID)) {
+        question.selectedAnswer = question.selectedAnswer.filter(
+          (answer) => answer !== answerID
+        );
+      } else {
+        question.selectedAnswer = [...question.selectedAnswer, answerID];
+      }
+
+      selectedAll.value = true;
+      currentPartQuestion.value.questions.forEach((question) => {
+        if (question.selectedAnswer == 0) {
+          selectedAll.value = false;
+        }
+      });
+    };
     const goNextPartQuestion = () => {
       if (
         unitDetail.value.currentIndex <
@@ -552,7 +593,7 @@ export default defineComponent({
       }
     };
     const checkAnswer = () => {
-      // Mutiple check
+      // Mutiple check single
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
           if (
@@ -624,6 +665,33 @@ export default defineComponent({
             unitDetail.value.numberQuestionCorrect++;
           }
         }
+      } else if (currentPartQuestion.value.type == "QUIZ5") {
+        currentPartQuestion.value.questions.forEach((question) => {
+          question.status = "true";
+          const sortedCorrect = question.correctAnswer.sort();
+          const sortedSelect = question.selectedAnswer.sort();
+          console.log(sortedCorrect, sortedSelect);
+          question.correctAnswerLeft = sortedCorrect.length;
+          for (let i = 0; i < sortedCorrect.length; i++) {
+            if (!sortedCorrect.includes(sortedSelect[i])) {
+              question.status = "false";
+            } else {
+              question.correctAnswerLeft--;
+            }
+            if (sortedCorrect.length < sortedSelect.length) {
+              question.status = "false";
+            }
+          }
+          unitDetail.value.numberQuestionComplete++;
+        });
+        currentPartQuestion.value.status = "true";
+        currentPartQuestion.value.questions.forEach((question) => {
+          if (question.status == "false") {
+            currentPartQuestion.value.status = "false";
+          } else {
+            unitDetail.value.numberQuestionCorrect++;
+          }
+        });
       }
     };
     // reset question
@@ -661,6 +729,11 @@ export default defineComponent({
             answer.status = "unmake";
             answer.choosedContent = false;
           });
+        }
+      } else if (currentPartQuestion.value.type == "QUIZ5") {
+        for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
+          currentPartQuestion.value.questions[i].selectedAnswer = [];
+          currentPartQuestion.value.questions[i].correctAnswerLeft = 0;
         }
       }
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
@@ -828,6 +901,7 @@ export default defineComponent({
       showTheoryMobile,
       checkAnswer,
       updateSelectedAnswer,
+      updateSelectedAnswerMany,
       redoQuestion,
       goNextPartQuestion,
       moveToChoosedQuestion,

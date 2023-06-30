@@ -188,6 +188,14 @@
                 :currentPartQuestion="questionPart"
               />
             </div>
+            <div v-if="questionPart.type == 'QUIZ5'">
+              <MutipleChoiceManyHistory
+                v-for="(question, index) in questionPart.questions"
+                :key="question.questionID"
+                :question="question"
+                :index="index"
+              />
+            </div>
           </div>
           <!-- Mobile bottom  -->
         </div>
@@ -299,6 +307,7 @@ import circleLeftIcon from "../assets/images/circle-left.svg";
 import showListIcon from "../assets/images/show-list.svg";
 import circleDownDisableIcon from "../assets/images/circle-down-disable.svg";
 import MutipleChoiceHistory from "@/components/question/MutipleChoiceHistory.vue";
+import MutipleChoiceManyHistory from "@/components/question/MutipleChoiceManyHistory.vue";
 import FillInBlankHistory from "@/components/question/FillInBlankHistory.vue";
 import DropboxHistory from "@/components/question/DropboxHistory.vue";
 import MatchingHistory from "@/components/question/MatchingHistory.vue";
@@ -306,6 +315,7 @@ import TheoryModal from "@/components/modal/TheoryModal.vue";
 export default defineComponent({
   name: "PracticeHistory",
   components: {
+    MutipleChoiceManyHistory,
     MutipleChoiceHistory,
     FillInBlankHistory,
     DropboxHistory,
