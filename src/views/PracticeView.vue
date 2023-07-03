@@ -566,20 +566,22 @@ export default defineComponent({
       const question = currentPartQuestion.value.questions.find(
         (data) => data.questionID == questionID
       );
-      if (question.selectedAnswer.includes(answerID)) {
-        question.selectedAnswer = question.selectedAnswer.filter(
-          (answer) => answer !== answerID
-        );
-      } else {
-        question.selectedAnswer = [...question.selectedAnswer, answerID];
-      }
-
-      selectedAll.value = true;
-      currentPartQuestion.value.questions.forEach((question) => {
-        if (question.selectedAnswer == 0) {
-          selectedAll.value = false;
+      if (question.status == "unmake") {
+        if (question.selectedAnswer.includes(answerID)) {
+          question.selectedAnswer = question.selectedAnswer.filter(
+            (answer) => answer !== answerID
+          );
+        } else {
+          question.selectedAnswer = [...question.selectedAnswer, answerID];
         }
-      });
+
+        selectedAll.value = true;
+        currentPartQuestion.value.questions.forEach((question) => {
+          if (question.selectedAnswer == 0) {
+            selectedAll.value = false;
+          }
+        });
+      }
     };
     const goNextPartQuestion = () => {
       if (
@@ -672,15 +674,18 @@ export default defineComponent({
           const sortedSelect = question.selectedAnswer.sort();
           console.log(sortedCorrect, sortedSelect);
           question.correctAnswerLeft = sortedCorrect.length;
-          for (let i = 0; i < sortedCorrect.length; i++) {
+          for (let i = 0; i < sortedSelect.length; i++) {
             if (!sortedCorrect.includes(sortedSelect[i])) {
               question.status = "false";
             } else {
               question.correctAnswerLeft--;
             }
-            if (sortedCorrect.length < sortedSelect.length) {
-              question.status = "false";
-            }
+          }
+          if (
+            sortedCorrect.length < sortedSelect.length ||
+            question.correctAnswerLeft != 0
+          ) {
+            question.status = "false";
           }
           unitDetail.value.numberQuestionComplete++;
         });
@@ -697,7 +702,7 @@ export default defineComponent({
     // reset question
     const redoQuestion = () => {
       currentPartQuestion.value.status = "unmake";
-      //Type choice
+      //Type choice (Single)
       if (currentPartQuestion.value.type == "QUIZ1") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
           currentPartQuestion.value.questions[i].selectedAnswer = 0;
@@ -722,6 +727,7 @@ export default defineComponent({
             select.removeAttribute("disabled");
           }
         });
+        // Type Matching
       } else if (currentPartQuestion.value.type == "QUIZ4") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
           currentPartQuestion.value.questions[i].answers.forEach((answer) => {
@@ -730,10 +736,19 @@ export default defineComponent({
             answer.choosedContent = false;
           });
         }
-      } else if (currentPartQuestion.value.type == "QUIZ5") {
+      }
+      //Type Choice (Mutiple)
+      else if (currentPartQuestion.value.type == "QUIZ5") {
         for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
-          currentPartQuestion.value.questions[i].selectedAnswer = [];
-          currentPartQuestion.value.questions[i].correctAnswerLeft = 0;
+          const question = currentPartQuestion.value.questions[i];
+          question.selectedAnswer.forEach((answer) => {
+            if (!question.correctAnswer.includes(answer)) {
+              question.selectedAnswer = question.selectedAnswer.filter(
+                (data) => data != answer
+              );
+            }
+          });
+          question.correctAnswerLeft = 0;
         }
       }
       for (let i = 0; i < currentPartQuestion.value.questions.length; i++) {
@@ -793,6 +808,7 @@ export default defineComponent({
       }
     };
     onMounted(() => {
+      //Get Current data here (Call api for practice view)
       currentPartQuestion.value =
         unitDetail.value.questionPart[unitDetail.value.currentIndex];
       // Current Question

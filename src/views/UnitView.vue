@@ -218,6 +218,9 @@ export default defineComponent({
               answer.status = "unmake";
               answer.choosedContent = false;
             });
+          } else if (part.type == "QUIZ5") {
+            question.selectedAnswer = [];
+            question.correctAnswerLeft = 0;
           }
         });
       });
