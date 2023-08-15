@@ -1,6 +1,6 @@
 <template lang="">
   <div v-if="question">
-    <div class="absolute right-0 top-4">
+    <div v-if="theoryData != null && theoryData.length > 0" class="float-right">
       <img
         @click="updateTheoryModalStatus(true)"
         class="hover:opacity-80 cursor-pointer"
@@ -31,7 +31,7 @@ export default defineComponent({
     optionList: Array,
   },
   setup(props) {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { lessonDetail, theoryData } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     const setDefaultProperty = () => {
@@ -69,7 +69,8 @@ export default defineComponent({
     });
     return {
       theoryIcon,
-      unitDetail,
+      lessonDetail,
+      theoryData,
       updateTheoryModalStatus,
     };
   },

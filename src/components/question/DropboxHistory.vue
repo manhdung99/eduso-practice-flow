@@ -31,7 +31,7 @@ export default defineComponent({
     optionList: Array,
   },
   setup(props) {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { lessonDetail } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     const setDefaultProperty = () => {
@@ -82,7 +82,7 @@ export default defineComponent({
     });
     return {
       theoryIcon,
-      unitDetail,
+      lessonDetail,
       updateTheoryModalStatus,
     };
   },

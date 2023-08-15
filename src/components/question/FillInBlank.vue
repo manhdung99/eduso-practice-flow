@@ -1,21 +1,13 @@
 <template lang="">
   <div v-if="question">
-    <div class="absolute right-0 top-4">
-      <img
-        @click="updateTheoryModalStatus(true)"
-        class="hover:opacity-80 cursor-pointer"
-        :src="theoryIcon"
-        alt=""
-      />
-    </div>
     <div
       v-html="question.Description"
-      class="font-medium lg:pr-14 pt-4 leading-12"
+      class="font-medium pt-12 leading-12"
     ></div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, nextTick, onMounted } from "vue";
+import { defineComponent, nextTick, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import theoryIcon from "../../assets/images/theory-icon.svg";
 import { useUnitStore } from "../../store/unitStore";
@@ -29,25 +21,33 @@ export default defineComponent({
     updateSelectedAnswer: Function,
     partID: [Number, String],
     answerList: Array,
+    oldAnswer: Array,
+    partIndex: Number,
   },
   setup(props) {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { lessonDetail, theoryData } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     const setDefaultProperty = () => {
       const answers = props.answerList as Array<any>;
+      const oldAnswer = props.oldAnswer as Array<any>;
+      const questions = props.question;
       const elements = document.getElementsByClassName("fillquiz");
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLInputElement;
-        if (props.question.status != "unmake") {
-          element.setAttribute("disabled", "");
-        }
+
         element.setAttribute("placeholder", "Trả lời");
-        element.id = answers[i].answerID;
-        element.value = answers[i].currentAnswer;
-        if (answers[i].status == "true") {
+        element.id = answers[i][0].ParentID;
+        const oldIndex = oldAnswer.findIndex(
+          (data) => data.QuestionID == element.id
+        );
+        if (oldIndex >= 0) {
+          element.setAttribute("disabled", "");
+          element.value = oldAnswer[oldIndex].AnswerValue;
+        }
+        if (questions.Questions[i].status == "true") {
           element.classList.add("true");
-        } else if (answers[i].status == "false") {
+        } else if (questions.Questions[i].status == "false") {
           element.classList.add("false");
         }
       }
@@ -57,9 +57,18 @@ export default defineComponent({
         setDefaultProperty();
       });
     });
+    watch(
+      () => props.partIndex,
+      () => {
+        nextTick(() => {
+          setDefaultProperty();
+        });
+      }
+    );
     return {
       theoryIcon,
-      unitDetail,
+      lessonDetail,
+      theoryData,
       updateTheoryModalStatus,
     };
   },

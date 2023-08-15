@@ -1,31 +1,15 @@
 <template>
   <div class="home">Home Page</div>
-  <div class="flex p-4 gap-4 flex-wrap">
-    <router-link v-for="unit in units" :key="unit.id" :to="`/unit/${unit.id}`">
-      <CartUnit
-        :imageURL="unit.url"
-        :title="unit.unitTitle"
-        :numberQuestion="unit.numberQuestion"
-      />
-    </router-link>
-  </div>
-  <router-view></router-view>
 </template>
 
 <script lang="ts">
-import CartUnit from "@/components/CartUnit.vue";
 import { defineComponent, onMounted } from "vue";
-import { storeToRefs } from "pinia";
-import { useUnitStore } from "../store/unitStore";
+import router from "@/router";
 export default defineComponent({
   name: "HomeView",
   setup() {
-    const { units } = storeToRefs(useUnitStore());
-    const { getUnits, setUnitDetail } = useUnitStore();
-    onMounted(getUnits);
-    onMounted(getUnits);
-    return { units, getUnits, setUnitDetail };
+    onMounted(() => router.push("/course/5e83f76cf4e1ee1140b3cd4e"));
+    return {};
   },
-  components: { CartUnit },
 });
 </script>

@@ -1,16 +1,8 @@
 <template lang="">
   <div v-if="question">
-    <div class="absolute right-1 top-4">
-      <img
-        @click="updateTheoryModalStatus(true)"
-        class="hover:opacity-80 cursor-pointer"
-        :src="theoryIcon"
-        alt=""
-      />
-    </div>
     <div
       v-html="question.Description"
-      class="font-medium lg:pr-14 pt-4 leading-12"
+      class="font-medium pt-6 leading-12"
     ></div>
   </div>
 </template>
@@ -20,57 +12,83 @@ import { storeToRefs } from "pinia";
 import theoryIcon from "../../assets/images/theory-icon.svg";
 import { useUnitStore } from "../../store/unitStore";
 import { useModalStore } from "../../store/modalStore";
-
+import Question from "@/types/question";
 export default defineComponent({
-  name: "FillInBlankHistory",
+  name: "FillInBlank",
   props: {
     index: Number,
     question: Object,
     updateSelectedAnswer: Function,
-    partID: [Number, String],
     answerList: Array,
+    oldAnswer: Array,
+    fillInBlankQuestionList: Array,
   },
   setup(props) {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { lessonDetail } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
-    const setAnswer = () => {
-      const answers = props.answerList as Array<any>;
-      const elements = document.getElementsByClassName("fillquiz");
+    const setDefaultProperty = () => {
+      const questions = props.fillInBlankQuestionList as Array<Question>;
+      const oldAnswer = props.oldAnswer as Array<any>;
+      const elements = document.querySelectorAll(".fillquiz");
+
       for (let i = 0; i < elements.length; i++) {
+        const question = questions[i] as Question;
         const element = elements[i] as HTMLInputElement;
-        if (props.question.status != "unmake") {
+        element.setAttribute("placeholder", "Trả lời");
+        element.setAttribute("disabled", "");
+        element.id = question.ID;
+        element.value = question.Content;
+        const oldIndex = oldAnswer.findIndex(
+          (data) => data.QuestionID == element.id
+        );
+        if (oldIndex >= 0) {
           element.setAttribute("disabled", "");
+          element.value = oldAnswer[oldIndex].AnswerValue;
         }
-        element.id = answers[i].answerID;
-        element.value = answers[i].currentAnswer;
-        element.style.width = answers[i].currentAnswer.length + 4 + "ch";
-        if (answers[i].status == "true") {
+        if (question.status == "true") {
           element.classList.add("true");
-        } else if (answers[i].status == "false") {
+        } else if (question.status == "false" && question.Content != null) {
           const siblingElement = element.nextSibling;
           if (siblingElement == null) {
             const newSpan = document.createElement("span");
-            newSpan.textContent = answers[i].answerValue;
+            let strReturn = "";
+            question.Answers.forEach((answer, index) => {
+              if (index > 0) {
+                strReturn = strReturn + " / ";
+              }
+              strReturn = strReturn + answer.Content;
+            });
+            newSpan.textContent = "(" + strReturn + ")";
             newSpan.classList.add("true-answer");
             element.parentNode.appendChild(newSpan);
           }
           element.classList.add("false");
-        } else {
-          element.value = answers[i].answerValue;
-          element.style.width = answers[i].answerValue.length + 4 + "ch";
+        } else if (
+          question.status == "unmake" ||
+          (question.status == "false" && question.Content == null)
+        ) {
+          let strReturn = "";
+          question.Answers.forEach((answer, index) => {
+            if (index > 0) {
+              strReturn = strReturn + " / ";
+            }
+            strReturn = strReturn + answer.Content;
+          });
+          element.value = strReturn;
           element.classList.add("unmake");
         }
+        element.style.width = element.value.length + 2 + "ch";
       }
     };
     onMounted(() => {
       nextTick(() => {
-        setAnswer();
+        setDefaultProperty();
       });
     });
     return {
       theoryIcon,
-      unitDetail,
+      lessonDetail,
       updateTheoryModalStatus,
     };
   },
@@ -82,8 +100,9 @@ export default defineComponent({
   margin-left: 8px;
 }
 .fillquiz.unmake {
-  background: white;
-  border: 1px #55934b dashed;
+  border-color: #55934b;
+  background: #eaf1e9;
+  border: dashed #55934b 1px;
   color: #55934b;
 }
 </style>

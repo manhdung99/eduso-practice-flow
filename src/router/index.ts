@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import UnitView from "../views/UnitView.vue";
+import CourseView from "../views/CourseView.vue";
+import LessonView from "../views/LessonView.vue";
 import PracticeView from "../views/PracticeView.vue";
 import WorkbookView from "../views/WorkbookView.vue";
 import HistoryView from "../views/PracticeHistory.vue";
@@ -14,13 +15,25 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "Trang chủ" },
   },
   {
-    path: "/unit/:id",
-    name: "unit",
-    component: UnitView,
+    path: "/course/:courseId",
+    name: "courseview",
+    component: CourseView,
     meta: { title: "Chi tiết chương" },
   },
   {
-    path: "/practice/:id",
+    path: "/course/:courseId/:lessonId",
+    name: "lesson",
+    component: LessonView,
+    meta: { title: "Chi tiết chương" },
+  },
+  {
+    path: "/lesson/:id",
+    name: "lessonview",
+    component: LessonView,
+    meta: { title: "Chi tiết chương" },
+  },
+  {
+    path: "/practice/:courseId/:id",
     name: "practice",
     component: PracticeView,
     meta: { title: "Luyện tập" },
@@ -32,7 +45,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "Tổng kết" },
   },
   {
-    path: "/history/:id",
+    path: "/history/:courseId/:id",
     name: "history",
     component: HistoryView,
     meta: { title: "Lịch sử luyện tập" },

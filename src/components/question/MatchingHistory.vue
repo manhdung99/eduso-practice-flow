@@ -1,72 +1,86 @@
 <template lang="">
-  <div class="flex flex-wrap" v-if="question">
-    <div class="w-full h-full lg:pl-4 lg:pr-1 relative lg:pt-4 py-2">
+  <div class="flex flex-wrap" v-if="question" :id="question.ID">
+    <div class="w-full h-full lg:pr-1 relative lg:pt-4 py-2">
       <div>
-        <div v-for="(answer, index) in question.answers" :key="answer.answerID">
-          <div class="mb-4">
+        <div>
+          <div class="">
             <div
-              v-html="answer.contentAnswer"
-              class="font-medium flex-1 mr-4 mb-4"
+              v-html="question.Content"
+              class="font-medium flex-1 mr-4"
             ></div>
             <!-- Chưa làm -->
-            <div v-if="answer.status == 'unmake'">
+            <div v-if="question.status == 'unmake'">
               <div class="text-green text-sm italic">đáp án đúng</div>
-              <div
-                @click="currentIndex = index"
-                class="matching-input unmake flex-1"
-              >
-                <span
-                  @click="removeImage($event, index)"
-                  :class="answer.status != 'answered' ? 'hidden' : ''"
-                  class="w-6 h-6 absolute right-2 top-2"
-                  ><img :src="removeIcon" alt=""
-                /></span>
-                <div v-html="answer.contentQuestion"></div>
+              <div class="matching-input unmake flex-1">
+                <div
+                  v-if="question.Answers[0].Media == null"
+                  v-html="question.Answers[0].Content"
+                ></div>
+                <div
+                  v-if="
+                    question.Answers[0].Media != null &&
+                    question.Answers[0].Media.Extension.includes('image')
+                  "
+                >
+                  <img :src="question.Answers[0].Media.Path" alt="" />
+                </div>
               </div>
             </div>
             <!-- Làm đúng -->
-            <div v-else-if="answer.status == true">
-              <div class="italic">Đáp án của bạn</div>
-              <div
-                @click="currentIndex = index"
-                class="matching-input true flex-1"
-              >
-                <span
-                  @click="removeImage($event, index)"
-                  :class="answer.status != 'answered' ? 'hidden' : ''"
-                  class="w-6 h-6 absolute right-2 top-2"
-                  ><img :src="removeIcon" alt=""
-                /></span>
-                <div v-html="answer.currentContent"></div>
+            <div v-else-if="question.status == 'true'">
+              <div class="italic mb-1">Đáp án của bạn</div>
+              <div class="matching-input true flex-1">
+                <div
+                  v-if="question.Answers[0].Media == null"
+                  v-html="question.Answers[0].Content"
+                ></div>
+                <div
+                  v-if="
+                    question.Answers[0].Media != null &&
+                    question.Answers[0].Media.Extension.includes('image')
+                  "
+                >
+                  <img :src="question.Answers[0].Media.Path" alt="" />
+                </div>
               </div>
             </div>
             <!-- làm sai  -->
-            <div v-else-if="answer.status == false">
-              <div class="italic">Đáp án của bạn</div>
+            <div v-else-if="question.status == 'false'">
+              <div v-if="question.selectedAnswer" class="italic">
+                Đáp án của bạn
+              </div>
               <div
-                @click="currentIndex = index"
+                v-if="question.selectedAnswer"
                 class="matching-input false flex-1"
               >
-                <span
-                  @click="removeImage($event, index)"
-                  :class="answer.status != 'answered' ? 'hidden' : ''"
-                  class="w-6 h-6 absolute right-2 top-2"
-                  ><img :src="removeIcon" alt=""
-                /></span>
-                <div v-html="answer.currentContent"></div>
+                <div
+                  v-if="question.selectedAnswer.Path == null"
+                  v-html="question.selectedAnswer"
+                ></div>
+                <div
+                  v-if="
+                    question.selectedAnswer != null &&
+                    question.selectedAnswer.Path != null &&
+                    question.selectedAnswer.Extension.includes('image')
+                  "
+                >
+                  <img :src="question.selectedAnswer.Path" alt="" />
+                </div>
               </div>
-              <div class="text-green text-sm italic mt-6">đáp án đúng</div>
-              <div
-                @click="currentIndex = index"
-                class="matching-input unmake flex-1"
-              >
-                <span
-                  @click="removeImage($event, index)"
-                  :class="answer.status != 'answered' ? 'hidden' : ''"
-                  class="w-6 h-6 absolute right-2 top-2"
-                  ><img :src="removeIcon" alt=""
-                /></span>
-                <div v-html="answer.contentQuestion"></div>
+              <div class="text-green text-sm italic mt-2 mb-1">đáp án đúng</div>
+              <div class="matching-input unmake flex-1">
+                <div
+                  v-if="question.Answers[0].Media == null"
+                  v-html="question.Answers[0].Content"
+                ></div>
+                <div
+                  v-if="
+                    question.Answers[0].Media != null &&
+                    question.Answers[0].Media.Extension.includes('image')
+                  "
+                >
+                  <img :src="question.Answers[0].Media.Path" alt="" />
+                </div>
               </div>
             </div>
           </div>
@@ -76,14 +90,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, ref } from "vue";
 import theoryIcon from "../../assets/images/theory-icon.svg";
 import { useModalStore } from "../../store/modalStore";
 import removeIcon from "../../assets/images/remove.svg";
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
-  name: "Matching",
+  name: "MatchingHistory",
   props: {
     index: Number,
     question: Object,
@@ -94,7 +108,7 @@ export default defineComponent({
     setAllSelectd: Function,
     unitIndex: Number,
   },
-  setup(props) {
+  setup() {
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     const labels = ["A", "B", "C"];
@@ -102,67 +116,6 @@ export default defineComponent({
     const currentAnswerSelected = ref(null);
     const currentAnswer = ref(null);
 
-    //Set image answer when click
-
-    const setImage = (event, index) => {
-      if (currentAnswer.value.status == "unmake") {
-        const targetDiv = event.target.closest(".target-div");
-        if (targetDiv) {
-          const targetElement = targetDiv.firstChild;
-          // const newTargetElement = document.createElement("img");
-          // newTargetElement.src = targetElement.src;
-          targetElement.classList.add("new-target-element");
-          // targetElement.width = targetElement.width;
-          targetElement.dataset.indexNumber = targetDiv.id;
-          currentAnswer.value.status = "answered";
-          currentAnswer.value.currentContent = targetElement.outerHTML;
-          const currentImageAnswer = props.question.answers[index];
-          currentImageAnswer.choosedContent = true;
-          if (currentIndex.value < props.question.answers.length - 1) {
-            currentIndex.value++;
-          }
-        }
-        props.setAllSelectd(true);
-        props.question.answers.forEach((answer) => {
-          if (answer.status == "unmake") {
-            props.setAllSelectd(false);
-          }
-        });
-      }
-    };
-    // Set current answer when click
-    const setCurrentAnswer = (index = currentIndex.value) => {
-      const elements = document.getElementsByClassName("matching-input");
-      currentAnswerSelected.value = elements[index];
-      currentAnswer.value = props.question.answers[index];
-    };
-    //Remove image in div
-    const removeImage = async (event, index) => {
-      const currentDiv = event.target.closest(".matching-input");
-      const currentImg = currentDiv.querySelector(".new-target-element");
-      await setCurrentAnswer(index);
-      currentAnswer.value.status = "unmake";
-      const answerIndex = props.question.answers.findIndex(
-        (answer) => answer.answerID == currentImg.dataset.indexNumber
-      );
-      const currentAnswerImage = props.question.answers[answerIndex];
-      currentAnswerImage.choosedContent = false;
-      props.setAllSelectd(false);
-    };
-    onMounted(() => {
-      setCurrentAnswer();
-    });
-    watch(
-      () => currentIndex.value,
-      () => setCurrentAnswer()
-    );
-    watch(
-      () => props.unitIndex,
-      () => {
-        currentIndex.value = 0;
-        setCurrentAnswer();
-      }
-    );
     return {
       theoryIcon,
       labels,
@@ -170,8 +123,6 @@ export default defineComponent({
       currentAnswerSelected,
       currentAnswer,
       updateTheoryModalStatus,
-      setImage,
-      removeImage,
       removeIcon,
     };
   },

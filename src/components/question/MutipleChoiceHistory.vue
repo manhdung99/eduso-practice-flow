@@ -1,40 +1,34 @@
 <template lang="">
-  <div v-if="question">
-    <div class="flex items-center justify-between my-4 gap-x-5">
-      <span class="w-4/5"
-        ><strong>Question {{ index + 1 }}.</strong>
-        {{ question.questionValue }}</span
-      >
-      <span>
-        <img
-          @click="updateTheoryModalStatus(true)"
-          class="hover:opacity-80 cursor-pointer"
-          :src="theoryIcon"
-          alt=""
-        />
-      </span>
+  <div v-if="question" :id="question.ID">
+    <div class="flex items-center justify-between my-4">
+      <span class="w-4/5" v-html="question.Content"> </span>
     </div>
     <div class="font-medium">
       <div
-        v-for="answer in question.answers"
-        :key="answer.answerID"
+        v-for="answer in question.Answers"
+        :key="answer.ID"
         :class="[
-          question.selectedAnswer == answer.answerID &&
-          question.correctAnswer == answer.answerID
-            ? 'bg-green-lighter border-green'
+          question.CloneAnswers == answer.ID && question.status == 'true'
+            ? '!bg-green-lighter !border-green !text-green'
             : '',
-          question.selectedAnswer == answer.answerID &&
-          question.correctAnswer != answer.answerID
-            ? 'bg-raspberry-lighter border-raspberry'
+          question.CloneAnswers == answer.ID && question.status == 'false'
+            ? 'bg-raspberry-lighter border-raspberry !text-raspberry'
             : '',
-          question.selectedAnswer != answer.answerID &&
-          question.correctAnswer == answer.answerID
-            ? '!border-green border-dashed'
+          answer.IsCorrect && question.status == 'false'
+            ? ' border-dashed !background-white !text-green !border-green'
+            : '',
+          answer.IsCorrect && question.status == 'unmake'
+            ? ' border-dashed !background-white !text-green !border-green'
+            : '',
+          answer.IsCorrect &&
+          question.status == 'true' &&
+          question.CloneAnswers == null
+            ? ' border-dashed !background-white !text-green !border-green'
             : '',
         ]"
-        class="px-4 py-3 border border-neutral-300 rounded mb-2"
+        class="px-4 py-3 border border-neutral-300 rounded mb-2 cursor-pointer"
       >
-        <span>{{ answer.answerValue }}</span>
+        <span v-html="answer.Content"></span>
       </div>
     </div>
   </div>
@@ -51,16 +45,15 @@ export default defineComponent({
   props: {
     index: Number,
     question: Object,
-    updateSelectedAnswer: Function,
     partID: [Number, String],
   },
   setup() {
-    const { unitDetail } = storeToRefs(useUnitStore());
+    const { lessonDetail } = storeToRefs(useUnitStore());
     const modal = useModalStore();
     const { updateTheoryModalStatus } = modal;
     return {
       theoryIcon,
-      unitDetail,
+      lessonDetail,
       updateTheoryModalStatus,
     };
   },
