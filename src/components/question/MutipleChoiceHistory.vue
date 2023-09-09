@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between my-4">
       <span v-html="question.Content"> </span>
     </div>
-    <div class="font-medium">
+    <div :class="question.Answers[0].Media ? 'flex' : ''" class="font-medium">
       <div
         v-for="answer in question.Answers"
         :key="answer.ID"
@@ -25,10 +25,16 @@
           question.CloneAnswers == null
             ? ' border-dashed !background-white !text-green !border-green'
             : '',
+          answer.Media ? 'mx-1' : '',
         ]"
         class="px-4 py-3 border border-neutral-300 rounded mb-2 cursor-pointer"
       >
-        <span v-html="answer.Content"></span>
+        <span v-if="!answer.Media" v-html="answer.Content"></span>
+        <div v-else>
+          <div v-if="answer.Media.Extension.includes('image')">
+            <img :src="answer.Media.Path" alt="" />
+          </div>
+        </div>
       </div>
     </div>
   </div>

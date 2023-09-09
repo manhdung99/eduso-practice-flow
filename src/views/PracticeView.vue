@@ -1274,24 +1274,15 @@ export default defineComponent({
         }
         return part;
       });
-      // let part = localStorage.getItem(questionPart.value[partIndex.value].ID);
-      // if (part) {
-      //   part = JSON.parse(part);
-      //   currentPartQuestion.value = part;
-      //   const index = questionPart.value.findIndex(
-      //     (data) => data.ID == currentPartQuestion.value.ID
-      //   );
-      //   questionPart.value[index] = currentPartQuestion.value;
-      // } else {
-      //   currentPartQuestion.value = questionPart.value[partIndex.value];
-      // }
       currentPartQuestion.value = questionPart.value[partIndex.value];
-
       if (currentPartQuestion.value) {
         // Current Question
         currentQuestion.value = questions.value.findIndex(
           (question) => question.ID == currentPartQuestion.value.Questions[0].ID
         );
+        if (currentPartQuestion.value.Type == "QUIZ1") {
+          nextTick(() => disableCheckButton());
+        }
         if (currentPartQuestion.value.Type == "QUIZ2") {
           answerList.value = [];
           currentPartQuestion.value.Questions.forEach((question) => {
