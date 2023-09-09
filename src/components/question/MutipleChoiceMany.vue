@@ -1,7 +1,7 @@
 <template lang="">
   <div v-if="question" :id="question.ID">
     <div class="flex items-center justify-between my-4">
-      <span class="w-4/5" v-html="question.Content"> </span>
+      <span v-html="question.Content"> </span>
     </div>
     <div class="text-raspberry mb-2" v-if="question.correctAnswerLeft > 0">
       Còn {{ question.correctAnswerLeft }} câu trả lời đúng
@@ -12,21 +12,23 @@
         :key="answer.ID"
         :class="[
           question.CloneAnswers.includes(answer.ID) &&
-          question.status == 'unmake'
+          question.status == 'selected'
             ? 'bg-iceberg text-white'
             : '',
           question.CloneAnswers.includes(answer.ID) &&
           answer.IsCorrect == true &&
-          question.status != 'unmake'
+          question.status != 'unmake' &&
+          question.status != 'selected'
             ? '!bg-green-lighter !border-green !text-green'
             : '',
           question.CloneAnswers.includes(answer.ID) &&
           answer.IsCorrect == false &&
-          question.status != 'unmake'
+          question.status != 'unmake' &&
+          question.status != 'selected'
             ? 'bg-raspberry-lighter border-raspberry !text-raspberry'
             : '',
           !question.CloneAnswers.includes(answer.ID) &&
-          question.status == 'unmake'
+          question.status == 'selected'
             ? 'hover:border-iceberg hover:text-iceberg'
             : '',
         ]"

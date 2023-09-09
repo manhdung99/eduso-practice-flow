@@ -57,6 +57,7 @@ export default defineComponent({
         element.id = answers[i].answerID;
         element.value = answers[i].currentAnswer;
         element.style.width = answers[i].currentAnswer.length + 6 + "ch";
+        element.style.maxWidth = "33ch";
         if (answers[i].status == "true") {
           element.classList.add("true");
         } else if (answers[i].status == "false") {
@@ -71,6 +72,7 @@ export default defineComponent({
         } else {
           element.value = answers[i].answerValue;
           element.style.width = answers[i].answerValue.length + 6 + "ch";
+          element.style.maxWidth = "33ch";
           element.classList.add("unmake");
         }
       }

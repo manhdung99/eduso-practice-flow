@@ -21,12 +21,12 @@ export const useUnitStore = defineStore("unitStore", {
     setCourseID(id) {
       this.courseID = id;
     },
-    getLessons(id: string | number): void {
+    async getLessons(id: string | number): Promise<void> {
       const url =
         process.env.VUE_APP_BASE_URL +
         process.env.VUE_APP_GET_LESSONS +
         `${id}`;
-      axios
+      await axios
         .get(url, {
           headers: {
             Authorization:
@@ -42,22 +42,34 @@ export const useUnitStore = defineStore("unitStore", {
             const currentChapter = response.data.Data.Chapters.find(
               (chapter) => chapter.CourseID == id
             );
-            console.log(response.data.Data.Chapters);
-
-            console.log(currentChapter);
-
+            this.chapters = this.chapters.map((chapter) => {
+              chapter = {
+                ...chapter,
+                totalQuestions: 0,
+                completeQuestion: 0,
+                correctQuestion: 0,
+              };
+              this.lessons
+                .filter((lesson) => lesson.ChapterID == chapter.ID)
+                .forEach((lesson) => {
+                  chapter.totalQuestions += lesson.TotalQuestions;
+                  chapter.completeQuestion += lesson.CompleteQuestions;
+                  chapter.correctQuestion += lesson.PassQuestions;
+                });
+              return chapter;
+            });
             if (currentChapter != null) {
               this.chapterTitle = currentChapter.Name;
             }
           }
         });
     },
-    setLessonDetail(id: string | number): void {
+    async setLessonDetail(id: string | number): Promise<void> {
       const url =
         process.env.VUE_APP_BASE_URL +
         process.env.VUE_APP_GET_LESSON_DETAILS +
         `${id}`;
-      axios
+      await axios
         .get(url, {
           headers: {
             Authorization:
@@ -168,10 +180,10 @@ export const useUnitStore = defineStore("unitStore", {
           }
         });
     },
-    updateAnswer(answers): void {
+    async updateAnswer(answers): Promise<void> {
       const url =
         process.env.VUE_APP_BASE_URL + process.env.VUE_APP_UPDATE_ANSWER;
-      axios
+      await axios
         .post(url, answers, {
           headers: {
             Authorization:
@@ -195,10 +207,10 @@ export const useUnitStore = defineStore("unitStore", {
           console.log(response);
         });
     },
-    redoLesson(partID): void {
+    async redoLesson(partID): Promise<void> {
       const url =
         process.env.VUE_APP_BASE_URL + process.env.VUE_APP_REDO_LESSON;
-      axios
+      await axios
         .post(url, partID, {
           headers: {
             Authorization:

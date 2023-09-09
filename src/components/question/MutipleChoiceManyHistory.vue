@@ -1,7 +1,7 @@
 <template lang="">
   <div v-if="question" :id="question.ID">
     <div class="flex items-center justify-between my-4">
-      <span class="w-4/5" v-html="question.Content"> </span>
+      <span v-html="question.Content"> </span>
     </div>
     <div class="font-medium">
       <div

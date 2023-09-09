@@ -1,7 +1,7 @@
 <template lang="">
   <div v-if="currentPartQuestion" class="flex flex-wrap h-full">
     <div
-      class="w-full lg:w-1/2 h-auto lg:h-full mb-4 lg:mb-0 lg:border-r lg:border-gray-400 pl-8 pr-5 lg:pr-8 pt-4 lg:px-4 relative scroll-area"
+      class="w-full lg:w-1/2 h-auto lg:h-full mb-4 lg:mb-0 lg:border-r lg:border-gray-400 pl-3 pt-4 lg:px-4 relative scroll-area"
     >
       <div
         v-if="currentPartQuestion.Title"
@@ -43,9 +43,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="w-full lg:w-1/2 h-full pl-8 pr-5 lg:pl-4 lg:pr-1 relative lg:pt-4"
-    >
+    <div class="w-full lg:w-1/2 h-full pl-3 lg:pl-4 lg:pr-1 relative lg:pt-4">
       <div class="pt-2 border-t border-gray-400 lg:border-0 lg:pt-0">
         <div
           v-for="(question, index) in currentPartQuestion.Questions"
@@ -114,6 +112,7 @@ import theoryIcon from "../../assets/images/theory-icon.svg";
 import { useModalStore } from "../../store/modalStore";
 import removeIcon from "../../assets/images/remove.svg";
 import Answer from "@/types/answer";
+import Question from "@/types/question";
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Matching",
@@ -123,6 +122,9 @@ export default defineComponent({
     currentPartQuestion: Object,
     setAllSelectd: Function,
     unitIndex: Number,
+    questionList: Array,
+    currentQuestionIndex: Number,
+    updateCurrentQuestion: Function,
   },
   setup(props) {
     const modal = useModalStore();
@@ -132,7 +134,6 @@ export default defineComponent({
     const currentAnswerSelected = ref(null);
     const currentAnswer = ref(null);
     const isMobileView = ref(window.innerWidth <= 767);
-
     const placeholderText = computed(() => {
       return isMobileView.value
         ? "Chọn đáp án từ danh sách trên" // Text for mobile view
@@ -167,6 +168,10 @@ export default defineComponent({
           props.setAllSelectd(false);
         }
       });
+      window.localStorage.setItem(
+        props.currentPartQuestion.ID,
+        JSON.stringify(props.currentPartQuestion)
+      );
     };
     const findCurrentIndex = () => {
       const answeredIndex = props.currentPartQuestion.Questions.findIndex(
@@ -178,7 +183,14 @@ export default defineComponent({
     };
     // Set current answer when click
     const setCurrentAnswer = (index = currentIndex.value) => {
-      currentAnswer.value = props.currentPartQuestion.Questions[index];
+      const questionList = props.questionList as Array<Question>;
+      currentAnswer.value = props.currentPartQuestion.Questions[
+        index
+      ] as Question;
+      const questionIndex = questionList.findIndex((question) => {
+        return question.ID == currentAnswer.value.ID;
+      });
+      props.updateCurrentQuestion(questionIndex);
     };
     //Remove image in div
     const removeImage = async (question) => {
@@ -188,8 +200,13 @@ export default defineComponent({
       );
       answerList[answerIndex].isShow = true;
       question.selectedAnswer = "";
+      question.selectedAnswerID = "";
       question.status = "unmake";
       props.setAllSelectd(false);
+      window.localStorage.setItem(
+        props.currentPartQuestion.ID,
+        JSON.stringify(props.currentPartQuestion)
+      );
     };
     onMounted(() => {
       findCurrentIndex();

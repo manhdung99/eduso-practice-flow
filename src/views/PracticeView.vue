@@ -47,7 +47,7 @@
                       v-for="(question, questionIndex) in part.Questions"
                       :key="question.ID"
                       @click="moveToChoosedQuestion(part.ID, question.ID)"
-                      class="flex items-center py-2 hover:bg-slate-200 cursor-pointer"
+                      class="flex items-center py-2 hover:bg-slate-200 cursor-pointer px-2"
                     >
                       <span
                         v-if="question.status == 'true'"
@@ -61,7 +61,14 @@
                         ><span class="path1"></span><span class="path2"></span
                       ></span>
                       <span class="icon-unmake-answer" v-else></span>
-                      <span class="text-sm text-indigo ml-2.5"
+                      <span
+                        :class="
+                          question.status == 'selected' ||
+                          question.status == 'answered'
+                            ? '!text-blue-500'
+                            : ''
+                        "
+                        class="text-sm text-indigo ml-2.5"
                         >Câu {{ questionIndex + 1 }}</span
                       >
                     </div>
@@ -94,7 +101,7 @@
                       v-for="(question, questionIndex) in part.Questions"
                       :key="question.ID"
                       @click="moveToChoosedQuestionMobile(part.ID, question.ID)"
-                      class="flex items-center py-2 hover:bg-slate-200 cursor-pointer"
+                      class="flex items-center py-2 hover:bg-slate-200 cursor-pointer px-2"
                     >
                       <span
                         v-if="question.status == 'true'"
@@ -117,7 +124,7 @@
               </div>
             </div>
             <div
-              class="absolute -left-42 hover:left-0 top-4 bg-primary text-white items-center px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+              class="absolute -left-45 hover:left-0 top-4 bg-primary text-white items-center px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
               @click="showAnswer = true"
               v-else
             >
@@ -132,12 +139,15 @@
               class="two-question-wrapper lg:mx-auto mt-4"
             >
               <div class="w-full h-full px-0 relative">
-                <div ref="el" class="question-wrapper scroll-area">
+                <div ref="el" class="question-wrapper scroll-area content-area">
                   <Matching
                     :currentPartQuestion="currentPartQuestion"
                     :setAllSelectd="setAllSelectd"
                     :unitIndex="partIndex"
                     :answerList="answerList"
+                    :questionList="questions"
+                    :currentQuestionIndex="currentQuestion"
+                    :updateCurrentQuestion="updateCurrentQuestion"
                   />
                 </div>
                 <div
@@ -163,11 +173,14 @@
                 <div class="checking-btn-wrapper matching" v-else>
                   <button
                     @click="goNextPartQuestion"
-                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white whitespace-nowrap"
                   >
                     Bỏ qua
                   </button>
-                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                  <button
+                    @click="redoQuestion"
+                    class="btn btn-primary w-2/3 whitespace-nowrap"
+                  >
                     Làm lại
                   </button>
                 </div>
@@ -180,21 +193,25 @@
                 (currentPartQuestion.Type == 'QUIZ2' ||
                   currentPartQuestion.Questions.length < 2 ||
                   ((!currentPartQuestion.Title ||
-                    currentPartQuestion.Title.split(' ').length < 200) &&
+                    currentPartQuestion.Title.split(' ').length < 100) &&
                     (!currentPartQuestion.Description ||
-                      currentPartQuestion.Description.split(' ').length < 200)))
+                      currentPartQuestion.Description.split(' ').length < 100)))
               "
               class="one-question-wrapper"
             >
-              <div ref="el" class="content-question-part scroll-area">
+              <div class="content-question-part">
                 <!-- <div class="px-1 pb-2 lg:pb-8 border-b border-gray-300 text-sm">
                   <div v-html="currentPartQuestion.Description"></div>
                 </div> -->
-                <div class="h-full" v-if="currentPartQuestion.Type == 'QUIZ1'">
+                <div
+                  ref="el"
+                  class="h-full scroll-area content-area"
+                  v-if="currentPartQuestion.Type == 'QUIZ1'"
+                >
                   <div
-                    class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm flex justify-between"
+                    class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm justify-between"
                   >
-                    <div class="w-9/10">
+                    <div class="py-1">
                       <div v-html="currentPartQuestion.Title"></div>
                       <div v-if="currentPartQuestion.Media != null">
                         <audio
@@ -209,7 +226,7 @@
                     </div>
                     <span
                       v-if="theoryData != null && theoryData.length > 0"
-                      class="hover:opacity-80 cursor-pointer"
+                      class="hover:opacity-80 cursor-pointer fixed right-4 top-2"
                     >
                       <img
                         @click="updateTheoryModalStatus(true)"
@@ -219,21 +236,26 @@
                       />
                     </span>
                   </div>
-
-                  <MutipleChoice
-                    v-for="(question, index) in currentPartQuestion.Questions"
-                    :key="question.questionID"
-                    :updateSelectedAnswer="updateSelectedAnswer"
-                    :question="question"
-                    :index="index"
-                    :partID="currentPartQuestion.ID"
-                  />
+                  <div>
+                    <MutipleChoice
+                      v-for="(question, index) in currentPartQuestion.Questions"
+                      :key="question.questionID"
+                      :updateSelectedAnswer="updateSelectedAnswer"
+                      :question="question"
+                      :index="index"
+                      :partID="currentPartQuestion.ID"
+                    />
+                  </div>
                 </div>
-                <div class="" v-if="currentPartQuestion.Type == 'QUIZ2'">
+                <div
+                  ref="el"
+                  class="h-full scroll-area content-area"
+                  v-if="currentPartQuestion.Type == 'QUIZ2'"
+                >
                   <div
                     class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm flex justify-between"
                   >
-                    <div class="w-9/10">
+                    <div class="flex-1">
                       <div v-html="currentPartQuestion.Title"></div>
                       <div v-if="currentPartQuestion.Media != null">
                         <audio
@@ -244,7 +266,7 @@
                     </div>
                     <span
                       v-if="theoryData != null && theoryData.length > 0"
-                      class="hover:opacity-80 cursor-pointer"
+                      class="hover:opacity-80 cursor-pointer fixed right-4 top-2"
                     >
                       <img
                         @click="updateTheoryModalStatus(true)"
@@ -267,24 +289,15 @@
                     :partIndex="partIndex"
                   />
                 </div>
-                <!-- <div class="h-full" v-if="currentPartQuestion.Type == 'QUIZ3'">
-                  <DropBox
-                    :class="
-                      currentPartQuestion.Questions.length < 2
-                        ? 'one-question scroll-area'
-                        : ''
-                    "
-                    :question="currentPartQuestion"
-                    :partID="currentPartQuestion.ID"
-                    :optionList="optionList"
-                    :oldAnswer="oldAnswer"
-                  />
-                </div> -->
-                <div class="h-full" v-if="currentPartQuestion.Type == 'QUIZ4'">
+                <div
+                  ref="el"
+                  class="h-full scroll-area content-area"
+                  v-if="currentPartQuestion.Type == 'QUIZ4'"
+                >
                   <div
-                    class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm flex justify-between"
+                    class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm justify-between"
                   >
-                    <div class="w-9/10">
+                    <div class="flex-1">
                       <div v-html="currentPartQuestion.Title"></div>
                       <div v-if="currentPartQuestion.Media != null">
                         <audio
@@ -299,7 +312,7 @@
                     </div>
                     <span
                       v-if="theoryData != null && theoryData.length > 0"
-                      class="hover:opacity-80 cursor-pointer"
+                      class="hover:opacity-80 cursor-pointer fixed right-4 top-2"
                     >
                       <img
                         @click="updateTheoryModalStatus(true)"
@@ -341,11 +354,14 @@
                 <div class="checking-btn-wrapper" v-else>
                   <button
                     @click="goNextPartQuestion"
-                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white whitespace-nowrap"
                   >
                     Bỏ qua
                   </button>
-                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                  <button
+                    @click="redoQuestion"
+                    class="btn btn-primary w-2/3 whitespace-nowrap"
+                  >
                     Làm lại
                   </button>
                 </div>
@@ -358,9 +374,9 @@
                   currentPartQuestion.Type == 'QUIZ4') &&
                 currentPartQuestion.Questions.length > 2 &&
                 ((currentPartQuestion.Title &&
-                  currentPartQuestion.Title.split(' ').length > 200) ||
+                  currentPartQuestion.Title.split(' ').length > 100) ||
                   (currentPartQuestion.Description &&
-                    currentPartQuestion.Description.split(' ').length > 200))
+                    currentPartQuestion.Description.split(' ').length > 100))
               "
               class="two-question-wrapper lg:mx-auto mt-4"
             >
@@ -395,7 +411,6 @@
                 </div>
               </div>
               <div
-                ref="el"
                 :class="!showTheoryMobile ? 'show' : ''"
                 class="answer-question-part"
               >
@@ -406,7 +421,7 @@
                 >
                   <img :src="circleLeftIcon" alt=""
                 /></span>
-                <div class="question-wrapper scroll-area">
+                <div ref="el" class="question-wrapper scroll-area content-area">
                   <div v-if="currentPartQuestion.Type == 'QUIZ1'">
                     <MutipleChoice
                       v-for="(question, index) in currentPartQuestion.Questions"
@@ -451,11 +466,14 @@
                 <div class="checking-btn-wrapper" v-else>
                   <button
                     @click="goNextPartQuestion"
-                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white"
+                    class="btn btn-disable w-1/3 hover:bg-gray-400 hover:text-white whitespace-nowrap"
                   >
                     Bỏ qua
                   </button>
-                  <button @click="redoQuestion" class="btn btn-primary w-2/3">
+                  <button
+                    @click="redoQuestion"
+                    class="btn btn-primary w-2/3 whitespace-nowrap"
+                  >
                     Làm lại
                   </button>
                 </div>
@@ -468,10 +486,10 @@
                   currentPartQuestion.Type == 'QUIZ4') &&
                   currentPartQuestion.Questions.length > 2 &&
                   ((currentPartQuestion.Title &&
-                    currentPartQuestion.Title.split(' ').length > 200) ||
+                    currentPartQuestion.Title.split(' ').length > 100) ||
                     (currentPartQuestion.Description &&
                       currentPartQuestion.Description.split(' ').length >
-                        200))) ||
+                        100))) ||
                 currentPartQuestion.Type == 'QUIZ3'
                   ? 'two-question'
                   : '',
@@ -503,13 +521,13 @@
                   class="btn btn-primary flex items-center mr-2"
                 >
                   <span class="icon-up mr-1"></span>
-                  <span class="whitespace-nowrap ml-1">Câu trước</span>
+                  <span class="whitespace-nowrap ml-1">Phần trước</span>
                 </button>
                 <button
                   @click="goNextPartQuestion"
                   class="btn btn-primary flex items-center ml-2"
                 >
-                  <span class="whitespace-nowrap mr-1">Câu sau</span>
+                  <span class="whitespace-nowrap mr-1">Phần sau</span>
                   <span class="icon-down ml-1"></span>
                 </button>
               </div>
@@ -558,7 +576,30 @@
         </div>
       </div>
     </div>
-
+    <!-- Warning modal  -->
+    <div
+      v-if="openWarning"
+      class="bg-modal fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center z-10"
+    >
+      <div class="absolute w-80 bg-white p-4 rounded-md">
+        <div class="">
+          <p class="font-semibold">Chú ý !</p>
+          <div>Có vẻ như bạn chưa trả lời hết câu hỏi.</div>
+          <p>Tiếp tục hoàn thành và bỏ qua các câu hỏi chưa được trả lời</p>
+        </div>
+        <div class="flex justify-between flex-wrap">
+          <button @click="completeLesson()" class="btn btn-primary w-full mb-2">
+            Hoàn thành
+          </button>
+          <button
+            @click="openWarning = false"
+            class="btn btn-primary disable w-full"
+          >
+            Kiểm tra lại
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="workbook-body" v-if="currentPartQuestion && showWorkbook">
       <div class="workbook-question-wrapper mt-4">
         <span
@@ -613,8 +654,8 @@
                 <span
                   v-if="question.status != 'true' && question.status != 'false'"
                   @click="
-                    moveToChoosedQuestion(part.ID, question.ID);
                     showWorkbook = false;
+                    moveToChoosedQuestion(part.ID, question.ID);
                   "
                   class="text-iceberg-lighter italic hover:underline cursor-pointer"
                   >Làm ngay</span
@@ -622,8 +663,10 @@
               </div>
             </div>
           </div>
-
-          <button @click="completeLesson" class="btn btn-primary complete-btn">
+          <button
+            @click="checkCompleteLesson"
+            class="btn btn-primary complete-btn"
+          >
             Hoàn thành
           </button>
         </div>
@@ -635,9 +678,16 @@
     >
       Bài này chưa có nội dung
     </div>
-    <div class="loading-img" v-if="loading">
-      <img src="../assets/images/Loading_icon.gif" alt="" />
-    </div>
+    <Teleport to="body">
+      <div
+        v-if="loading"
+        class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
+      >
+        <div class="loading-img">
+          <img src="../assets/images/loading-gif.gif" alt="" />
+        </div>
+      </div>
+    </Teleport>
   </div>
   <TheoryModal v-if="openTheoryModal" />
 </template>
@@ -706,12 +756,13 @@ export default defineComponent({
     const partIndex = ref(0);
     const el = ref(null);
     const loading = ref(null);
+    const openWarning = ref(false);
     //Update answer type Mutiple choice
     const updateSelectedAnswer = (questionID, answerID) => {
       const question = currentPartQuestion.value.Questions.find(
         (data) => data.ID == questionID
       );
-      if (question.status == "unmake") {
+      if (question.status == "unmake" || question.status == "selected") {
         question.CloneAnswers = answerID;
         selectedAll.value = true;
         currentPartQuestion.value.Questions.forEach((question) => {
@@ -722,14 +773,25 @@ export default defineComponent({
             selectedAll.value = false;
           }
         });
+        question.status = "selected";
       }
+      currentQuestion.value = questions.value.findIndex(
+        (question) => question.ID == questionID
+      );
+      window.localStorage.setItem(
+        currentPartQuestion.value.ID,
+        JSON.stringify(currentPartQuestion.value)
+      );
+    };
+    const updateCurrentQuestion = (index) => {
+      currentQuestion.value = index;
     };
     // Update Select mutiple choice answer
     const updateSelectedAnswerMany = (questionID, answerID) => {
       const question = currentPartQuestion.value.Questions.find(
         (data) => data.ID == questionID
       );
-      if (question.status == "unmake") {
+      if (question.status == "unmake" || question.status == "selected") {
         if (question.CloneAnswers.includes(answerID)) {
           question.CloneAnswers = question.CloneAnswers.filter(
             (answer) => answer !== answerID
@@ -737,7 +799,11 @@ export default defineComponent({
         } else {
           question.CloneAnswers = [...question.CloneAnswers, answerID];
         }
-
+        if (question.CloneAnswers.length > 0) {
+          question.status = "selected";
+        } else {
+          question.status = "unmake";
+        }
         selectedAll.value = true;
         currentPartQuestion.value.Questions.forEach((question) => {
           if (
@@ -748,6 +814,14 @@ export default defineComponent({
           }
         });
       }
+
+      currentQuestion.value = questions.value.findIndex(
+        (question) => question.ID == questionID
+      );
+      window.localStorage.setItem(
+        currentPartQuestion.value.ID,
+        JSON.stringify(currentPartQuestion.value)
+      );
     };
     const goNextPartQuestion = () => {
       if (partIndex.value < questionPart.value.length - 1) {
@@ -791,7 +865,7 @@ export default defineComponent({
       // Type fill in blank & select box
       else if (currentPartQuestion.value.Type == "QUIZ2") {
         currentPartQuestion.value.status = "true";
-        currentPartQuestion.value.Questions.forEach((question) => {
+        currentPartQuestion.value.Questions.forEach(async (question) => {
           lessonDetail.value.CompleteQuestions++;
           const answers = question.Answers;
           const input = document.getElementById(
@@ -800,12 +874,14 @@ export default defineComponent({
           question.Content = input.value;
           input.setAttribute("disabled", "");
           question.status = "false";
-          answers.forEach((answer) => {
-            if (question.Content == answer.Content) {
+          await answers.forEach((answer) => {
+            if (
+              question.Content.toLowerCase() == answer.Content.toLowerCase()
+            ) {
               question.status = "true";
             }
           });
-          if (question.status == true) {
+          if (question.status == "true") {
             lessonDetail.value.numberQuestionCorrect++;
             input.classList.add("true");
           } else {
@@ -864,6 +940,7 @@ export default defineComponent({
         }
       });
       cucalatorQuestion();
+      localStorage.removeItem(currentPartQuestion.value.ID);
     };
     // reset question
     const redoQuestion = () => {
@@ -955,7 +1032,7 @@ export default defineComponent({
       for (let i = 0; i < partQuestionLength; i++) {
         const part = questionPart.value[i];
         part.Questions.forEach((question) => {
-          if (question.status != "unmake") {
+          if (question.status == "true" || question.status == "false") {
             lessonDetail.value.CompleteQuestions++;
             if (question.status == "true") {
               lessonDetail.value.numberQuestionCorrect++;
@@ -987,21 +1064,47 @@ export default defineComponent({
       );
       showAnswer.value = false;
     };
+    //Check input filled
     // Check all input filled
-    const checkFillAllInput = () => {
-      const myInputs = document.getElementsByClassName("fillquiz");
+    const checkFillAllInput = async () => {
+      const myInputs = await document.getElementsByClassName("fillquiz");
+      selectedAll.value = true;
+      for (let j = 0; j < myInputs.length; j++) {
+        const currentInput = myInputs[j] as HTMLInputElement;
+        if (currentInput.value.length < 1) {
+          console.log(currentInput.value.length);
+
+          selectedAll.value = false;
+        }
+      }
+
+      const questionList = currentPartQuestion.value.Questions;
       for (let i = 0; i < myInputs.length; i++) {
         const inputElement = myInputs[i] as HTMLInputElement;
         inputElement.addEventListener("blur", () => {
           selectedAll.value = true;
           for (let j = 0; j < myInputs.length; j++) {
             const currentInput = myInputs[j] as HTMLInputElement;
+            const question = questionList.find(
+              (question) => question.ID == currentInput.id
+            );
+            question.CloneAnswers = currentInput.value;
             if (currentInput.value.length < 1) {
               selectedAll.value = false;
+              question.status = "unmake";
+            } else {
+              question.status = "answered";
             }
           }
+          window.localStorage.setItem(
+            currentPartQuestion.value.ID,
+            JSON.stringify(currentPartQuestion.value)
+          );
         });
         inputElement.addEventListener("focus", () => {
+          currentQuestion.value = questions.value.findIndex(
+            (question) => question.ID == inputElement.id
+          );
           selectedAll.value = true;
           for (let j = 0; j < myInputs.length; j++) {
             const currentInput = myInputs[j] as HTMLInputElement;
@@ -1026,6 +1129,13 @@ export default defineComponent({
           }
         });
       }
+    };
+    const scrollToTop = () => {
+      const element = document.querySelector(".content-area");
+      element.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     };
     onMounted(async () => {
       loading.value = true;
@@ -1156,7 +1266,27 @@ export default defineComponent({
           });
         }
       });
+      //Set data in localStorage to part
+      questionPart.value = questionPart.value.map((part) => {
+        let currentPart = localStorage.getItem(part.ID);
+        if (currentPart) {
+          part = JSON.parse(currentPart);
+        }
+        return part;
+      });
+      // let part = localStorage.getItem(questionPart.value[partIndex.value].ID);
+      // if (part) {
+      //   part = JSON.parse(part);
+      //   currentPartQuestion.value = part;
+      //   const index = questionPart.value.findIndex(
+      //     (data) => data.ID == currentPartQuestion.value.ID
+      //   );
+      //   questionPart.value[index] = currentPartQuestion.value;
+      // } else {
+      //   currentPartQuestion.value = questionPart.value[partIndex.value];
+      // }
       currentPartQuestion.value = questionPart.value[partIndex.value];
+
       if (currentPartQuestion.value) {
         // Current Question
         currentQuestion.value = questions.value.findIndex(
@@ -1188,13 +1318,28 @@ export default defineComponent({
               );
             }
           }
+          const questionLength = currentPartQuestion.value.Questions.length;
+          for (let i = 0; i < questionLength; i++) {
+            const question = currentPartQuestion.value.Questions[i];
+            answerList.value = answerList.value.map((answer) => {
+              if (answer.ID == question.selectedAnswerID) {
+                answer = { ...answer, isShow: false };
+              }
+              return answer;
+            });
+          }
         }
       }
       loading.value = false;
     });
     onMounted(() => {
       nextTick(() => {
-        checkFillAllInput();
+        if (
+          currentPartQuestion.value &&
+          currentPartQuestion.value.Type == "QUIZ2"
+        ) {
+          checkFillAllInput();
+        }
       });
     });
     onMounted(() => {
@@ -1219,12 +1364,24 @@ export default defineComponent({
     const setAllSelectd = (status: boolean) => {
       selectedAll.value = status;
     };
-    const completeLesson = () => {
+    const checkCompleteLesson = () => {
+      if (
+        lessonDetail.value.TotalQuestions -
+          lessonDetail.value.CompleteQuestions >
+        0
+      ) {
+        openWarning.value = true;
+      } else {
+        completeLesson();
+      }
+    };
+    const completeLesson = async () => {
+      loading.value = true;
       const partLength = questionPart.value.length;
       for (let i = 0; i < partLength; i++) {
         const part = questionPart.value[i];
-        part.Questions.forEach((question) => {
-          if (question.status == "unmake") {
+        for (const question of part.Questions) {
+          if (question.status != "true" && question.status != "false") {
             const data = new FormData();
             data.append("QuestionID", question.ID);
             data.append("AnswerID", "");
@@ -1234,16 +1391,20 @@ export default defineComponent({
             data.append("LessonPartID", part.ID);
             data.append("CourseLessonID", lessonDetail.value.ID as string);
             data.append("CourseID", route.params.courseId as string);
-            updateAnswer(data);
+            await updateAnswer(data);
           }
-        });
+        }
       }
+      questionPart.value.forEach((part) => {
+        localStorage.removeItem(part.ID);
+      });
+      loading.value = false;
       router.push(`/course/${route.params.courseId}/${lessonDetail.value.ID}`);
     };
     //Scroll to question
     const moveToQuestion = (id) => {
       const section = document.getElementById(id);
-      el.value.scrollTo({ top: section.offsetTop - 8, behavior: "smooth" });
+      el.value.scrollTo({ top: section.offsetTop - 50, behavior: "smooth" });
     };
     const disableCheckButton = () => {
       //Disable check button
@@ -1260,9 +1421,6 @@ export default defineComponent({
           }
         } else if (currentPartQuestion.value.Type == "QUIZ2") {
           const myInputs = document.getElementsByClassName("fillquiz");
-          console.log("here");
-          console.log(myInputs.length);
-
           for (let i = 0; i < myInputs.length; i++) {
             selectedAll.value = true;
             const currentInput = myInputs[i] as HTMLInputElement;
@@ -1274,7 +1432,6 @@ export default defineComponent({
           const index = currentPartQuestion.value.Questions.findIndex(
             (question) => question.selectedAnswer == ""
           );
-          console.log(index);
 
           if (index >= 0) {
             selectedAll.value = false;
@@ -1297,7 +1454,18 @@ export default defineComponent({
     watch(
       () => partIndex.value,
       () => {
-        currentPartQuestion.value = questionPart.value[partIndex.value];
+        nextTick(() => scrollToTop());
+        let part = localStorage.getItem(questionPart.value[partIndex.value].ID);
+        if (part) {
+          part = JSON.parse(part);
+          currentPartQuestion.value = part;
+          const index = questionPart.value.findIndex(
+            (data) => data.ID == currentPartQuestion.value.ID
+          );
+          questionPart.value[index] = currentPartQuestion.value;
+        } else {
+          currentPartQuestion.value = questionPart.value[partIndex.value];
+        }
         nextTick(() => disableCheckButton());
 
         if (currentPartQuestion.value) {
@@ -1308,6 +1476,8 @@ export default defineComponent({
           );
 
           if (currentPartQuestion.value.Type == "QUIZ2") {
+            console.log("herre");
+
             answerList.value = [];
             currentPartQuestion.value.Questions.forEach((question) => {
               answerList.value = [...answerList.value, [...question.Answers]];
@@ -1368,6 +1538,10 @@ export default defineComponent({
       completeLesson,
       loading,
       disableCheckButton,
+      questions,
+      updateCurrentQuestion,
+      openWarning,
+      checkCompleteLesson,
     };
   },
 });
@@ -1389,6 +1563,16 @@ export default defineComponent({
   color: white;
   background: linear-gradient(#105277, #00314c);
   border: #00314c 2px solid;
+}
+.btn-primary.disable {
+  border: 2px solid #dfdfdf;
+  background: #dfdfdf;
+  color: #555;
+}
+.btn-primary.disable:hover {
+  border: 2px solid #dfdfdf;
+  background: #dfdfdf;
+  color: #555;
 }
 .bg-primary {
   background: linear-gradient(#105277, #00314c);
@@ -1434,8 +1618,9 @@ export default defineComponent({
   width: 250px;
   background: white;
   height: calc(100vh - 84px);
-  padding: 0 24px 24px 24px;
+  padding: 12px 24px 24px 24px;
   margin-top: 16px;
+  border-radius: 8px;
 }
 
 .part-title {
@@ -1548,6 +1733,7 @@ export default defineComponent({
   margin-left: 50%;
   transform: translateX(-50%);
   box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+  border-radius: 8px;
 }
 .history-content {
   height: calc(100% - 100px);
@@ -1581,24 +1767,24 @@ export default defineComponent({
 @media screen and (max-width: 1023px) {
   .two-question-wrapper {
     width: 100%;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 150px);
   }
 
   .one-question-wrapper {
     position: relative;
     width: 100%;
-    height: calc(100vh - 190px);
-    padding: 24px 24px 0;
+    height: calc(100vh - 140px);
+    padding: 24px 12px 0;
     margin: 0;
     transform: unset;
     padding-bottom: 28px;
   }
 
   .checking-btn-wrapper {
-    width: calc(100% - 48px);
+    width: calc(100% - 24px);
     position: absolute;
     bottom: 32px;
-    left: 24px;
+    left: 12px;
   }
   .one-question-wrapper .checking-btn-wrapper {
     bottom: 12px;
@@ -1621,10 +1807,10 @@ export default defineComponent({
   }
   @supports (-webkit-touch-callout: none) {
     .two-question-wrapper {
-      height: calc(100vh - 210px);
+      height: calc(100vh - 150px);
     }
     .one-question-wrapper {
-      height: calc(100vh - 200px);
+      height: calc(100vh - 150px);
     }
   }
 }
@@ -1640,7 +1826,8 @@ export default defineComponent({
     width: auto;
     background: #00000080;
     height: auto;
-    z-index: 10;
+    z-index: 11;
+    margin-top: 0;
   }
   .question-wrapper {
     height: calc(100% - 80px);
@@ -1667,6 +1854,7 @@ export default defineComponent({
     bottom: 8px;
     right: 8px;
     left: 8px;
+    max-height: 80vh;
   }
   .content-question-part {
     height: calc(100% - 40px);
@@ -1674,8 +1862,8 @@ export default defineComponent({
   .answer-question-part {
     width: 100%;
     border: unset;
-    padding: 0 32px;
-    padding-right: 20px;
+    padding: 0 12px;
+    padding-right: 0px;
     position: absolute;
     left: -105%;
     padding-top: 8px;
@@ -1687,7 +1875,7 @@ export default defineComponent({
   .theory-question-part {
     width: 100%;
     border: unset;
-    padding: 0 32px;
+    padding: 0 18px;
     position: absolute;
     right: -115%;
     border-radius: 8px;
@@ -1697,10 +1885,13 @@ export default defineComponent({
   .theory-question-part.show {
     right: 0;
   }
+  .theory-question-part.shadow-primary {
+    box-shadow: none;
+  }
   .workbook-question-wrapper {
     position: relative;
     width: calc(100% - 32px);
-    height: calc(100vh - 72px);
+    height: calc(100vh - 84px);
     padding: 16px 16px 0;
     margin: 0;
     margin: 0 auto;

@@ -1,9 +1,10 @@
 <template>
   <div class="">
-    <div class="border-b text-center mt-4">
+    <div class="text-center my-2">
       <p class="text-indigo text-2xl font-bold">Mục lục</p>
     </div>
     <a-menu
+      class="pt-2"
       v-model:selectedKeys="selectedKeys"
       style="width: 100%"
       mode="inline"
@@ -11,11 +12,58 @@
       @openChange="onOpenChange"
     >
       <a-sub-menu v-for="chapter in chapters" :key="chapter.ID">
-        <template #title>{{ chapter.Name }}</template>
+        <template #title>
+          <ProcessVue
+            :totalQuestion="chapter.totalQuestions"
+            :completeQuestion="chapter.completeQuestion"
+            :correctQuestion="chapter.correctQuestion"
+          />
+          <div class="flex justify-between items-center pr-4">
+            <span class="text-ellipsis overflow-hidden w-3/5 md:w-auto">{{
+              chapter.Name
+            }}</span>
+            <div class="flex flex-col">
+              <span class="leading-6">Trả lời đúng </span>
+              <span class="leading-6"
+                >{{ chapter.correctQuestion }} /
+                {{ chapter.totalQuestions }}</span
+              >
+            </div>
+          </div>
+        </template>
         <div v-for="lesson in lessons" :key="lesson.ID">
           <router-link :to="`/course/${route.params.courseId}/${lesson.ID}`">
             <a-menu-item v-if="lesson.ChapterID == chapter.ID">
-              <div>{{ lesson.Title }}</div>
+              <ProcessVue
+                :totalQuestion="lesson.TotalQuestions"
+                :completeQuestion="lesson.CompleteQuestions"
+                :correctQuestion="lesson.PassQuestions"
+              />
+              <div class="flex justify-between">
+                <div class="text-ellipsis overflow-hidden w-3/5 md:w-auto">
+                  {{ lesson.Title }} ( đúng {{ lesson.PassQuestions }} /
+                  {{ lesson.TotalQuestions }})
+                </div>
+                <div>
+                  <span
+                    :class="
+                      lesson.CompleteQuestions >= lesson.TotalQuestions
+                        ? 'text-green'
+                        : lesson.CompleteQuestions == 0
+                        ? 'text-gray-400'
+                        : 'text-indigo'
+                    "
+                  >
+                    {{
+                      lesson.CompleteQuestions >= lesson.TotalQuestions
+                        ? "Đã hoàn thành"
+                        : lesson.CompleteQuestions == 0
+                        ? "Chưa làm"
+                        : "Chưa hoàn thành"
+                    }}
+                  </span>
+                </div>
+              </div>
             </a-menu-item>
           </router-link>
         </div>
@@ -38,6 +86,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useUnitStore } from "../store/unitStore";
 import { useRoute } from "vue-router";
+import ProcessVue from "../components/common/ProcessVue.vue";
 export default defineComponent({
   name: "CourseView",
   setup() {
@@ -55,8 +104,8 @@ export default defineComponent({
         openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
     };
-    onMounted(() => {
-      getLessons(route.params.courseId as string);
+    onMounted(async () => {
+      await getLessons(route.params.courseId as string);
     });
     return {
       lessons,
@@ -68,6 +117,6 @@ export default defineComponent({
       onOpenChange,
     };
   },
-  // components: { CartUnit },
+  components: { ProcessVue },
 });
 </script>

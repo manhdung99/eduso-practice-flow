@@ -8,7 +8,7 @@ import router from "@/router";
 export default defineComponent({
   name: "HomeView",
   setup() {
-    onMounted(() => router.push("/course/5e83f76cf4e1ee1140b3cd4e"));
+    onMounted(() => router.push("/course/6290ab1f6c9f3d1f84abb70b"));
     return {};
   },
 });

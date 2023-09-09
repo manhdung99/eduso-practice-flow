@@ -1,0 +1,49 @@
+ .doc-content {
+     display: flex;
+     flex-direction: row;
+     flex-wrap: wrap;
+ }
+
+ .vocab-box {
+     display: inline-block;
+     border: solid 1px #CCC;
+     border-radius: 10px;
+     margin: 10px;
+     padding: 10px;
+     position: relative;
+     vertical-align: top;
+     width: 46%;
+     background: #FFF;
+ }
+
+ .part-box.VOCAB .doc-content .vocab-box {
+     width: calc(50% - 20px);
+ }
+
+ .vocab-box .word-pron {
+     color: orange;
+     margin: 5px;
+ }
+
+ .vocab-box .word-title {
+     font-weight: 700;
+     font-size: 16px;
+ }
+
+ .vocab-box .vocab-audio {
+     display: inline-block;
+     position: relative;
+ }
+
+ .fa-volume-up {
+     background: url("../images/volume.svg") no-repeat;
+     position: absolute;
+     width: 22px;
+     height: 22px;
+     top: 4px;
+ }
+
+ .vocab-meaning b {
+     color: green;
+     font-weight: 700;
+ }

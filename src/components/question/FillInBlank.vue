@@ -1,5 +1,5 @@
 <template lang="">
-  <div v-if="question">
+  <div class="h-full" v-if="question">
     <div
       v-html="question.Description"
       class="font-medium pt-12 leading-12"
@@ -38,6 +38,12 @@ export default defineComponent({
 
         element.setAttribute("placeholder", "Trả lời");
         element.id = answers[i][0].ParentID;
+        if (questions.Questions[i].CloneAnswers) {
+          element.value = questions.Questions[i].CloneAnswers;
+          if (questions.Questions[i].status == "unmake") {
+            questions.Questions[i].status = "answered";
+          }
+        }
         const oldIndex = oldAnswer.findIndex(
           (data) => data.QuestionID == element.id
         );
@@ -85,6 +91,7 @@ export default defineComponent({
   outline: none;
   padding-left: 12px;
   position: relative;
+  border-radius: 4px;
 }
 .fillquiz.false {
   border-color: #d03239;

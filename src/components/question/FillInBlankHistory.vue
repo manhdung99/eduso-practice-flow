@@ -79,6 +79,7 @@ export default defineComponent({
           element.classList.add("unmake");
         }
         element.style.width = element.value.length + 2 + "ch";
+        element.style.maxWidth = "33ch";
       }
     };
     onMounted(() => {

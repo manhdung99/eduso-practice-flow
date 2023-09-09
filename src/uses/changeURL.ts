@@ -5,10 +5,7 @@ function addStaticURLForDescription(Description) {
     !Description.includes("https") &&
     !Description.includes("http://publisher.edusolution.vn")
   ) {
-    console.log(Description);
-
     Description = Description.replace(/src="/g, 'src="https://static.eduso.vn');
-    console.log(Description);
   }
   return Description;
 }

@@ -1,14 +1,14 @@
 <template lang="">
   <div v-if="question" :id="question.ID">
     <div class="flex items-center justify-between my-4">
-      <span class="w-4/5" v-html="question.Content"> </span>
+      <span v-html="question.Content"> </span>
     </div>
     <div class="font-medium">
       <div
         v-for="answer in question.Answers"
         :key="answer.ID"
         :class="[
-          question.CloneAnswers == answer.ID && question.status == 'unmake'
+          question.CloneAnswers == answer.ID && question.status == 'selected'
             ? 'bg-iceberg text-white'
             : '',
           question.CloneAnswers == answer.ID && question.status == 'true'
@@ -17,7 +17,7 @@
           question.CloneAnswers == answer.ID && question.status == 'false'
             ? 'bg-raspberry-lighter border-raspberry !text-raspberry'
             : '',
-          question.CloneAnswers != answer.ID && question.status == 'unmake'
+          question.CloneAnswers != answer.ID && question.status == 'selected'
             ? 'hover:border-iceberg hover:text-iceberg'
             : '',
         ]"

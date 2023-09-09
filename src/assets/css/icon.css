@@ -26,11 +26,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-show-list:before {
-    content: "\e900";
-    color: #19455d;
-}
-
 .icon-right:before {
     content: "\e90c";
     color: currentColor;

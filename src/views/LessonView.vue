@@ -20,9 +20,9 @@
       class="lesson-view-wrapper"
       v-if="lessonDetail.CompleteQuestions >= lessonDetail.TotalQuestions"
     >
-      <div class="lesson-view-content scroll-area">
+      <div class="lesson-view-content scroll-area h-full py-2">
         <div class="flex justify-center lesson-image-complete">
-          <img class="" :src="LessonImage" alt="" />
+          <img class="object-contain" :src="LessonImage" alt="" />
         </div>
         <div class="px-6">
           <div class="w-full mb-8">
@@ -107,8 +107,8 @@
       <div
         class="rounded-lg bg-white w-full lg:w-1/2 lg:ml-1/2 lg:-translate-x-1/2 mt-4 shadow-md shadow-gray-300 overflow-hidden scroll-area"
       >
-        <div class="flex justify-center img-lesson">
-          <img :src="LessonImage" alt="" />
+        <div class="flex justify-center img-lesson py-2">
+          <img class="object-contain" :src="LessonImage" alt="" />
         </div>
         <div class="px-2 lg:px-6 pb-6">
           <div class="w-full">
@@ -167,12 +167,15 @@
                 :to="`/practice/${route.params.courseId}/${lessonDetail.ID}`"
               >
                 <a-button
-                  class="!h-11.5 w-full !font-medium text-center flex justify-center"
+                  class="!h-11.5 w-full !font-medium justify-center relative"
                   type="primary"
-                  >Làm tiếp
-                  <span
-                    class="icon-right absolute right-5 top-1/2 -translate-y-1/2"
-                  ></span>
+                >
+                  <div>
+                    Làm tiếp
+                    <span
+                      class="icon-right absolute right-5 top-1/2 -translate-y-1/2"
+                    ></span>
+                  </div>
                 </a-button>
               </router-link>
             </div>
@@ -194,19 +197,27 @@ export default defineComponent({
   setup() {
     const correctProcess = ref(0);
     const route = useRoute();
+    const questionPart = ref([]);
     const { lessons, lessonDetail, LessonImage, chapterTitle } = storeToRefs(
       useUnitStore()
     );
-    const { setLessonDetail, redoLesson, setCourseID, getLessons } =
-      useUnitStore();
-
-    const resetUnit = () => {
+    const {
+      setLessonDetail,
+      redoLesson,
+      setCourseID,
+      getLessons,
+      setLessonQuestion,
+    } = useUnitStore();
+    const resetUnit = async () => {
       // unitDetail.value.currentIndex = 0;
       lessonDetail.value.CompleteQuestions = 0;
       lessonDetail.value.PassQuestions = 0;
       const data = new FormData();
       data.append("lessonID", lessonDetail.value.ID as string);
-      redoLesson(data);
+      await redoLesson(data);
+      questionPart.value.forEach((part) => {
+        localStorage.removeItem(part.ID);
+      });
       router.push(
         `/practice/${route.params.courseId}/${lessonDetail.value.ID}`
       );
@@ -218,12 +229,13 @@ export default defineComponent({
       const nextUnitID = lessons.value[currentUnitIndex + 1].ID;
       setLessonDetail(nextUnitID);
     };
-    onMounted(() => {
-      getLessons(route.params.courseId as string);
-      setCourseID(route.params.courseId);
-      nextTick(() => {
-        setLessonDetail(route.params.lessonId as string);
-      });
+    onMounted(async () => {
+      await getLessons(route.params.courseId as string);
+      await setCourseID(route.params.courseId);
+      await setLessonDetail(route.params.lessonId as string);
+      questionPart.value = await setLessonQuestion(
+        lessonDetail.value.ID as string
+      );
     });
     return {
       lessonDetail,
@@ -233,6 +245,7 @@ export default defineComponent({
       route,
       LessonImage,
       chapterTitle,
+      questionPart,
     };
   },
 });
@@ -253,18 +266,18 @@ export default defineComponent({
   box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
 }
 .button-wrapper {
-  position: absolute;
+  position: fixed;
   width: 50%;
   margin-left: 50%;
   transform: translate(-50%);
   display: flex;
-  bottom: -40px;
+  bottom: 4px;
 }
 .img-lesson {
-  max-height: 65vh;
+  max-height: 55vh;
 }
 .lesson-image-complete {
-  max-height: 50vh;
+  max-height: 45vh;
 }
 @media screen and (max-width: 1023px) {
   .lesson-view-content {
@@ -275,10 +288,11 @@ export default defineComponent({
     padding: 0;
   }
   .lesson-view-wrapper {
-    padding: 0 24px;
+    height: calc(100vh - 130px);
+    padding: 0 1rem;
   }
   .button-wrapper {
-    width: calc(100% - 48px);
+    width: calc(100% - 32px);
     transform: unset;
     margin-left: unset;
   }
@@ -286,7 +300,7 @@ export default defineComponent({
     max-height: 50vh;
   }
   .lesson-image-complete {
-    max-height: 45vh;
+    max-height: 30vh;
   }
 }
 </style>

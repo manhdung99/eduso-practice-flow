@@ -6,19 +6,20 @@
     <div
       class="px-4 py-3 lg:py-5 relative shadow shadow-gray-300 flex items-center justify-center"
     >
-      <div
-        @click="$router.go(-1)"
-        class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
-      >
-        <img src="../assets/images/left.svg" alt="" />
-      </div>
+      <router-link :to="`/course/${route.params.courseId}/${lessonDetail.ID}`">
+        <div
+          class="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 cursor-pointer"
+        >
+          <img src="../assets/images/left.svg" alt="" />
+        </div>
+      </router-link>
       <div
         class="ml-10 inline-block text-indigo text-xl font-semibold whitespace-nowrap truncate"
       >
         {{ lessonDetail.Title }}
       </div>
     </div>
-    <div class="flex relative pt-2.5">
+    <div class="flex relative">
       <!-- List question -->
       <div
         v-show="showListQuestion"
@@ -34,12 +35,7 @@
               class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
             ></span>
           </div>
-          <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
-            Đã trả lời {{ lessonDetail.CompleteQuestions }}/{{
-              lessonDetail.TotalQuestions
-            }}
-            câu
-          </p>
+
           <div class="list-question-part scroll-area">
             <div v-for="(part, index) in questionPart" :key="part.ID">
               <h3 class="text-indigo font-semibold mb-2">
@@ -49,7 +45,7 @@
               <div
                 v-for="(question, questionIndex) in part.Questions"
                 :key="question.questionID"
-                class="flex items-center py-2 hover:bg-slate-200 cursor-pointer"
+                class="flex items-center py-2 hover:bg-slate-200 cursor-pointer px-2"
                 @click.prevent="scrollToSectionMobile(question.ID)"
               >
                 <span
@@ -76,6 +72,7 @@
           </div>
         </div>
       </div>
+      <!-- Desktop  -->
       <div
         v-show="showListQuestion"
         class="list-question-wrapper hidden lg:block"
@@ -90,12 +87,6 @@
               class="icon-close text-xs cursor-pointer text-gray-400 hover:text-black"
             ></span>
           </div>
-          <p class="text-sm italic text-indigo-lighter mb-5 font-medium">
-            Đã trả lời {{ lessonDetail.CompleteQuestions }}/{{
-              lessonDetail.TotalQuestions
-            }}
-            câu
-          </p>
           <div class="list-question-part scroll-area">
             <div v-for="(part, index) in questionPart" :key="part.ID">
               <h3 class="text-indigo font-semibold mb-2">
@@ -105,7 +96,7 @@
               <div
                 v-for="(question, questionIndex) in part.Questions"
                 :key="question.questionID"
-                class="flex items-center py-2 hover:bg-slate-200 cursor-pointer"
+                class="flex items-center py-2 hover:bg-slate-200 cursor-pointer px-2"
                 @click.prevent="scrollToSection(question.ID)"
               >
                 <span
@@ -118,7 +109,17 @@
                 ></span>
                 <span
                   v-else-if="
-                    question.status == 'false' && question.CloneAnswers != null
+                    (question.status == 'false' &&
+                      question.CloneAnswers != null &&
+                      part.Type != 'QUIZ3' &&
+                      part.Type != 'QUIZ2') ||
+                    (question.status == 'false' &&
+                      question.selectedAnswer != null &&
+                      question.selectedAnswer != '' &&
+                      part.Type == 'QUIZ3') ||
+                    (question.status == 'false' &&
+                      question.Content != null &&
+                      part.Type == 'QUIZ2')
                   "
                   class="icon-incorrect-answer"
                   ><span class="path1"></span><span class="path2"></span
@@ -134,100 +135,94 @@
       </div>
       <div
         v-show="!showListQuestion"
-        class="absolute -left-42 hover:left-0 top-2.5 bg-primary text-white items-center px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
+        class="absolute -left-45 hover:left-0 top-2.5 bg-primary text-white items-center px-4 py-2 rounded-r cursor-pointer transition-all hidden lg:flex"
         @click="showListQuestion = true"
       >
         <span class="text-sm mr-2">Xem danh sách câu hỏi</span>
         <span class="icon-right ml-3"></span>
       </div>
-      <div class="w-full">
+      <div class="w-full px-4 lg:px-0">
         <div
           @scroll="onScroll($event)"
           ref="el"
-          class="history-question-wrapper mx-auto scroll-area"
+          class="history-question-wrapper p-4 w-full lg:w-1/2 mx-auto"
         >
-          <div
-            v-for="part in questionPart"
-            :key="part.ID"
-            class="list-answer-wrapper"
-            :id="part.ID"
-          >
-            <div class="px-1 border-gray-300 text-sm">
-              <div
-                class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm flex justify-between"
-              >
-                <div class="w-9/10">
-                  <div v-html="part.Title"></div>
-                  <div v-if="part.Media != null">
-                    <audio :src="part.Media.Path" :controls="true"></audio>
-                  </div>
-                  <div
-                    v-if="part.Description != null && part.Type != 'QUIZ2'"
-                    v-html="part.Description"
-                  ></div>
-                </div>
-                <span
-                  v-if="theoryData != null && theoryData.length > 0"
-                  class="hover:opacity-80 cursor-pointer"
+          <div class="scroll-area h-full">
+            <div
+              v-for="part in questionPart"
+              :key="part.ID"
+              class="list-answer-wrapper"
+              :id="part.ID"
+            >
+              <div class="px-1 border-gray-300 text-sm">
+                <div
+                  class="px-1 pb-2 lg:pb-4 border-b border-gray-300 text-sm flex justify-between"
                 >
-                  <img
-                    @click="updateTheoryModalStatus(true)"
-                    class=""
-                    :src="theoryIcon"
-                    alt=""
-                  />
-                </span>
+                  <div class="flex-1">
+                    <div v-html="part.Title"></div>
+                    <div v-if="part.Media != null">
+                      <audio :src="part.Media.Path" :controls="true"></audio>
+                    </div>
+                    <div
+                      v-if="part.Description != null && part.Type != 'QUIZ2'"
+                      v-html="part.Description"
+                    ></div>
+                  </div>
+                  <span
+                    v-if="theoryData != null && theoryData.length > 0"
+                    class="hover:opacity-80 cursor-pointer"
+                  >
+                    <img
+                      @click="updateTheoryModalStatus(true)"
+                      class=""
+                      :src="theoryIcon"
+                      alt=""
+                    />
+                  </span>
+                </div>
+              </div>
+              <div v-if="part.Type == 'QUIZ1'">
+                <MutipleChoiceHistory
+                  v-for="(question, index) in part.Questions"
+                  :key="question.questionID"
+                  :question="question"
+                  :index="index"
+                />
+              </div>
+              <div v-if="part.Type == 'QUIZ2'">
+                <FillInBlankHistory
+                  :question="part"
+                  :partID="part.ID"
+                  :answerList="answerList"
+                  :oldAnswer="oldAnswer"
+                  :fillInBlankQuestionList="fillInBlankQuestionList"
+                />
+              </div>
+              <div v-if="part.Type == 'QUIZ3'">
+                <MatchingHistory
+                  v-for="(question, index) in part.Questions"
+                  :key="question.questionID"
+                  :question="question"
+                  :index="index"
+                  :partID="part.ID"
+                  :currentPartQuestion="questionPart"
+                />
+              </div>
+              <div v-if="part.Type == 'QUIZ4'">
+                <MutipleChoiceManyHistory
+                  v-for="(question, index) in part.Questions"
+                  :key="question.questionID"
+                  :question="question"
+                  :index="index"
+                />
               </div>
             </div>
-            <div v-if="part.Type == 'QUIZ1'">
-              <MutipleChoiceHistory
-                v-for="(question, index) in part.Questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-              />
-            </div>
-            <div v-if="part.Type == 'QUIZ2'">
-              <FillInBlankHistory
-                :question="part"
-                :partID="part.ID"
-                :answerList="answerList"
-                :oldAnswer="oldAnswer"
-                :fillInBlankQuestionList="fillInBlankQuestionList"
-              />
-            </div>
-            <!-- <div v-if="part.Type == 'QUIZ3'">
-              <DropboxHistory
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-                :partID="part.ID"
-                :optionList="optionList"
-              />
-            </div> -->
-            <div v-if="part.Type == 'QUIZ3'">
-              <MatchingHistory
-                v-for="(question, index) in part.Questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-                :partID="part.ID"
-                :currentPartQuestion="questionPart"
-              />
-            </div>
-            <div v-if="part.Type == 'QUIZ4'">
-              <MutipleChoiceManyHistory
-                v-for="(question, index) in part.Questions"
-                :key="question.questionID"
-                :question="question"
-                :index="index"
-              />
-            </div>
           </div>
+
           <!-- Mobile bottom  -->
         </div>
         <!-- Desktop bottom  -->
-        <div class="relative bottom-2 ml-1/2 -translate-x-1/2 w-1/2 mt-6 px-2">
+        <div class="relative bottom-2 ml-1/2 -translate-x-1/2 w-1/2 mt-6">
           <div class="mt-4 justify-between hidden items-center lg:flex">
             <div class="w-1/3 relative">
               <div>
@@ -237,7 +232,7 @@
             </div>
             <div class="flex">
               <button
-                :disabled="currentQuestion == 0"
+                :disabled="firstPart"
                 @click="currentQuestion--"
                 class="btn btn-primary flex items-center mr-2"
               >
@@ -349,6 +344,7 @@ export default defineComponent({
     const currentQuestion = ref(0);
     const selectedAll = ref(false);
     const lastPart = ref(false);
+    const firstPart = ref(true);
     const el = ref(null);
     const answerList = ref([]);
     const optionList = ref([]);
@@ -371,21 +367,22 @@ export default defineComponent({
       const scrollTop = event.target.scrollTop;
       const clientHeight = event.target.clientHeight;
       const scrollHeight = event.target.scrollHeight;
+      if (scrollTop <= 100) {
+        firstPart.value = true;
+      } else {
+        firstPart.value = false;
+      }
       if (scrollTop + clientHeight == scrollHeight) {
         lastPart.value = true;
       } else {
         lastPart.value = false;
       }
-      questionPart.value.forEach((part) => {
-        const section = document.getElementById(part.ID);
-        if (
-          section.offsetTop <= scrollTop &&
-          section.offsetTop + section.offsetHeight > scrollTop
-        ) {
-          currentPartQuestion.value = questionPart.value.findIndex(
-            (data) => data.id == part.id
-          );
-        }
+      let questionHeights = [];
+      let cumulativeHeight = 0;
+      questionList.value.forEach((question) => {
+        const questionHeight = question.clientHeight;
+        cumulativeHeight += questionHeight;
+        questionHeights.push(cumulativeHeight);
       });
     };
     const moveToPart = (number) => {
@@ -553,6 +550,8 @@ export default defineComponent({
       fillInBlankQuestionList,
       theoryData,
       updateTheoryModalStatus,
+      firstPart,
+      route,
     };
   },
 });
@@ -565,11 +564,15 @@ export default defineComponent({
   height: 100%;
 }
 .history-question-wrapper {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 154px);
   overflow-x: hidden;
   position: relative;
-  padding: 0 8px;
-  width: 50%;
+  padding: 0 1rem;
+  margin-top: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 .list-answer-wrapper {
   margin-top: 0;
@@ -577,17 +580,13 @@ export default defineComponent({
 .list-answer-wrapper {
   background: white;
   border-radius: 8px;
-  padding: 16px;
   width: 100%;
   margin-bottom: 10px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   position: relative;
 }
 @media screen and (max-width: 767px) {
   .list-answer-wrapper {
     width: 100%;
-    padding: 16px 40px;
   }
   .history-question-wrapper {
     width: 100%;
