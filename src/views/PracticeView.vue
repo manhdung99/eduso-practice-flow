@@ -1320,6 +1320,9 @@ export default defineComponent({
             });
           }
         }
+        if (currentPartQuestion.value.Type == "QUIZ4") {
+          nextTick(() => disableCheckButton());
+        }
       }
       loading.value = false;
     });

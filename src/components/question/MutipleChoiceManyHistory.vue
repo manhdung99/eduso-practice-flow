@@ -3,7 +3,10 @@
     <div class="flex items-center justify-between my-4">
       <span v-html="question.Content"> </span>
     </div>
-    <div class="font-medium">
+    <div
+      :class="question.Answers[0].Media ? 'flex justify-center flex-wrap' : ''"
+      class="font-medium"
+    >
       <div
         v-for="answer in question.Answers"
         :key="answer.ID"
@@ -27,11 +30,17 @@
           question.status == 'unmake'
             ? '!bg-green-lighter !border-green !text-green !border-dashed'
             : '',
+          answer.Media ? 'w-3/10 mx-1 flex items-center justify-center' : '',
         ]"
         @click="updateSelectedAnswerMany(question.ID, answer.ID)"
         class="px-4 py-3 border border-neutral-300 rounded mb-2 cursor-pointer"
       >
-        <span v-html="answer.Content"></span>
+        <span v-if="!answer.Media" v-html="answer.Content"></span>
+        <div v-else>
+          <div class="" v-if="answer.Media.Extension.includes('image')">
+            <img :src="answer.Media.Path" alt="" />
+          </div>
+        </div>
       </div>
     </div>
   </div>

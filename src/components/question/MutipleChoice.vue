@@ -3,7 +3,10 @@
     <div class="flex items-center justify-between my-4">
       <span v-html="question.Content"> </span>
     </div>
-    <div :class="question.Answers[0].Media ? 'flex' : ''" class="font-medium">
+    <div
+      :class="question.Answers[0].Media ? 'flex justify-center flex-wrap' : ''"
+      class="font-medium"
+    >
       <div
         v-for="answer in question.Answers"
         :key="answer.ID"
@@ -20,7 +23,7 @@
           question.CloneAnswers != answer.ID && question.status == 'selected'
             ? 'hover:border-iceberg hover:text-iceberg'
             : '',
-          answer.Media ? 'mx-1' : '',
+          answer.Media ? 'w-3/10 mx-1 flex items-center justify-center' : '',
         ]"
         @click="updateSelectedAnswer(question.ID, answer.ID)"
         class="px-4 py-3 border border-neutral-300 rounded mb-2 cursor-pointer"
