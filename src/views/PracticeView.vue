@@ -1752,9 +1752,6 @@ export default defineComponent({
   left: calc(50% + 125px);
   width: calc(66.66% - 170px);
 }
-.theory-content {
-  height: calc(100% - 60px);
-}
 @media screen and (max-width: 1023px) {
   .two-question-wrapper {
     width: 100%;

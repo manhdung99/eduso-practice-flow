@@ -11,22 +11,94 @@
         ></span>
       </div>
       <div class="theory-content scroll-area">
-        <div class="mb-4" v-for="theory in theoryData" :key="theory.ID">
-          <div v-if="theory.Type == 'AUDIO'">
-            <div v-if="theory.Media.Extension.includes('audio')">
-              <audio :src="theory.Media.Path" controls></audio>
-              <div v-html="theory.Description"></div>
+        <div
+          class="mb-4 h-4/5"
+          v-for="(theory, index) in theoryData"
+          :key="theory.ID"
+          :class="index == currentIndex ? '' : 'hidden'"
+        >
+          <div class="h-full">
+            <div
+              class="text-xl text-indigo my-2 text-center"
+              v-html="theory.Title"
+            ></div>
+            <div class="h-full" v-if="theory.Type == 'AUDIO'">
+              <div
+                class="h-full"
+                v-if="theory.Media.Extension.includes('audio')"
+              >
+                <audio :src="theory.Media.Path" controls></audio>
+                <div v-html="theory.Description"></div>
+              </div>
             </div>
-          </div>
-          <div v-else-if="theory.Type == 'VOCAB'">
-            <div class="doc-content" v-html="theory.Description"></div>
-          </div>
-          <div v-if="theory.Type == 'DOC'">
-            <div v-if="theory.Media.Extension.includes('pdf')">
-              <embed class="w-full h-80" :src="theory.Media.Path" />
+            <div class="h-full" v-if="theory.Type == 'VIDEO'">
+              <div
+                class="h-full"
+                v-if="theory.Media.Extension.includes('audio')"
+              >
+                <div v-html="theory.Description"></div>
+              </div>
+            </div>
+            <div v-else-if="theory.Type == 'VOCAB'">
+              <div class="doc-content" v-html="theory.Description"></div>
+            </div>
+            <div class="h-full" v-if="theory.Type == 'DOC'">
+              <div class="h-full" v-if="theory.Media.Extension.includes('pdf')">
+                <embed class="w-full h-full" :src="theory.Media.Path" />
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="absolute bottom-0 flex justify-center w-full">
+        <ul class="flex items-center">
+          <li
+            v-if="currentIndex > 0"
+            @click="currentIndex--"
+            class="px-4 py-2 border border-grey-lighter hover:text-indigo hover:border-indigo cursor-pointer"
+          >
+            Trang trước
+          </li>
+          <li
+            v-for="(theory, index) in theoryData"
+            :key="theory.ID"
+            class="border border-grey-lighter hover:text-indigo hover:border-indigo cursor-pointer w-10 h-10"
+            :class="index == currentIndex ? '!border-indigo' : ''"
+            @click="currentIndex = index"
+          >
+            <img
+              v-if="theory.Type == 'DOC'"
+              class="w-10 h-10"
+              :src="documentIcon"
+              alt=""
+            />
+            <img
+              v-if="theory.Type == 'AUDIO'"
+              class="w-10 h-10"
+              :src="volumeIcon"
+              alt=""
+            />
+            <img
+              v-if="theory.Type == 'VIDEO'"
+              class="w-10 h-10"
+              :src="videoIcon"
+              alt=""
+            />
+            <img
+              v-if="theory.Type == 'VOCAB'"
+              class="w-10 h-10"
+              :src="languageIcon"
+              alt=""
+            />
+          </li>
+          <li
+            v-if="currentIndex != theoryData.length - 1"
+            @click="currentIndex++"
+            class="px-4 py-2 border border-grey-lighter hover:text-indigo hover:border-indigo cursor-pointer"
+          >
+            Trang sau
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -37,6 +109,11 @@ import { useModalStore } from "../../store/modalStore";
 import { useUnitStore } from "../../store/unitStore";
 import { storeToRefs } from "pinia";
 import PlayPronun from "../../uses/playMedia";
+import documentIcon from "../../assets/images/document-icon.svg";
+import languageIcon from "../../assets/images/language-icon.svg";
+import videoIcon from "../../assets/images/video-icon.svg";
+import leftIcon from "../../assets/images/left.svg";
+import volumeIcon from "../../assets/images/volume.svg";
 import {
   addStaticURLForDescription,
   addStaticURLForMedia,
@@ -77,6 +154,11 @@ export default defineComponent({
       newTheoryData,
       PlayPronun,
       currentIndex,
+      documentIcon,
+      languageIcon,
+      videoIcon,
+      leftIcon,
+      volumeIcon,
     };
   },
 });
@@ -92,10 +174,11 @@ export default defineComponent({
   transform: translateX(-50%);
   margin-top: 4px;
   height: calc(100vh - 8px);
+  position: relative;
 }
 .theory-content {
-  height: calc(100% - 80px);
-  padding-left: 16px;
+  height: calc(100% - 120px);
+  padding: 0 48px;
 }
 .theory-modal p {
   display: flex;
@@ -104,5 +187,10 @@ export default defineComponent({
 }
 .two-question-wrapper .theory-content {
   padding-left: 0;
+}
+@media screen and (max-width: 767px) {
+  .theory-content {
+    padding: 0 16px;
+  }
 }
 </style>
